@@ -21,12 +21,7 @@
             "input": "apps/frontend/public"
           }
         ],
-        "styles": ["apps/frontend/src/styles.scss"],
-        "server": "apps/frontend/src/main.server.ts",
-        "ssr": {
-          "entry": "apps/frontend/src/server.ts"
-        },
-        "outputMode": "server"
+        "styles": ["apps/frontend/src/styles.scss"]
       },
       "configurations": {
         "production": {

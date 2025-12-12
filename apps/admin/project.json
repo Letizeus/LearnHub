@@ -21,12 +21,7 @@
             "input": "apps/admin/public"
           }
         ],
-        "styles": ["apps/admin/src/styles.scss"],
-        "server": "apps/admin/src/main.server.ts",
-        "ssr": {
-          "entry": "apps/admin/src/server.ts"
-        },
-        "outputMode": "server"
+        "styles": ["apps/admin/src/styles.scss"]
       },
       "configurations": {
         "production": {
@@ -60,7 +55,8 @@
           "buildTarget": "admin:build:production"
         },
         "development": {
-          "buildTarget": "admin:build:development"
+          "buildTarget": "admin:build:development",
+          "port": 4201
         }
       },
       "defaultConfiguration": "development"
