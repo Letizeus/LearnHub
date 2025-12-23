@@ -5,6 +5,7 @@
       "@nx/angular": "22.1.3"
     }
   },
+  "useDaemonProcess": true,
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "nxCloudId": "6931783bcb46887a9164160e",
   "targetDefaults": {

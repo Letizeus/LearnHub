@@ -22,3 +22,48 @@ services:
         condition: service_healthy
     environment:
       - ME_CONFIG_BASICAUTH=false
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ['CMD', 'ollama', 'list']
+      interval: 5s
+      retries: 5
+    environment:
+      - OLLAMA_NUM_CTX=4096 # Zwingt den Server global auf 4096
+      - OLLAMA_KEEP_ALIVE=24h # Hält das Modell im RAM (schneller beim Testen)
+      - OLLAMA_FLASH_ATTENTION=1 # Beschleunigt die Verarbeitung
+    restart: always
+    # Optional: Falls du GPU-Support in Docker auf Mac hinbekommst, bräuchtest du hier deploy resources.
+    # Standardmäßig läuft dies auf Mac meist über CPU.
+
+  ollama-model-puller:
+    image: ollama/ollama:latest
+    container_name: ollama-puller
+    depends_on:
+      ollama:
+        condition: service_healthy
+    volumes:
+      - ollama_data:/root/.ollama # Teilt sich den Speicher mit dem Server!
+    environment:
+      - OLLAMA_HOST=ollama:11434
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      echo 'Warte auf Ollama Server...' &&
+      sleep 5 &&
+      echo 'Lade Vision Modell (Moondream)...' &&
+      ollama pull granite3.2-vision:latest &&
+      echo 'Lade Logic Modell (DeepSeek 1.5B)...' &&
+      ollama pull deepseek-r1:1.5b &&
+      echo 'Fertig! Modelle sind bereit.'
+      "
+    restart: 'no' # Soll nicht ständig neu starten, wenn er fertig ist
+
+volumes:
+  ollama_data:
