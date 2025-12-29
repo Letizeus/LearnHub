@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { NxWelcome } from './nx-welcome';
+import { AddExams } from './add-exams/add-exams';
 
 @Component({
-  imports: [NxWelcome, RouterModule],
+  imports: [RouterModule, AddExams],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
