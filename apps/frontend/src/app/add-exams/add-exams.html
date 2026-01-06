@@ -4,10 +4,19 @@
             <input pInputText id="on_label" [(ngModel)]="title" pSize="large" autocomplete="off" fluid/>
             <label for="on_label">Title</label>
         </p-floatlabel>
-        <p-fileupload name="uploadedFiles[]" url="#TODO in app.routes.ts" (onUpload)="close()" [multiple]="true" accept="image/*" maxFileSize="1000000" mode="advanced">
-            <ng-template #empty>
-                <div>Drag and drop files to here to upload.</div>
-            </ng-template>
+        <p-fileupload 
+            #fileUpload
+            mode="basic"
+            [multiple]="true"
+            accept="image/*"
+            maxFileSize="1000000"
+            (onSelect) = "onFileSelect($event)"
+            [customUpload]="true">
         </p-fileupload>
+        <p-button 
+            label="Upload"
+            type="button" 
+            (onClick)="addExam(fileUpload)">
+        </p-button>
     </body>
 </html>

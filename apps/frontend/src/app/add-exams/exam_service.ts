@@ -1,0 +1,25 @@
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+
+@Injectable(
+{
+    providedIn: 'root'
+}
+)
+export class ExamService {
+    constructor(private http: HttpClient) {}
+    public addExam(newExam: FormData){
+        /* //CONSOLE LOGGING
+        newExam.forEach((value, key) => {
+            console.log(key, value);
+
+            if (value instanceof File) {
+                console.log('  name:', value.name);
+                console.log('  type:', value.type);
+                console.log('  size:', value.size);
+            }
+        });
+        */
+        return this.http.post('api/exams', newExam);
+    }
+}
