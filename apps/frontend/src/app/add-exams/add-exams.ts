@@ -38,7 +38,7 @@ export class AddExams {
     }
 
     try {
-      const saved = await firstValueFrom(this._examService.addExam(newExam));
+      const saved = await firstValueFrom(this._examService.addExam(newExam)); //.subscribe({next:, err: ...) is deprecated, so alternative after research.
       console.log(saved);
       this.resetForm(fileUpload);
     } catch (err) {
