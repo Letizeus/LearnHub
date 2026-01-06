@@ -6,7 +6,7 @@ import { HttpClient } from "@angular/common/http";
     providedIn: 'root'
 }
 )
-export class ExamService {
+export class ExamHandler {
     constructor(private http: HttpClient) {}
     public addExam(newExam: FormData){
         /* //CONSOLE LOGGING

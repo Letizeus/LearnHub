@@ -8,7 +8,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
 import { FileSelectEvent, FileUpload, FileUploadModule } from 'primeng/fileupload';
 
-import { ExamService } from './exam_service';
+import { ExamHandler } from './exam.handler';
 
 @Component({
   selector: 'app-add-exams',
@@ -17,13 +17,13 @@ import { ExamService } from './exam_service';
   styleUrl: './add-exams.css',
 })
 export class AddExams {
-  private _examService: ExamService
+  private _examHandler: ExamHandler
 
   protected title: string = "";
   protected files: File[] = [];
 
-  constructor(service: ExamService){
-    this._examService = service
+  constructor(examHandler: ExamHandler){
+    this._examHandler = examHandler;
   }
 
   onFileSelect($event: FileSelectEvent){
@@ -38,7 +38,7 @@ export class AddExams {
     }
 
     try {
-      const saved = await firstValueFrom(this._examService.addExam(newExam)); //.subscribe({next:, err: ...) is deprecated, so alternative after research.
+      const saved = await firstValueFrom(this._examHandler.addExam(newExam)); //.subscribe({next:, err: ...) is deprecated, so alternative after research.
       console.log(saved);
       this.resetForm(fileUpload);
     } catch (err) {
