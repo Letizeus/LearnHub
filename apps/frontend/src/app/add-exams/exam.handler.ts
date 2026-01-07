@@ -9,7 +9,8 @@ import { HttpClient } from "@angular/common/http";
 export class ExamHandler {
     constructor(private http: HttpClient) {}
     public addExam(newExam: FormData){
-        /* //CONSOLE LOGGING
+        const baseUrl: string = "http://localhost:3000/api/";
+        //CONSOLE LOGGING
         newExam.forEach((value, key) => {
             console.log(key, value);
 
@@ -19,7 +20,6 @@ export class ExamHandler {
                 console.log('  size:', value.size);
             }
         });
-        */
-        return this.http.post('api/exams', newExam);
+        return this.http.post(baseUrl+'exams/add', newExam);
     }
 }

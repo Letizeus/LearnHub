@@ -2,11 +2,8 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 @Schema()
 export class Exam {
-    @Prop()
-    id: string;
-
     @Prop({ required: true })
-    name: string;
+    title: string;
 
     @Prop({
         type: [
