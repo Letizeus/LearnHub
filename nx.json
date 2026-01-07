@@ -1,9 +1,7 @@
 {
   "installation": {
     "version": "22.3.3",
-    "plugins": {
-      "@nx/angular": "22.3.3"
-    }
+    "plugins": { "@nx/angular": "22.3.3" }
   },
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "nxCloudId": "6931783bcb46887a9164160e",
@@ -25,30 +23,13 @@
     "@nx/jest:jest": {
       "cache": true,
       "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
-      "options": {
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
-      }
+      "options": { "passWithNoTests": true },
+      "configurations": { "ci": { "ci": true, "codeCoverage": true } }
     }
   },
   "plugins": [
-    {
-      "plugin": "@nx/playwright/plugin",
-      "options": {
-        "targetName": "e2e"
-      }
-    },
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "lint"
-      }
-    },
+    { "plugin": "@nx/playwright/plugin", "options": { "targetName": "e2e" } },
+    { "plugin": "@nx/eslint/plugin", "options": { "targetName": "lint" } },
     {
       "plugin": "@nx/webpack/plugin",
       "options": {
@@ -68,8 +49,6 @@
       "style": "scss",
       "unitTestRunner": "jest"
     },
-    "@nx/angular:component": {
-      "style": "css"
-    }
+    "@nx/angular:component": { "style": "css" }
   }
 }

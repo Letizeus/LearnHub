@@ -1,12 +1,28 @@
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
+@Schema()
 export class Exam {
-    id: number;
-    title: string;
-    files: File[];
+    @Prop()
+    id: string;
 
-    constructor(){
-        this.id = -1;
-        this.title = "";
-        this.files = [];
-    }
+    @Prop({ required: true })
+    name: string;
+
+    @Prop({
+        type: [
+            {
+                filename: String,
+                mimetype: String,
+                size: Number,
+                path: String,
+            },
+        ],
+    })
+    files: {
+        filename: string;
+        mimetype: string; 
+        size: number;
+        path: string;
+    }[];
 }
+export const ExamSchema = SchemaFactory.createForClass(Exam);
