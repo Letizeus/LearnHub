@@ -1,8 +1,8 @@
 {
   "installation": {
-    "version": "22.1.3",
+    "version": "22.3.3",
     "plugins": {
-      "@nx/angular": "22.1.3"
+      "@nx/angular": "22.3.3"
     }
   },
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
