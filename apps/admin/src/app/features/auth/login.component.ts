@@ -32,7 +32,6 @@ export class LoginComponent {
         username: 'admin',
         email: this.form.value.email ?? '',
         displayName: 'Admin',
-        roles: ['admin'],
       },
     });
     this.router.navigateByUrl('/dashboard');
