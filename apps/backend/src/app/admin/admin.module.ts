@@ -1,4 +1,3 @@
-// TEMP: Schema registration only. No controllers/services yet
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
@@ -13,6 +12,8 @@ import {
   PlatformConfig,
   PlatformConfigSchema,
 } from './schemas';
+import { DashboardController } from './controllers/dashboard.controller';
+import { DashboardService } from './services/dashboard.service';
 
 @Module({
   imports: [
@@ -24,5 +25,7 @@ import {
       { name: PlatformConfig.name, schema: PlatformConfigSchema },
     ]),
   ],
+  controllers: [DashboardController],
+  providers: [DashboardService],
 })
 export class AdminModule {}

@@ -56,7 +56,8 @@
         },
         "development": {
           "buildTarget": "admin:build:development",
-          "port": 4201
+          "port": 4201,
+          "proxyConfig": "apps/admin/proxy.conf.json"
         }
       },
       "defaultConfiguration": "development"

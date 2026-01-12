@@ -1,3 +1,97 @@
-<div class="page-card">
-  <h2>Dashboard</h2>
+<div class="dashboard">
+  <div class="dashboard-header">
+    <h2>Dashboard</h2>
+    <div class="timeframe-filter">
+      <label for="timeframe">Timeframe:</label>
+      <select
+        id="timeframe"
+        [(ngModel)]="selectedTimeframe"
+        (ngModelChange)="onTimeframeChange($event)"
+        class="timeframe-select"
+      >
+        @for (option of timeframeOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+  <div class="loading-state">
+    <i class="pi pi-spin pi-spinner loading-icon"></i>
+    <p>Loading dashboard metrics...</p>
+  </div>
+  }
+
+  <!-- Error State -->
+  @else if (error()) {
+  <div class="error-state">
+    <i class="pi pi-exclamation-triangle error-icon"></i>
+    <p>{{ error() }}</p>
+    <button
+      class="retry-button"
+      (click)="onTimeframeChange(selectedTimeframe())"
+    >
+      <i class="pi pi-refresh"></i>
+      Retry
+    </button>
+  </div>
+  }
+
+  <!-- Metrics Cards -->
+  @else if (metricCards().length > 0) {
+  <div class="metrics-grid">
+    @for (card of metricCards(); track card.title) {
+    <div class="metric-card">
+      <div class="metric-icon" [class]="card.colorClass">
+        <i [class]="card.icon"></i>
+      </div>
+      <div class="metric-content">
+        <h3 class="metric-title">{{ card.title }}</h3>
+        <p class="metric-value">{{ card.value | number }}</p>
+      </div>
+    </div>
+    }
+  </div>
+  }
+
+  <!-- Empty State (if no metrics) -->
+  @else {
+  <div class="empty-state">
+    <i class="pi pi-inbox empty-icon"></i>
+    <p>No metrics available yet</p>
+    <p class="empty-subtitle">
+      Data will appear once users start using the platform
+    </p>
+  </div>
+  }
+
+  <!-- Registration Chart Section -->
+  @if (!isLoading() && !error()) {
+  <div class="chart-section">
+    <h3 class="chart-title">User Registrations Over Time</h3>
+
+    @if (isChartLoading()) {
+    <div class="chart-loading">
+      <i class="pi pi-spin pi-spinner"></i>
+      <p>Loading chart...</p>
+    </div>
+    } @else if (chartData() && chartData()!.data.length > 0) {
+    <div class="chart-container">
+      <canvas
+        baseChart
+        [data]="lineChartData()"
+        [options]="lineChartOptions"
+        type="line"
+      >
+      </canvas>
+    </div>
+    } @else {
+    <div class="chart-empty">
+      <p>No registration data available for the selected timeframe</p>
+    </div>
+    }
+  </div>
+  }
 </div>
