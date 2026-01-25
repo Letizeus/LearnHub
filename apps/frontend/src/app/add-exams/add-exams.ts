@@ -6,13 +6,14 @@ import { firstValueFrom } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { FileSelectEvent, FileUpload, FileUploadModule } from 'primeng/fileupload';
 
 import { ExamHandler } from './exam.handler';
 
 @Component({
   selector: 'app-add-exams',
-  imports: [CommonModule, FormsModule, InputTextModule, FloatLabelModule, ButtonModule, FileUploadModule],
+  imports: [ScrollPanelModule, CommonModule, FormsModule, InputTextModule, FloatLabelModule, ButtonModule, FileUploadModule],
   templateUrl: './add-exams.html',
   styleUrls: ['./add-exams.scss'],
 })
