@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
+import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 
 import { InputTextModule } from 'primeng/inputtext';
@@ -12,22 +12,46 @@ import { ExamHandler } from './exam.handler';
 
 @Component({
   selector: 'app-add-exams',
-  imports: [FormsModule,InputTextModule, FloatLabelModule, ButtonModule, FileUploadModule],
+  imports: [CommonModule, FormsModule, InputTextModule, FloatLabelModule, ButtonModule, FileUploadModule],
   templateUrl: './add-exams.html',
-  styleUrl: './add-exams.css',
+  styleUrls: ['./add-exams.scss'],
 })
 export class AddExams {
   private _examHandler: ExamHandler
 
   protected title: string = "";
   protected files: File[] = [];
+  protected previews: string[] = [];
+  protected activePreview: string | null = null;
 
   constructor(examHandler: ExamHandler){
     this._examHandler = examHandler;
   }
 
+  openPreview(img: string){
+    this.activePreview = img;
+  }
+
+  closePreview(){
+    this.activePreview = null
+  }
+
+  removeChosenFile(index: number){
+    URL.revokeObjectURL(this.previews[index]);
+    this.previews.splice(index, 1);
+    this.previews = [...this.previews];
+    this.activePreview = null;
+  }
+
   onFileSelect($event: FileSelectEvent){
     this.files = [...$event.files];
+    for(const file of this.files){
+      const reader = new FileReader();
+      reader.onload = () =>{
+        this.previews.push(reader.result as string);
+      }
+      reader.readAsDataURL(file);
+    }
   }
 
   async addExam(fileUpload: FileUpload){
@@ -51,6 +75,8 @@ export class AddExams {
     fileUpload.clear();
     this.title = "";
     this.files = [];
+    this.previews = []; 
+    this.activePreview = null;
   }
 }
 

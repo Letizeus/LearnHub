@@ -1,22 +1,41 @@
 <html>
     <body>
-        <p-floatlabel variant="on">
-            <input pInputText id="on_label" [(ngModel)]="title" pSize="large" autocomplete="off" fluid/>
-            <label for="on_label">Title</label>
-        </p-floatlabel>
-        <p-fileupload 
-            #fileUpload
-            mode="basic"
-            [multiple]="true"
-            accept="image/*"
-            maxFileSize="1000000"
-            (onSelect) = "onFileSelect($event)"
-            [customUpload]="true">
-        </p-fileupload>
-        <p-button 
-            label="Upload"
-            type="button" 
-            (onClick)="addExam(fileUpload)">
-        </p-button>
+        <div class="view">
+             <p-floatlabel variant="on">
+                <input pInputText id="on_label" [(ngModel)]="title" pSize="large" autocomplete="off" fluid/>
+                <label for="on_label">Title</label>
+            </p-floatlabel>
+
+            <p-fileupload 
+                #fileUpload
+                mode="basic"
+                [multiple]="true"
+                accept="image/*, application/pdf"
+                maxFileSize="1000000"
+                (onSelect) = "onFileSelect($event)"
+                [customUpload]="true">
+            </p-fileupload>
+
+            <div class="previews">
+                <div class="preview" *ngFor="let img of this.previews; let i = index;">
+                    <button type="button" (click)="openPreview(img)">
+                        <img [src]="img"/>
+                    </button>
+                    <button class="removeImg" (click)="removeChosenFile(i)">x</button>
+                </div>
+            </div>
+
+            <div class="singlePreview" *ngIf="activePreview" (click)="closePreview()">
+                <img [src]="activePreview"/>
+            </div>
+
+            <p-button
+                class="upload-button"
+                label="Upload"
+                type="button" 
+                severity="primary"
+                (onClick)="addExam(fileUpload)">
+            </p-button>
+        </div>
     </body>
 </html>

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
+//TO-DO: Missing UploadUserId, ModuleId, TagId!
 @Schema()
 export class Exam {
     @Prop({ required: true })
