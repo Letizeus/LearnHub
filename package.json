@@ -11,7 +11,7 @@
     "dev:backend": "nx serve backend",
     "dev:admin": "NODE_OPTIONS='--experimental-require-module --no-warnings' nx serve admin",
     "format:write": "nx format:write",
-    "format:check": "nx format:check"
+    "format:check": "nx format:check",
     "mock-api": "node apps/frontend/mock/mock-server.js"
   },
   "dependencies": {

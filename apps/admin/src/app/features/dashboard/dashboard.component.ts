@@ -4,12 +4,10 @@ import {
   inject,
   signal,
   computed,
-  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration } from 'chart.js';
+import { ChartModule } from 'primeng/chart';
 import {
   DashboardService,
   DashboardMetrics,
@@ -27,13 +25,12 @@ interface MetricCard {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseChartDirective],
+  imports: [CommonModule, FormsModule, ChartModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
-  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
   private readonly dashboardService = inject(DashboardService);
 
   // State signals
@@ -53,10 +50,8 @@ export class DashboardComponent {
       .trim();
   }
 
-  // Chart configuration
-  protected readonly lineChartData = computed<
-    ChartConfiguration<'line'>['data']
-  >(() => {
+  // Chart configuration using PrimeNG Chart
+  protected readonly lineChartData = computed(() => {
     const data = this.chartData();
     if (!data || !data.data.length) {
       return {
@@ -87,7 +82,7 @@ export class DashboardComponent {
     };
   });
 
-  protected lineChartOptions: ChartConfiguration<'line'>['options'] = {
+  protected readonly lineChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -212,7 +207,6 @@ export class DashboardComponent {
         next: (data) => {
           this.chartData.set(data);
           this.isChartLoading.set(false);
-          this.chart?.update();
         },
         error: (err) => {
           console.error('Failed to load chart data:', err);

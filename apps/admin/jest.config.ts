@@ -13,7 +13,7 @@ export default {
     ],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!.*\\.mjs$|ng2-charts|lodash-es|chart\\.js)',
+    'node_modules/(?!.*\\.mjs$|lodash-es|chart\\.js)',
   ],
   moduleNameMapper: {
     '^lodash-es$': 'lodash',
