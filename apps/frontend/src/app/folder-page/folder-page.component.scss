@@ -1,0 +1,53 @@
+@use 'variables' as theme;
+
+.header {
+  display: flex;
+
+  h1 {
+    flex-grow: 1;
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .icon {
+    padding: 0.8rem 1.3rem;
+    border-radius: 5px;
+    color: white;
+
+    background-color: theme.$surface-400;
+
+    &.primary {
+      background-color: theme.$primary;
+    }
+
+    .mat-icon {
+      $size: 2rem;
+      font-size: $size;
+      height: $size;
+      width: $size;
+    }
+  }
+
+  .grow {
+    flex-grow: 1;
+  }
+
+  cursor: pointer;
+  user-select: none;
+  border-radius: 5px;
+  padding: 10px;
+
+  &:hover {
+    transition: 0.5s ease;
+    background-color: color-mix(in srgb, theme.$primary, white 90%);
+  }
+
+  &:active {
+    transition: none;
+    background-color: color-mix(in srgb, theme.$primary, white 70%);
+  }
+}

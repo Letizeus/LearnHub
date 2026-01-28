@@ -1,0 +1,17 @@
+<div class="lh-container">
+  <div class="header">
+    <h1>Folders</h1>
+    <p-button [rounded]="true" [text]="true" severity="secondary" (click)="createFolder()">
+      <mat-icon>add</mat-icon>
+    </p-button>
+  </div>
+  @for (folder of folderService.folders(); track $index) {
+  <div class="item" [routerLink]="`/folder/${folder.id}`">
+    <div class="icon" [class.primary]="folder.id === 'liked'">
+      <mat-icon>{{ folder.icon || 'folder' }}</mat-icon>
+    </div>
+    <p>{{ folder.name }}</p>
+  </div>
+
+  }
+</div>

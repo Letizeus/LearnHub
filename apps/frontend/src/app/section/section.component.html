@@ -1,0 +1,9 @@
+<div class="header">
+  @if (icon()) {
+  <mat-icon [innerText]="icon()"></mat-icon>
+  }
+  <p [innerText]="label()"></p>
+</div>
+<div class="content" [class.horizonal]="horizontal()">
+  <ng-content></ng-content>
+</div>

@@ -1,0 +1,36 @@
+<p-confirmdialog />
+<div class="lh-container">
+  <div class="header">
+    @if (editMode) { @if (folderService.activeFolder()!.id == 'liked') {
+    <h1>{{ folderService.activeFolder()!.name }}</h1>
+    } @else {
+    <input value="{{ folderService.activeFolder()!.name }}" #folderName />
+    }
+
+    <p-button [rounded]="true" [text]="true" severity="success" (click)="handleFolderChange()">
+      <mat-icon>check</mat-icon>
+    </p-button>
+    } @else {
+    <h1>{{ folderService.activeFolder()!.name }}</h1>
+    <p-button [rounded]="true" [text]="true" severity="secondary" (click)="editMode = true">
+      <mat-icon>edit</mat-icon>
+    </p-button>
+    <p-button [rounded]="true" [text]="true" severity="info">
+      <mat-icon> picture_as_pdf</mat-icon>
+    </p-button>
+    @if (folderService.activeFolder()!.id != 'liked') {
+    <p-button [rounded]="true" [text]="true" severity="danger" (click)="confirmDelete($event)">
+      <mat-icon>delete</mat-icon>
+    </p-button>
+    } }
+  </div>
+
+  <p>{{ folderService.activeFolder()!.documents.length }} {{ folderService.activeFolder()!.documents.length == 1 ? 'item' : 'items' }}</p>
+  @if (editMode) { @for (doc of folderService.folderContent(); track $index) { @if (doc) {
+  <lh-search-item [data]="doc" />
+  } @else {
+  <lh-search-item [explictShow]="true" />
+  } } } @else {
+  <lh-folder-items [items]="folderService.folderContent()"></lh-folder-items>
+  }
+</div>

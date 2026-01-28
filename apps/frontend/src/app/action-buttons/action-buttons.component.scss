@@ -1,0 +1,14 @@
+.actions {
+  display: flex;
+  gap: 1rem;
+
+  .splitbutton-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .mat-icon {
+    transform: translateY(-1px);
+  }
+}

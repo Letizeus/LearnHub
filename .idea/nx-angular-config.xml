@@ -2,6 +2,10 @@
 <project version="4">
   <component name="NxAngularConfigService" workspaceLocation="file://$PROJECT_DIR$/nx.json">
     <projects>
+      <project name="admin" file="file://$PROJECT_DIR$/apps/admin/project.json" />
+      <project name="admin-e2e" file="file://$PROJECT_DIR$/apps/admin-e2e/project.json" />
+      <project name="backend" file="file://$PROJECT_DIR$/apps/backend/project.json" />
+      <project name="backend-e2e" file="file://$PROJECT_DIR$/apps/backend-e2e/project.json" />
       <project name="frontend" file="file://$PROJECT_DIR$/apps/frontend/project.json" />
       <project name="frontend-e2e" file="file://$PROJECT_DIR$/apps/frontend-e2e/project.json" />
     </projects>

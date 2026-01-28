@@ -1,0 +1,118 @@
+<p-drawer header="Tags" [(visible)]="tagSelect" [fullScreen]="true">
+  @if (!tagGroupsSelect.hasValue()) {
+  <div class="skeleton-container">
+    <div>
+      <p-skeleton width="20rem" height="2rem" />
+      <p-skeleton width="20rem" height="10rem" />
+    </div>
+    <div>
+      <p-skeleton width="20rem" height="2rem" />
+      <p-skeleton width="20rem" height="10rem" />
+    </div>
+  </div>
+  } @else { @for (tagGroup of tagGroupsSelect.value(); track tagGroup.id) {
+  <lh-section [label]="tagGroup.name" [icon]="tagGroup.icon">
+    <div class="categories">
+      @for (tag of tagGroup.tags; track tag) {
+      <div
+        class="card"
+        [style.background-image]="tag.backgroundImage && `url('${tag.backgroundImage}')`"
+        [style]="`--color: ${tag.color || 'lightgray'};`"
+        (click)="addTag(tag.id)"
+      >
+        @if (tag.icon) {
+        <mat-icon>{{ tag.icon }}</mat-icon>
+        }
+        <span>{{ tag.name }}</span>
+      </div>
+      }
+    </div>
+  </lh-section>
+  } }
+</p-drawer>
+<p-drawer [visible]="quickAction() != ''" (onHide)="quickAction.set('')" header="Add to a folder" position="right">
+  <div class="quickactions">
+    <lh-folder [content]="quickAction()" />
+    <lh-action-buttons [id]="quickAction()" [small]="true" class="actionButtons" />
+  </div>
+</p-drawer>
+<div class="container">
+  <div class="input">
+    <input pInputText type="text" pSize="large" placeholder="Type to search..." fluid (input)="handleSearch($event)" />
+    @if (isSearch()) {
+    <p-button (click)="folderSelect()" [severity]="selectMode() ? 'success' : 'primary'"
+      >@if (selectMode()) {
+      <mat-icon>check</mat-icon>
+      } @else {
+      <mat-icon>folder_check</mat-icon>
+      }</p-button
+    >
+    }
+  </div>
+
+  @if (isSearch()) {
+  <div class="tags">
+    <p-chip class="chip addChip" [style]="`--color: lightgray;`" (click)="tagSelect = true">
+      @if (searchTags().length == 0) {
+      <span>Add tags</span>
+      }
+      <mat-icon>add_circle</mat-icon>
+    </p-chip>
+    @for (tag of searchTags(); track tag.id) {
+    <p-chip class="chip" [removable]="true" [style]="`--color: ${tag.color};`" (onRemove)="removeTag(tag.id)">
+      <mat-icon>{{ tag.icon }}</mat-icon>
+      <span>{{ tag.name.length > 6 ? (tag.name | slice : 0 : 7) + '...' : tag.name }}</span>
+    </p-chip>
+    }
+  </div>
+  <lh-section [label]="'Related Collections'" icon="box" [horizontal]="true">
+    @for (collection of contentDataService.searchResults().collections.items; track $index) {
+    <lh-collection-preview [data]="collection" />
+    }
+  </lh-section>
+  <lh-section [label]="'Most relevant exercises'">
+    @for (item of contentDataService.searchResults().exercises.items; track $index) {
+    <div
+      role="button"
+      [class.selected]="folderService.isInFolder(item.id, selectMode())"
+      [lhLongPressLink]="selectMode() ? '' : `/content/${item.id}`"
+      lhLongPress
+      (longPress)="handleLongPressMenu(item.id)"
+      (click)="selectMode() && addToFolder(item.id)"
+    >
+      <lh-search-item [data]="item" />
+    </div>
+    }
+  </lh-section>
+
+  } @else { @if (!tagGroupsSelect.hasValue()) {
+  <div class="skeleton-container">
+    <div>
+      <p-skeleton width="20rem" height="2rem" />
+      <p-skeleton width="20rem" height="10rem" />
+    </div>
+    <div>
+      <p-skeleton width="20rem" height="2rem" />
+      <p-skeleton width="20rem" height="10rem" />
+    </div>
+  </div>
+  } @else { @for (tagGroup of tagGroupsMainPage.value(); track tagGroup.id) {
+  <lh-section [label]="tagGroup.name" [icon]="tagGroup.icon">
+    <div class="categories">
+      @for (tag of tagGroup.tags; track tag) {
+      <div
+        class="card"
+        [style.background-image]="tag.backgroundImage && `url('${tag.backgroundImage}')`"
+        [style]="`--color: ${tag.color || 'lightgray'};`"
+        (click)="addTag(tag.id)"
+      >
+        @if (tag.icon) {
+        <mat-icon>{{ tag.icon }}</mat-icon>
+        }
+        <span>{{ tag.name }}</span>
+      </div>
+      }
+    </div>
+  </lh-section>
+  } } }
+</div>

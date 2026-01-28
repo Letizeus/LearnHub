@@ -1,0 +1,25 @@
+<div class="actions">
+  <button pButton (click)="handleLike()">
+    @if (liked()) {
+    <mat-icon class="filled">star</mat-icon>@if (!small()) {
+    <span pButtonLabel>Liked!</span>
+    } } @else {
+    <mat-icon>star</mat-icon>@if (!small()) {
+    <span pButtonLabel>Like</span>
+    } }
+  </button>
+  <p-split-button
+    label="Download"
+    severity="contrast"
+    [model]="[{ label: 'as PDF' }, { label: 'as Word' }, { label: 'as Image' }, { label: 'copy text to clipboard' }]"
+  >
+    <ng-template #content>
+      <span class="splitbutton-content">
+        <mat-icon>download</mat-icon>
+        @if (!small()) {
+        <span>Download</span>
+        }
+      </span>
+    </ng-template>
+  </p-split-button>
+</div>

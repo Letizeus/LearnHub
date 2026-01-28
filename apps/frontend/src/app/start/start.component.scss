@@ -1,0 +1,156 @@
+@property --g1x { syntax: '<percentage>'; inherits: false; initial-value: 25%; }
+@property --g1y { syntax: '<percentage>'; inherits: false; initial-value: 61%; }
+@property --g2x { syntax: '<percentage>'; inherits: false; initial-value: 42%; }
+@property --g2y { syntax: '<percentage>'; inherits: false; initial-value: 84%; }
+@property --g3x { syntax: '<percentage>'; inherits: false; initial-value: 13%; }
+@property --g3y { syntax: '<percentage>'; inherits: false; initial-value: 58%; }
+@property --g4x { syntax: '<percentage>'; inherits: false; initial-value: 53%; }
+@property --g4y { syntax: '<percentage>'; inherits: false; initial-value: 90%; }
+@property --g5x { syntax: '<percentage>'; inherits: false; initial-value: 23%; }
+@property --g5y { syntax: '<percentage>'; inherits: false; initial-value: 79%; }
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 3.5rem 1.5rem;
+  height: 100%;
+}
+
+.header {
+  animation: flyingIn 2s cubic-bezier(0.26, 0.18, 0, 1);
+  text-align: center;
+  margin-bottom: 4rem;
+  align-self: center;
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  .mat-icon {
+    font-size: 2rem;
+    height: 2rem;
+    width: 2rem;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes flyingIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+$color1: hsla(298, 0%, 100%, 1);
+$color2: hsla(298, 0%, 100%, 1);
+$color3: hsla(241, 99%, 39%, 0.34);
+$color4: hsla(230, 69%, 54%, 0.979);
+$color5: hsla(224, 100%, 66%, 1);
+
+.container {
+  --g1x: 25%; --g1y: 61%;
+  --g2x: 42%; --g2y: 84%;
+  --g3x: 13%; --g3y: 58%;
+  --g4x: 53%; --g4y: 90%;
+  --g5x: 23%; --g5y: 79%;
+
+  background-image:
+          radial-gradient(circle at var(--g1x) var(--g1y), $color1 0%, transparent 55.31899567992806%),
+          radial-gradient(circle at var(--g2x) var(--g2y), $color2 0%, transparent 55.31899567992806%),
+          radial-gradient(circle at var(--g3x) var(--g3y), $color3 0%, transparent 45.77892876736944%),
+          radial-gradient(circle at var(--g4x) var(--g4y), $color4 0%, transparent 45.77892876736944%),
+          radial-gradient(circle at var(--g5x) var(--g5y), $color5 0%, transparent 74%);
+  background-color: hsla(252, 0%, 12%, 0);
+  background-blend-mode: overlay, overlay, normal, normal, normal;
+
+  animation: bg-shift 3s cubic-bezier(0.26, 0.18, 0, 1) infinite alternate;
+}
+
+@keyframes bg-shift {
+  to {
+    /* target positions (match your original 50% values) */
+    --g1x: 30%; --g1y: 80%;
+    --g2x: 10%; --g2y: 54%;
+    --g3x: 10%; --g3y: 50%;
+    --g4x: 10%; --g4y: 70%;
+    --g5x: 26%; --g5y: 85%;
+  }
+}
+
+
+@keyframes bg {
+  0% {
+    background-image: radial-gradient(
+        circle at 25% 61%,
+        $color1 0%,
+        transparent 55.31899567992806%
+      ),
+      radial-gradient(
+        circle at 42% 84%,
+        $color2 0%,
+        transparent 55.31899567992806%
+      ),
+      radial-gradient(
+        circle at 13% 58%,
+        $color3 0%,
+        transparent 45.77892876736944%
+      ),
+      radial-gradient(
+        circle at 53% 90%,
+        $color4 0%,
+        transparent 45.77892876736944%
+      ),
+      radial-gradient(circle at 23% 79%, $color5 0%, transparent 74%);
+  }
+  50% {
+    background-image: radial-gradient(
+        circle at 30% 80%,
+        $color1 0%,
+        transparent 55.31899567992806%
+      ),
+      radial-gradient(
+        circle at 10% 54%,
+        $color2 0%,
+        transparent 55.31899567992806%
+      ),
+      radial-gradient(
+        circle at 10% 50%,
+        $color3 0%,
+        transparent 45.77892876736944%
+      ),
+      radial-gradient(
+        circle at 10% 70%,
+        $color4 0%,
+        transparent 45.77892876736944%
+      ),
+      radial-gradient(circle at 43% 90%, $color5 0%, transparent 74%);
+  }
+  100% {
+    background-image: radial-gradient(
+        circle at 25% 61%,
+        $color1 0%,
+        transparent 55.31899567992806%
+      ),
+      radial-gradient(
+        circle at 42% 84%,
+        $color2 0%,
+        transparent 55.31899567992806%
+      ),
+      radial-gradient(
+        circle at 13% 58%,
+        $color3 0%,
+        transparent 45.77892876736944%
+      ),
+      radial-gradient(
+        circle at 53% 90%,
+        $color4 0%,
+        transparent 45.77892876736944%
+      ),
+      radial-gradient(circle at 23% 79%, $color5 0%, transparent 74%);
+  }
+}

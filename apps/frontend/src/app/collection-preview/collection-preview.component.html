@@ -1,0 +1,11 @@
+<div class="container" [routerLink]="['/search']" [queryParams]="{ c: data().id }" queryParamsHandling="merge">
+  <div class="image" [style.background-image]="`url('${data().previewImage}')`">
+    <div class="innerBar" [style.color]="contentColor()">
+      <div>
+        <mat-icon>article</mat-icon>
+        <div [innerText]="data().length"></div>
+      </div>
+    </div>
+  </div>
+  <div class="title" [innerText]="data().title"></div>
+</div>

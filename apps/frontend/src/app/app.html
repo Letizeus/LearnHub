@@ -1,2 +1,5 @@
-<app-nx-welcome></app-nx-welcome>
-<router-outlet></router-outlet>
+<div class="wrapper">
+  <p-toast [breakpoints]="{ '920px': { left: 'auto', width: '80%' } }" />
+  <router-outlet></router-outlet>
+  <lh-navbar />
+</div>

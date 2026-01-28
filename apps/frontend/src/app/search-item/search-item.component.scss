@@ -1,0 +1,62 @@
+@use 'variables' as theme;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  background-color: theme.$bg-ground;
+
+  .unknown {
+    color: theme.$surface-500;
+
+    &.bar {
+      border-top: 1px solid theme.$surface-500;
+    }
+  }
+
+  padding: 10px;
+
+  .bar {
+    border-top: 1px black solid;
+    padding-top: 2px;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    gap: 5px;
+    flex-wrap: wrap;
+
+    div {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-wrap: nowrap;
+    }
+
+    .mat-icon {
+      $size: 1.2rem;
+      height: $size;
+      width: $size;
+      font-size: $size;
+    }
+
+  }
+
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    transition: 0.5s ease;
+    background-color: color-mix(in srgb, theme.$primary, white 90%);
+  }
+
+  &:active {
+    transition: none;
+    background-color: color-mix(in srgb, theme.$primary, white 70%);
+  }
+
+  .text {
+    line-height: 1.3rem;
+  }
+}

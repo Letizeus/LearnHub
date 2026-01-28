@@ -1,0 +1,9 @@
+<div class="container">
+  <div class="bar">
+    @for (route of routes; track route.label; let idx = $index) {
+    <a pButton class="p-button-text" [routerLink]="route.routerLink">
+      <mat-icon [class.filled]="current() === idx" pButtonIcon [innerText]="route.icon"></mat-icon>
+    </a>
+    }
+  </div>
+</div>

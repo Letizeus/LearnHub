@@ -1,0 +1,34 @@
+:host {
+  margin-bottom: 1rem;
+}
+
+.header {
+  border-top: 1px black solid;
+  padding: 6px 0px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  /*background-color: white;
+  padding: 6px;
+  border-radius: 4px;*/
+  .mat-icon {
+    $size: 1.3rem;
+    font-size: $size;
+    height: $size;
+    width: $size;
+  }
+}
+
+.horizonal {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  overflow: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  border-radius: 5px;
+}
+
+.horizonal::-webkit-scrollbar {
+  display: none;
+}
