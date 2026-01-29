@@ -3,93 +3,112 @@
     <h2>Dashboard</h2>
     <div class="timeframe-filter">
       <label for="timeframe">Timeframe:</label>
-      <select
-        id="timeframe"
+      <p-select
+        inputId="timeframe"
+        [options]="timeframeOptions"
         [(ngModel)]="selectedTimeframe"
         (ngModelChange)="onTimeframeChange($event)"
-        class="timeframe-select"
-      >
-        @for (option of timeframeOptions; track option.value) {
-        <option [value]="option.value">{{ option.label }}</option>
-        }
-      </select>
+        optionLabel="label"
+        optionValue="value"
+        [style]="{ width: '180px' }"
+      ></p-select>
     </div>
   </div>
 
   <!-- Loading State -->
   @if (isLoading()) {
-  <div class="loading-state">
-    <i class="pi pi-spin pi-spinner loading-icon"></i>
-    <p>Loading dashboard metrics...</p>
-  </div>
+  <p-card styleClass="state-card">
+    <ng-template pTemplate="content">
+      <div class="loading-state">
+        <i class="pi pi-spin pi-spinner loading-icon"></i>
+        <p>Loading dashboard metrics...</p>
+      </div>
+    </ng-template>
+  </p-card>
   }
 
   <!-- Error State -->
   @else if (error()) {
-  <div class="error-state">
-    <i class="pi pi-exclamation-triangle error-icon"></i>
-    <p>{{ error() }}</p>
-    <button
-      class="retry-button"
-      (click)="onTimeframeChange(selectedTimeframe())"
-    >
-      <i class="pi pi-refresh"></i>
-      Retry
-    </button>
-  </div>
+  <p-card styleClass="state-card">
+    <ng-template pTemplate="content">
+      <div class="error-state">
+        <i class="pi pi-exclamation-triangle error-icon"></i>
+        <p>{{ error() }}</p>
+        <button
+          pButton
+          type="button"
+          label="Retry"
+          icon="pi pi-refresh"
+          (click)="onTimeframeChange(selectedTimeframe())"
+          aria-label="Retry loading metrics"
+        ></button>
+      </div>
+    </ng-template>
+  </p-card>
   }
 
   <!-- Metrics Cards -->
   @else if (metricCards().length > 0) {
   <div class="metrics-grid">
     @for (card of metricCards(); track card.title) {
-    <div class="metric-card">
-      <div class="metric-icon" [class]="card.colorClass">
-        <i [class]="card.icon"></i>
-      </div>
-      <div class="metric-content">
-        <h3 class="metric-title">{{ card.title }}</h3>
-        <p class="metric-value">{{ card.value | number }}</p>
-      </div>
-    </div>
+    <p-card styleClass="metric-card">
+      <ng-template pTemplate="content">
+        <div class="metric-card-content">
+          <div class="metric-icon" [class]="card.colorClass">
+            <i [class]="card.icon"></i>
+          </div>
+          <div class="metric-text">
+            <h3 class="metric-title">{{ card.title }}</h3>
+            <p class="metric-value">{{ card.value | number }}</p>
+          </div>
+        </div>
+      </ng-template>
+    </p-card>
     }
   </div>
   }
 
   <!-- Empty State (if no metrics) -->
   @else {
-  <div class="empty-state">
-    <i class="pi pi-inbox empty-icon"></i>
-    <p>No metrics available yet</p>
-    <p class="empty-subtitle">
-      Data will appear once users start using the platform
-    </p>
-  </div>
+  <p-card styleClass="state-card">
+    <ng-template pTemplate="content">
+      <div class="empty-state">
+        <i class="pi pi-inbox empty-icon"></i>
+        <p>No metrics available yet</p>
+        <p class="empty-subtitle">
+          Data will appear once users start using the platform
+        </p>
+      </div>
+    </ng-template>
+  </p-card>
   }
 
   <!-- Registration Chart Section -->
   @if (!isLoading() && !error()) {
-  <div class="chart-section">
-    <h3 class="chart-title">User Registrations Over Time</h3>
-
-    @if (isChartLoading()) {
-    <div class="chart-loading">
-      <i class="pi pi-spin pi-spinner"></i>
-      <p>Loading chart...</p>
-    </div>
-    } @else if (chartData() && chartData()!.data.length > 0) {
-    <div class="chart-container">
-      <p-chart
-        type="line"
-        [data]="lineChartData()"
-        [options]="lineChartOptions"
-      />
-    </div>
-    } @else {
-    <div class="chart-empty">
-      <p>No registration data available for the selected timeframe</p>
-    </div>
-    }
-  </div>
+  <p-card styleClass="chart-card">
+    <ng-template pTemplate="header">
+      <h3 class="chart-title">User Registrations Over Time</h3>
+    </ng-template>
+    <ng-template pTemplate="content">
+      @if (isChartLoading()) {
+      <div class="chart-loading">
+        <i class="pi pi-spin pi-spinner"></i>
+        <p>Loading chart...</p>
+      </div>
+      } @else if (chartData() && chartData()!.data.length > 0) {
+      <div class="chart-container">
+        <p-chart
+          type="line"
+          [data]="lineChartData()"
+          [options]="lineChartOptions"
+        />
+      </div>
+      } @else {
+      <div class="chart-empty">
+        <p>No registration data available for the selected timeframe</p>
+      </div>
+      }
+    </ng-template>
+  </p-card>
   }
 </div>

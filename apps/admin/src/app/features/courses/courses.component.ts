@@ -41,7 +41,6 @@ export class CoursesComponent {
   // State signals
   readonly courses = signal<LearningContentCollection[]>([]);
   readonly selectedCourse = signal<LearningContentCollection | null>(null);
-  readonly isLoading = signal<boolean>(true);
   readonly drawerVisible = signal<boolean>(false);
   readonly totalRecords = signal<number>(0);
 
@@ -156,8 +155,6 @@ export class CoursesComponent {
   private loadCourses(
     sortOverrides?: { sortBy?: string; sortOrder?: 'asc' | 'desc' }
   ): void {
-    this.isLoading.set(true);
-
     const filters: CourseFilters = {
       search: this.searchQuery() || undefined,
       status: this.statusFilter() || undefined,
@@ -170,7 +167,6 @@ export class CoursesComponent {
       next: (response) => {
         this.courses.set(response.data);
         this.totalRecords.set(response.total);
-        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Failed to load courses:', err);
@@ -179,7 +175,6 @@ export class CoursesComponent {
           summary: 'Error',
           detail: 'Failed to load courses',
         });
-        this.isLoading.set(false);
       },
     });
   }

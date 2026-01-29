@@ -82,7 +82,6 @@ describe('CoursesComponent', () => {
     expect(spy).toHaveBeenCalled();
     expect(component.courses()).toEqual(mockCourses);
     expect(component.totalRecords()).toBe(2);
-    expect(component.isLoading()).toBe(false);
   });
 
   it('should reset to page 1 on filter change', () => {

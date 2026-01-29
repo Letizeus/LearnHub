@@ -96,7 +96,6 @@ describe('ContentComponent', () => {
     expect(spy).toHaveBeenCalled();
     expect(component.contentItems()).toEqual(mockContentItems);
     expect(component.totalRecords()).toBe(2);
-    expect(component.isLoading()).toBe(false);
   });
 
   it('should reset to page 1 on filter change', () => {

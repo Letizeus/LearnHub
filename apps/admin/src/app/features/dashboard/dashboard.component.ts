@@ -8,6 +8,9 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChartModule } from 'primeng/chart';
+import { SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import {
   DashboardService,
   DashboardMetrics,
@@ -22,10 +25,15 @@ interface MetricCard {
   colorClass: string;
 }
 
+interface TimeframeOption {
+  label: string;
+  value: TimeframeFilter;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ChartModule],
+  imports: [CommonModule, FormsModule, ChartModule, SelectModule, ButtonModule, CardModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -129,7 +137,7 @@ export class DashboardComponent {
   };
 
   // Timeframe options for the dropdown
-  protected readonly timeframeOptions = [
+  protected readonly timeframeOptions: TimeframeOption[] = [
     { label: 'Last 24 Hours', value: TimeframeFilter.DAY },
     { label: 'Last 7 Days', value: TimeframeFilter.WEEK },
     { label: 'Last 30 Days', value: TimeframeFilter.MONTH },

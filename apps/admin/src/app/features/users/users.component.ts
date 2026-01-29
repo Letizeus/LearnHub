@@ -41,7 +41,6 @@ export class UsersComponent {
   // State signals
   readonly users = signal<User[]>([]);
   readonly selectedUser = signal<User | null>(null);
-  readonly isLoading = signal<boolean>(true);
   readonly drawerVisible = signal<boolean>(false);
   readonly totalRecords = signal<number>(0);
 
@@ -214,8 +213,6 @@ export class UsersComponent {
   }
 
   private loadUsers(sortOverrides?: { sortBy?: string; sortOrder?: 'asc' | 'desc' }): void {
-    this.isLoading.set(true);
-
     const filters: UserFilters = {
       search: this.searchQuery() || undefined,
       status: this.statusFilter() || undefined,
@@ -228,7 +225,6 @@ export class UsersComponent {
       next: (response) => {
         this.users.set(response.data);
         this.totalRecords.set(response.total);
-        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Failed to load users:', err);
@@ -237,7 +233,6 @@ export class UsersComponent {
           summary: 'Error',
           detail: 'Failed to load users',
         });
-        this.isLoading.set(false);
       },
     });
   }

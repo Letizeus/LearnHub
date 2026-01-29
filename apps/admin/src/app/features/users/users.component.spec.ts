@@ -84,22 +84,18 @@ describe('UsersComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
 
-    expect(component.isLoading()).toBe(false);
     expect(component.users()).toEqual(mockUsers);
     expect(component.totalRecords()).toBe(2);
   });
 
-  it('should display loading state initially', () => {
-    jest.spyOn(usersService, 'getUsers').mockReturnValue(
-      new Observable(() => {
-        // Never complete to keep loading state
-      })
-    );
+  it('should load users data', () => {
+    jest.spyOn(usersService, 'getUsers').mockReturnValue(of(mockUsersResponse));
     fixture = TestBed.createComponent(UsersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
 
-    expect(component.isLoading()).toBe(true);
+    expect(usersService.getUsers).toHaveBeenCalled();
+    expect(component.users()).toEqual(mockUsers);
   });
 
   it('should handle error when loading users fails', () => {
@@ -107,12 +103,11 @@ describe('UsersComponent', () => {
       .spyOn(usersService, 'getUsers')
       .mockReturnValue(throwError(() => new Error('API Error')));
     const addSpy = jest.spyOn(messageService, 'add');
-    
+
     fixture = TestBed.createComponent(UsersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
 
-    expect(component.isLoading()).toBe(false);
     expect(addSpy).toHaveBeenCalledWith({
       severity: 'error',
       summary: 'Error',

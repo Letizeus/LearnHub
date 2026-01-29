@@ -41,7 +41,6 @@ export class ContentComponent {
   // State signals
   readonly contentItems = signal<Exercise[]>([]);
   readonly selectedContent = signal<Exercise | null>(null);
-  readonly isLoading = signal<boolean>(true);
   readonly drawerVisible = signal<boolean>(false);
   readonly totalRecords = signal<number>(0);
 
@@ -145,8 +144,6 @@ export class ContentComponent {
   private loadContent(
     sortOverrides?: { sortBy?: string; sortOrder?: 'asc' | 'desc' }
   ): void {
-    this.isLoading.set(true);
-
     const filters: ContentFilters = {
       search: this.searchQuery() || undefined,
       type: this.typeFilter() || undefined,
@@ -159,7 +156,6 @@ export class ContentComponent {
       next: (response) => {
         this.contentItems.set(response.data);
         this.totalRecords.set(response.total);
-        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Failed to load content:', err);
@@ -168,7 +164,6 @@ export class ContentComponent {
           summary: 'Error',
           detail: 'Failed to load content',
         });
-        this.isLoading.set(false);
       },
     });
   }
