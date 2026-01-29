@@ -18,6 +18,12 @@ export class AdminUser extends Document {
 
   @Prop({ default: 'active' })
   status!: string;
+
+  @Prop()
+  lastActiveAt?: Date;
+
+  createdAt!: Date;
+  updatedAt!: Date;
 }
 export const AdminUserSchema = SchemaFactory.createForClass(AdminUser);
 

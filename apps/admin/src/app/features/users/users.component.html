@@ -1,3 +1,268 @@
-<div class="page-card">
-  <h2>Users</h2>
+<div class="users-page">
+  <div class="users-header">
+    <h2>Users</h2>
+  </div>
+
+  <div class="page-card">
+    <!-- Filters Toolbar -->
+    <div class="filters-toolbar">
+      <div class="search-box">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearch()"
+            placeholder="Search by username, email, or name..."
+            class="search-input"
+          />
+        </span>
+        <button
+          pButton
+          type="button"
+          label="Search"
+          icon="pi pi-search"
+          (click)="onSearch()"
+          class="search-button"
+          aria-label="Search users"
+        ></button>
+      </div>
+
+      <div class="filter-group">
+        <label for="status-filter">Status:</label>
+        <p-select
+          inputId="status-filter"
+          [options]="statusOptions"
+          [(ngModel)]="statusFilter"
+          (ngModelChange)="onStatusChange()"
+          optionLabel="label"
+          optionValue="value"
+          [style]="{ width: '180px' }"
+        ></p-select>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <p-table
+      [value]="users()"
+      [lazy]="true"
+      [loading]="isLoading()"
+      [paginator]="true"
+      [rows]="rowsPerPage()"
+      [totalRecords]="totalRecords()"
+      [rowsPerPageOptions]="[10, 20, 50]"
+      (onPage)="onPageChange($any($event))"
+      (onSort)="onSort($any($event))"
+      [sortField]="'createdAt'"
+      [sortOrder]="-1"
+      class="users-table"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="username">
+            Username <p-sortIcon field="username"></p-sortIcon>
+          </th>
+          <th pSortableColumn="email">
+            Email <p-sortIcon field="email"></p-sortIcon>
+          </th>
+          <th pSortableColumn="displayName">
+            Display Name <p-sortIcon field="displayName"></p-sortIcon>
+          </th>
+          <th pSortableColumn="status">
+            Status <p-sortIcon field="status"></p-sortIcon>
+          </th>
+          <th pSortableColumn="lastActiveAt">
+            Last Active <p-sortIcon field="lastActiveAt"></p-sortIcon>
+          </th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.displayName }}</td>
+          <td>
+            <span [class]="'status-badge ' + getStatusClass(user.status)">
+              {{ getStatusLabel(user.status) }}
+            </span>
+          </td>
+          <td>
+            @if (user.lastActiveAt) {
+            {{ user.lastActiveAt | date : 'short' }}
+            } @else {
+            <span class="text-muted">Never</span>
+            }
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-eye"
+                class="p-button-text p-button-sm"
+                (click)="viewUser(user)"
+                pTooltip="View Details"
+                tooltipPosition="top"
+                aria-label="View user details"
+              ></button>
+              @if (user.status === 'active') {
+              <button
+                pButton
+                type="button"
+                icon="pi pi-lock"
+                class="p-button-text p-button-sm p-button-danger"
+                (click)="lockUser(user)"
+                pTooltip="Lock User"
+                tooltipPosition="top"
+                aria-label="Lock user"
+              ></button>
+              } @else {
+              <button
+                pButton
+                type="button"
+                icon="pi pi-unlock"
+                class="p-button-text p-button-sm p-button-success"
+                (click)="unlockUser(user)"
+                pTooltip="Unlock User"
+                tooltipPosition="top"
+                aria-label="Unlock user"
+              ></button>
+              }
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-text p-button-sm p-button-danger"
+                (click)="deleteUser(user)"
+                pTooltip="Delete User"
+                tooltipPosition="top"
+                aria-label="Delete user"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="empty-message">
+            <div class="empty-state">
+              <i class="pi pi-users empty-icon"></i>
+              <p>No users found</p>
+              @if (searchQuery() || statusFilter()) {
+              <p class="empty-subtitle">Try adjusting your filters</p>
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- User Detail Drawer -->
+  <p-drawer
+    [(visible)]="drawerVisible"
+    position="right"
+    [style]="{ width: '450px' }"
+    (onHide)="closeDrawer()"
+  >
+    <ng-template pTemplate="header">
+      <span class="drawer-title">User Details</span>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+      @if (selectedUser(); as user) {
+      <div class="user-details">
+        <div class="detail-section">
+          <h4>Basic Information</h4>
+          <div class="detail-row">
+            <span class="detail-label">Username:</span>
+            <span class="detail-value">{{ user.username }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">{{ user.email }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Display Name:</span>
+            <span class="detail-value">{{ user.displayName }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Status:</span>
+            <span [class]="'status-badge ' + getStatusClass(user.status)">
+              {{ getStatusLabel(user.status) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h4>Activity</h4>
+          <div class="detail-row">
+            <span class="detail-label">Last Active:</span>
+            <span class="detail-value">
+              @if (user.lastActiveAt) {
+              {{ user.lastActiveAt | date : 'medium' }}
+              } @else {
+              <span class="text-muted">Never</span>
+              }
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Created At:</span>
+            <span class="detail-value">
+              @if (user.createdAt) {
+              {{ user.createdAt | date : 'medium' }}
+              } @else {
+              <span class="text-muted">Unknown</span>
+              }
+            </span>
+          </div>
+        </div>
+
+        <div class="detail-actions">
+          <h4>Actions</h4>
+          @if (user.status === 'active') {
+          <button
+            pButton
+            type="button"
+            label="Lock User"
+            icon="pi pi-lock"
+            class="p-button-danger p-button-outlined action-btn"
+            (click)="lockUser(user)"
+            aria-label="Lock user"
+          ></button>
+          } @else {
+          <button
+            pButton
+            type="button"
+            label="Unlock User"
+            icon="pi pi-unlock"
+            class="p-button-success p-button-outlined action-btn"
+            (click)="unlockUser(user)"
+            aria-label="Unlock user"
+          ></button>
+          }
+          <button
+            pButton
+            type="button"
+            label="Delete User"
+            icon="pi pi-trash"
+            class="p-button-danger p-button-outlined action-btn"
+            (click)="deleteUser(user)"
+            aria-label="Delete user"
+          ></button>
+        </div>
+      </div>
+      }
+    </ng-template>
+  </p-drawer>
+
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Toast Messages -->
+  <p-toast></p-toast>
 </div>

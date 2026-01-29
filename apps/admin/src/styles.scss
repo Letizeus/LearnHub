@@ -10,6 +10,7 @@
     'Segoe UI', sans-serif;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
   /* Colors - Primary */
@@ -20,8 +21,12 @@
   /* Colors - Neutral */
   --color-text: #0f172a;
   --color-text-muted: #64748b;
+  --color-text-secondary: #64748b;
+  --color-text-tertiary: #94a3b8;
   --color-background: #f8fafc;
   --color-surface: #ffffff;
+  --color-surface-alt: #f1f5f9;
+  --color-surface-hover: #f8fafc;
   --color-border: #cbd5e1;
   --color-border-light: rgba(0, 0, 0, 0.05);
 

@@ -9,6 +9,7 @@ export interface AdminUser {
   displayName: string;
   status: UserStatus;
   lastActiveAt?: string;
+  createdAt?: string;
 }
 
 export interface Course {

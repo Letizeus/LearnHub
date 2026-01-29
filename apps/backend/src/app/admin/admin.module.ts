@@ -14,6 +14,8 @@ import {
 } from './schemas';
 import { DashboardController } from './controllers/dashboard.controller';
 import { DashboardService } from './services/dashboard.service';
+import { UsersController } from './controllers/users.controller';
+import { UsersService } from './services/users.service';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { DashboardService } from './services/dashboard.service';
       { name: PlatformConfig.name, schema: PlatformConfigSchema },
     ]),
   ],
-  controllers: [DashboardController],
-  providers: [DashboardService],
+  controllers: [DashboardController, UsersController],
+  providers: [DashboardService, UsersService],
 })
 export class AdminModule {}
