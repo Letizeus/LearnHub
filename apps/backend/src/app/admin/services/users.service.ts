@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { AdminUser } from '../schemas';
+import { User } from '../schemas';
 import { UpdateUserDto } from '../dto/user.dto';
 
 interface FindAllOptions {
@@ -26,11 +26,11 @@ interface UserResponse {
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(AdminUser.name)
-    private readonly userModel: Model<AdminUser>
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>
   ) {}
 
-  private toUserResponse(user: AdminUser, includeCreatedAt = false): UserResponse {
+  private toUserResponse(user: User, includeCreatedAt = false): UserResponse {
     const response: UserResponse = {
       id: user._id.toString(),
       username: user.username,

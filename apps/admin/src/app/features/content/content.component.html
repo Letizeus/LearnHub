@@ -1,3 +1,300 @@
-<div class="page-card">
-  <h2>Content</h2>
+<div class="content-page">
+  <div class="content-header">
+    <h2>Content</h2>
+  </div>
+
+  <div class="page-card">
+    <!-- Filters Toolbar -->
+    <div class="filters-toolbar">
+      <div class="search-box">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onFilterChange()"
+            placeholder="Search content by title..."
+            class="search-input"
+          />
+        </span>
+        <button
+          pButton
+          type="button"
+          label="Search"
+          icon="pi pi-search"
+          (click)="onFilterChange()"
+          class="search-button"
+          aria-label="Search content"
+        ></button>
+      </div>
+
+      <div class="filter-group">
+        <label for="type-filter">Type:</label>
+        <p-select
+          inputId="type-filter"
+          [options]="typeOptions"
+          [(ngModel)]="typeFilter"
+          (ngModelChange)="onFilterChange()"
+          optionLabel="label"
+          optionValue="value"
+          [style]="{ width: '180px' }"
+        ></p-select>
+      </div>
+    </div>
+
+    <!-- Content Table -->
+    <p-table
+      [value]="contentItems()"
+      [lazy]="true"
+      [loading]="isLoading()"
+      [paginator]="true"
+      [rows]="rowsPerPage()"
+      [totalRecords]="totalRecords()"
+      [rowsPerPageOptions]="[10, 20, 50]"
+      (onPage)="onPageChange($any($event))"
+      (onSort)="onSort($any($event))"
+      [sortField]="'createdAt'"
+      [sortOrder]="-1"
+      class="content-table"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="type">
+            Type <p-sortIcon field="type"></p-sortIcon>
+          </th>
+          <th pSortableColumn="downloads">
+            Downloads <p-sortIcon field="downloads"></p-sortIcon>
+          </th>
+          <th pSortableColumn="likes">
+            Likes <p-sortIcon field="likes"></p-sortIcon>
+          </th>
+          <th>Tags</th>
+          <th pSortableColumn="changedAt">
+            Changed At <p-sortIcon field="changedAt"></p-sortIcon>
+          </th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-content>
+        <tr>
+          <td>
+            <span class="type-badge">{{ content.type || 'Unknown' }}</span>
+          </td>
+          <td>{{ content.downloads || 0 }}</td>
+          <td>{{ content.likes || 0 }}</td>
+          <td>
+            @if (content.tags && content.tags.length > 0) {
+            <div class="tags-display">
+              @for (tag of content.tags; track tag.name) {
+              <span
+                class="tag-badge"
+                [style.background-color]="tag.color"
+                [style.color]="getContrastColor(tag.color)">
+                <i [class]="tag.icon"></i>
+                {{ tag.name }}
+              </span>
+              }
+            </div>
+            } @else {
+            <span class="text-muted">No tags</span>
+            }
+          </td>
+          <td>
+            @if (content.changedAt) {
+            {{ content.changedAt | date : 'short' }}
+            } @else {
+            <span class="text-muted">Unknown</span>
+            }
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-eye"
+                class="p-button-text p-button-sm"
+                (click)="viewContent(content)"
+                pTooltip="View Details"
+                tooltipPosition="top"
+                aria-label="View content details"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-text p-button-sm p-button-danger"
+                (click)="deleteContent(content)"
+                pTooltip="Delete Content"
+                tooltipPosition="top"
+                aria-label="Delete content"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="empty-message">
+            <div class="empty-state">
+              <i class="pi pi-file empty-icon"></i>
+              <p>No content found</p>
+              @if (searchQuery() || typeFilter()) {
+              <p class="empty-subtitle">Try adjusting your filters</p>
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Content Detail Drawer -->
+  <p-drawer
+    [(visible)]="drawerVisible"
+    position="right"
+    [style]="{ width: '450px' }"
+    (onHide)="closeDrawer()"
+  >
+    <ng-template pTemplate="header">
+      <span class="drawer-title">Content Details</span>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+      @if (selectedContent(); as content) {
+      <div class="content-details">
+        <div class="detail-section">
+          <h4>Basic Information</h4>
+          <div class="detail-row">
+            <span class="detail-label">Type:</span>
+            <span class="type-badge">{{ content.type || 'Unknown' }}</span>
+          </div>
+          @if (content.keywords) {
+          <div class="detail-row">
+            <span class="detail-label">Keywords:</span>
+            <span class="detail-value">{{ content.keywords }}</span>
+          </div>
+          }
+          @if (content.relatedCollectionId) {
+          <div class="detail-row">
+            <span class="detail-label">Collection:</span>
+            <span class="detail-value">{{ content.relatedCollectionId }}</span>
+          </div>
+          }
+        </div>
+
+        <div class="detail-section">
+          <h4>Engagement</h4>
+          <div class="detail-row">
+            <span class="detail-label">Downloads:</span>
+            <span class="detail-value">{{ content.downloads || 0 }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Likes:</span>
+            <span class="detail-value">{{ content.likes || 0 }}</span>
+          </div>
+          @if (content.tags && content.tags.length > 0) {
+          <div class="detail-row">
+            <span class="detail-label">Tags:</span>
+            <span class="detail-value">
+              <div class="tags-list">
+                @for (tag of content.tags; track tag.name) {
+                <span
+                  class="tag-badge"
+                  [style.background-color]="tag.color"
+                  [style.color]="getContrastColor(tag.color)">
+                  <i [class]="tag.icon"></i>
+                  {{ tag.name }}
+                </span>
+                }
+              </div>
+            </span>
+          </div>
+          }
+        </div>
+
+        @if (content.type === 'EXERCISE' && content.text) {
+        <div class="detail-section">
+          <h4>Exercise Details</h4>
+          <div class="detail-row">
+            <span class="detail-label">Exercise Text:</span>
+            <span class="detail-value">{{ content.text }}</span>
+          </div>
+          @if (content.tip) {
+          <div class="detail-row">
+            <span class="detail-label">Tip:</span>
+            <span class="detail-value">{{ content.tip }}</span>
+          </div>
+          }
+          @if (content.solution) {
+          <div class="detail-row">
+            <span class="detail-label">Solution:</span>
+            <span class="detail-value">{{ content.solution }}</span>
+          </div>
+          }
+          @if (content.eval_points !== undefined && content.total_points) {
+          <div class="detail-row">
+            <span class="detail-label">Points:</span>
+            <span class="detail-value"
+              >{{ content.eval_points }} / {{ content.total_points }}</span
+            >
+          </div>
+          }
+          @if (content.images && content.images.length > 0) {
+          <div class="detail-row">
+            <span class="detail-label">Images:</span>
+            <span class="detail-value">{{ content.images.length }} image(s)</span>
+          </div>
+          }
+        </div>
+        }
+
+        <div class="detail-section">
+          <h4>Timestamps</h4>
+          <div class="detail-row">
+            <span class="detail-label">Created At:</span>
+            <span class="detail-value">
+              @if (content.createdAt) {
+              {{ content.createdAt | date : 'medium' }}
+              } @else {
+              <span class="text-muted">Unknown</span>
+              }
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Changed At:</span>
+            <span class="detail-value">
+              @if (content.changedAt) {
+              {{ content.changedAt | date : 'medium' }}
+              } @else {
+              <span class="text-muted">Unknown</span>
+              }
+            </span>
+          </div>
+        </div>
+
+        <div class="detail-actions">
+          <h4>Actions</h4>
+          <button
+            pButton
+            type="button"
+            label="Delete Content"
+            icon="pi pi-trash"
+            class="p-button-danger p-button-outlined action-btn"
+            (click)="deleteContent(content)"
+            aria-label="Delete content"
+          ></button>
+        </div>
+      </div>
+      }
+    </ng-template>
+  </p-drawer>
+
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Toast Messages -->
+  <p-toast></p-toast>
 </div>

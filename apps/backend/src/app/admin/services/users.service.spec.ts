@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AdminUser } from '../schemas';
+import { User } from '../schemas';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -32,7 +32,7 @@ describe('UsersService', () => {
       providers: [
         UsersService,
         {
-          provide: getModelToken(AdminUser.name),
+          provide: getModelToken(User.name),
           useValue: mockUserModel,
         },
       ],

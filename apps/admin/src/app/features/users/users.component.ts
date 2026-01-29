@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminUser } from '@learnhub/models';
+import { User } from '@learnhub/models';
 import { UsersService, UserFilters } from './users.service';
 import { TableModule, TablePageEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -39,8 +39,8 @@ export class UsersComponent {
   private readonly messageService = inject(MessageService);
 
   // State signals
-  readonly users = signal<AdminUser[]>([]);
-  readonly selectedUser = signal<AdminUser | null>(null);
+  readonly users = signal<User[]>([]);
+  readonly selectedUser = signal<User | null>(null);
   readonly isLoading = signal<boolean>(true);
   readonly drawerVisible = signal<boolean>(false);
   readonly totalRecords = signal<number>(0);
@@ -88,7 +88,7 @@ export class UsersComponent {
     });
   }
 
-  viewUser(user: AdminUser): void {
+  viewUser(user: User): void {
     this.usersService.getUser(user.id).subscribe({
       next: (detailedUser) => {
         this.selectedUser.set(detailedUser);
@@ -110,7 +110,7 @@ export class UsersComponent {
     this.selectedUser.set(null);
   }
 
-  lockUser(user: AdminUser): void {
+  lockUser(user: User): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to lock user "${user.displayName}"? They will not be able to access the platform.`,
       header: 'Lock User',
@@ -142,7 +142,7 @@ export class UsersComponent {
     });
   }
 
-  unlockUser(user: AdminUser): void {
+  unlockUser(user: User): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to unlock user "${user.displayName}"? They will regain access to the platform.`,
       header: 'Unlock User',
@@ -173,7 +173,7 @@ export class UsersComponent {
     });
   }
 
-  deleteUser(user: AdminUser): void {
+  deleteUser(user: User): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to delete user "${user.displayName}"? This action cannot be undone.`,
       header: 'Delete User',

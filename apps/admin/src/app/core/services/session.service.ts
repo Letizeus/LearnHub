@@ -1,6 +1,6 @@
 // TEMP: Uses browser localStorage. Needs to be replaced with a real authentication system.
 import { Injectable, Signal, computed, signal } from '@angular/core';
-import { AdminUserSession } from '@learnhub/models';
+import { UserSession } from '@learnhub/models';
 
 // Key used to save/load session from browser storage
 const STORAGE_KEY = 'admin_session';
@@ -11,17 +11,17 @@ const STORAGE_KEY = 'admin_session';
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   // The actual data or null if logged out
-  private readonly _session = signal<AdminUserSession | null>(
+  private readonly _session = signal<UserSession | null>(
     this.loadFromBrowser()
   );
 
   // Same data but read-only (other code can read, but can't accidentally overwrite)
-  readonly session: Signal<AdminUserSession | null> = computed(() =>
+  readonly session: Signal<UserSession | null> = computed(() =>
     this._session()
   );
 
   // Get just the user info, or null if not logged in
-  user(): AdminUserSession['user'] | null {
+  user(): UserSession['user'] | null {
     return this._session()?.user ?? null;
   }
 
@@ -31,7 +31,7 @@ export class SessionService {
   }
 
   // Called after successful login: saves session to memory + browser storage
-  set(session: AdminUserSession): void {
+  set(session: UserSession): void {
     this._session.set(session);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
   }
@@ -43,11 +43,11 @@ export class SessionService {
   }
 
   // On app start, check if user was already logged in
-  private loadFromBrowser(): AdminUserSession | null {
+  private loadFromBrowser(): UserSession | null {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     try {
-      return JSON.parse(raw) as AdminUserSession;
+      return JSON.parse(raw) as UserSession;
     } catch {
       return null;
     }

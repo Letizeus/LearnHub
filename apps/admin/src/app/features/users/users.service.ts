@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AdminUser } from '@learnhub/models';
+import { User } from '@learnhub/models';
 
 export interface UsersListResponse {
-  data: AdminUser[];
+  data: User[];
   total: number;
   page: number;
   limit: number;
@@ -47,12 +47,12 @@ export class UsersService {
     return this.http.get<UsersListResponse>(this.apiUrl, { params });
   }
 
-  getUser(id: string): Observable<AdminUser> {
-    return this.http.get<AdminUser>(`${this.apiUrl}/${id}`);
+  getUser(id: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
 
-  updateUser(id: string, data: Partial<AdminUser>): Observable<AdminUser> {
-    return this.http.patch<AdminUser>(`${this.apiUrl}/${id}`, data);
+  updateUser(id: string, data: Partial<User>): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/${id}`, data);
   }
 
   lockUser(id: string): Observable<UserActionResponse> {

@@ -5,7 +5,7 @@ import { UsersService } from './users.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ConfirmationService, MessageService, Confirmation } from 'primeng/api';
-import { AdminUser } from '@learnhub/models';
+import { User } from '@learnhub/models';
 
 describe('UsersComponent', () => {
   let component: UsersComponent;
@@ -14,7 +14,7 @@ describe('UsersComponent', () => {
   let messageService: MessageService;
   let confirmationService: ConfirmationService;
 
-  const mockUsers: AdminUser[] = [
+  const mockUsers: User[] = [
     {
       id: '1',
       username: 'user1',
@@ -201,7 +201,7 @@ describe('UsersComponent', () => {
     jest.spyOn(usersService, 'getUsers').mockReturnValue(of(mockUsersResponse));
     const lockSpy = jest
       .spyOn(usersService, 'lockUser')
-      .mockReturnValue(of({ id: '1', status: 'locked' } as AdminUser));
+      .mockReturnValue(of({ id: '1', status: 'locked' } as User));
     const addSpy = jest.spyOn(messageService, 'add');
     jest.spyOn(confirmationService, 'confirm').mockImplementation((confirmation: Confirmation) => {
       confirmation.accept?.();
@@ -226,7 +226,7 @@ describe('UsersComponent', () => {
     jest.spyOn(usersService, 'getUsers').mockReturnValue(of(mockUsersResponse));
     const unlockSpy = jest
       .spyOn(usersService, 'unlockUser')
-      .mockReturnValue(of({ id: '2', status: 'active' } as AdminUser));
+      .mockReturnValue(of({ id: '2', status: 'active' } as User));
     const addSpy = jest.spyOn(messageService, 'add');
     jest.spyOn(confirmationService, 'confirm').mockImplementation((confirmation: Confirmation) => {
       confirmation.accept?.();
