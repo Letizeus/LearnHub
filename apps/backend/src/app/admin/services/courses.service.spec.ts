@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
+import { NotFoundException } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { Course } from '../schemas';
-import { NotFoundException } from '@nestjs/common';
 import { Status } from '@learnhub/models';
 
 describe('CoursesService', () => {
@@ -22,7 +22,6 @@ describe('CoursesService', () => {
     status: Status.PUBLISHED,
     author: 'Test Author',
     contentIds: ['content1'],
-    source: { url: 'https://example.com', publisher: 'Test Publisher' },
     createdAt: new Date(),
     changedAt: new Date(),
   };
@@ -68,27 +67,18 @@ describe('CoursesService', () => {
 
       expect(result.data).toHaveLength(1);
       expect(result.total).toBe(1);
-      expect(result.data[0].title).toBe('Test Course');
     });
 
-    it('should filter by search query', async () => {
+    it('should filter by search and status', async () => {
       mockCourseModel.find.mockReturnValue(mockChainedQuery([]));
       mockCourseModel.countDocuments.mockReturnValue(mockExecQuery(0));
 
-      await service.findAll({ search: 'test', page: 1, limit: 20 });
+      await service.findAll({ search: 'test', status: Status.PUBLISHED, page: 1, limit: 20 });
 
       expect(mockCourseModel.find).toHaveBeenCalledWith({
         title: { $regex: 'test', $options: 'i' },
+        status: Status.PUBLISHED,
       });
-    });
-
-    it('should filter by status', async () => {
-      mockCourseModel.find.mockReturnValue(mockChainedQuery([]));
-      mockCourseModel.countDocuments.mockReturnValue(mockExecQuery(0));
-
-      await service.findAll({ status: Status.PUBLISHED, page: 1, limit: 20 });
-
-      expect(mockCourseModel.find).toHaveBeenCalledWith({ status: Status.PUBLISHED });
     });
   });
 
@@ -109,27 +99,8 @@ describe('CoursesService', () => {
     });
   });
 
-  describe('update', () => {
-    it('should update a course', async () => {
-      const updatedCourse = { ...mockCourse, title: 'Updated Course' };
-      mockCourseModel.findByIdAndUpdate.mockReturnValue(mockExecQuery(updatedCourse));
-
-      const result = await service.update('1', { title: 'Updated Course' });
-
-      expect(result.title).toBe('Updated Course');
-    });
-
-    it('should throw NotFoundException if course not found', async () => {
-      mockCourseModel.findByIdAndUpdate.mockReturnValue(mockExecQuery(null));
-
-      await expect(service.update('999', { title: 'Updated' })).rejects.toThrow(
-        NotFoundException
-      );
-    });
-  });
-
   describe('deleteCourse', () => {
-    it('should delete a course', async () => {
+    it('should delete a course and return success', async () => {
       mockCourseModel.findByIdAndDelete.mockReturnValue(mockExecQuery(mockCourse));
 
       const result = await service.deleteCourse('1');

@@ -51,10 +51,6 @@ export class CoursesService {
     return this.http.get<LearningContentCollection>(`${this.apiUrl}/${id}`);
   }
 
-  updateCourse(id: string, data: Partial<LearningContentCollection>): Observable<LearningContentCollection> {
-    return this.http.patch<LearningContentCollection>(`${this.apiUrl}/${id}`, data);
-  }
-
   deleteCourse(id: string): Observable<CourseActionResponse> {
     return this.http.delete<CourseActionResponse>(`${this.apiUrl}/${id}`);
   }

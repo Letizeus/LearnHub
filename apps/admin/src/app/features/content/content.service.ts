@@ -51,13 +51,6 @@ export class ContentService {
     return this.http.get<Exercise>(`${this.apiUrl}/${id}`);
   }
 
-  updateContent(
-    id: string,
-    data: Partial<Exercise>
-  ): Observable<Exercise> {
-    return this.http.patch<Exercise>(`${this.apiUrl}/${id}`, data);
-  }
-
   deleteContent(id: string): Observable<ContentActionResponse> {
     return this.http.delete<ContentActionResponse>(`${this.apiUrl}/${id}`);
   }

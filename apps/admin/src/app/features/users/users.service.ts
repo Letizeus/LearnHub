@@ -51,10 +51,6 @@ export class UsersService {
     return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
 
-  updateUser(id: string, data: Partial<User>): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}`, data);
-  }
-
   lockUser(id: string): Observable<UserActionResponse> {
     return this.http.post<UserActionResponse>(`${this.apiUrl}/${id}/lock`, {});
   }

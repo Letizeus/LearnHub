@@ -96,17 +96,6 @@ nav a.active {
   border-bottom: 1px solid var(--color-border-light);
 }
 
-.breadcrumbs {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  font-weight: var(--font-weight-medium);
-}
-
-.divider {
-  opacity: 0.65;
-}
-
 .page {
   padding: var(--spacing-xl);
 }
