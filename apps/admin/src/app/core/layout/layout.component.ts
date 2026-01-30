@@ -4,6 +4,7 @@ import {
   inject,
   Signal,
   computed,
+  signal,
 } from '@angular/core';
 import {
   RouterLink,
@@ -32,6 +33,15 @@ export class LayoutComponent {
   protected readonly userLabel: Signal<string> = computed(
     () => this.session.user()?.displayName ?? 'Admin'
   );
+  protected readonly mobileMenuOpen = signal(false);
+
+  protected toggleMobileMenu(): void {
+    this.mobileMenuOpen.update(value => !value);
+  }
+
+  protected closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
+  }
 
   protected logout(): void {
     this.session.clear();

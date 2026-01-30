@@ -4,7 +4,7 @@
   display: inline-block;
   padding: 0.25rem 0.75rem;
   border-radius: calc($border-radius / 2);
-  font-size: 0.875rem;
+  font-size: $font-sm;
   font-weight: $font-medium;
   background-color: color-mix(in srgb, $blue-500 10%, transparent);
   color: $blue-500;
@@ -24,11 +24,11 @@
   gap: $spacing-xs;
   padding: $spacing-xs $spacing-sm;
   border-radius: calc($border-radius / 2);
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: $font-sm;
+  font-weight: $font-medium;
 
   i {
-    font-size: 0.75rem;
+    font-size: $font-xs;
   }
 }
 
@@ -54,5 +54,10 @@
     &:hover {
       background-color: $bg-hover;
     }
+  }
+
+  // Mobile Styles
+  @media (max-width: $breakpoint-md) {
+    min-width: auto;
   }
 }

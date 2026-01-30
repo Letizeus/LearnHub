@@ -23,4 +23,9 @@
       background-color: $bg-hover;
     }
   }
+
+  // Mobile Styles
+  @media (max-width: $breakpoint-md) {
+    min-width: auto;
+  }
 }

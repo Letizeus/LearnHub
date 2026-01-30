@@ -29,6 +29,14 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   padding: $spacing-xl;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-md;
+  }
 }
 
 .admin-header {
@@ -43,6 +51,17 @@ body {
     font-weight: $font-bold;
     color: $text-color;
   }
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+
+    h2 {
+      font-size: $font-2xl;
+    }
+  }
 }
 
 .page-card {
@@ -50,6 +69,15 @@ body {
   padding: $spacing-xl;
   border-radius: $border-radius;
   box-shadow: $shadow-md;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-md;
+    border-radius: calc($border-radius / 2);
+  }
 }
 
 .filters-toolbar {
@@ -89,6 +117,16 @@ body {
     .search-button {
       flex-shrink: 0;
     }
+
+    @media (max-width: $breakpoint-sm) {
+      min-width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+
+      .search-button {
+        width: 100%;
+      }
+    }
   }
 
   .filter-group {
@@ -101,6 +139,14 @@ body {
       font-weight: $font-medium;
       color: $text-secondary;
     }
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    gap: $spacing-md;
   }
 }
 
@@ -231,5 +277,92 @@ body {
     width: 100%;
     margin-bottom: $spacing-sm;
     justify-content: center;
+  }
+}
+
+// Mobile Styles
+@media (max-width: $breakpoint-md) {
+  p-table {
+    .p-datatable-wrapper {
+      overflow-x: visible;
+    }
+
+    .p-datatable-table {
+      width: 100%;
+      min-width: auto;
+    }
+
+    .p-datatable-thead > tr > th:not(:first-child):not(:last-child),
+    .p-datatable-tbody > tr > td:not(:first-child):not(:last-child) {
+      display: none;
+    }
+
+    .p-datatable-thead > tr > th:first-child,
+    .p-datatable-tbody > tr > td:first-child {
+      width: auto;
+      max-width: none;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .p-datatable-thead > tr > th:last-child,
+    .p-datatable-tbody > tr > td:last-child {
+      width: 85px;
+      min-width: 85px;
+      padding-inline: $spacing-xs;
+    }
+
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      font-size: 0.8rem;
+      padding: $spacing-sm $spacing-xs;
+    }
+  }
+
+  .action-buttons {
+    flex-wrap: nowrap;
+    gap: 0;
+    justify-content: center;
+
+    button {
+      padding: 0.25rem;
+      width: auto;
+      min-width: auto;
+
+      .p-button-icon {
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    }
+  }
+
+  p-drawer .p-drawer {
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  .p-dialog-footer {
+    flex-direction: column-reverse;
+    gap: $spacing-sm;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  html {
+    font-size: 14px;
+  }
+
+  .status-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  p-select,
+  p-select .p-select {
+    width: 100%;
   }
 }

@@ -7,6 +7,14 @@
   background: $bg-ground;
 }
 
+.mobile-header {
+  display: none;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
 .sidebar {
   background: $sidebar-bg;
   color: $sidebar-text;
@@ -19,9 +27,14 @@
   top: 0;
 }
 
-.brand {
+.brand,
+.brand-mobile {
   font-weight: $font-bold;
   letter-spacing: 0.02em;
+}
+
+.brand-mobile {
+  color: $text-color;
 }
 
 nav {
@@ -101,19 +114,77 @@ nav a.active {
   padding: $spacing-xl;
 }
 
-@media (max-width: 960px) {
+// Mobile Styles
+@media (max-width: $breakpoint-md) {
   .layout {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-md $spacing-lg;
+    background: $bg-card;
+    border-bottom: 1px solid var(--p-surface-200);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    .menu-toggle {
+      color: $text-color;
+    }
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    animation: fadeIn 0.2s ease-in-out;
   }
 
   .sidebar {
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    max-width: 85vw;
+    z-index: 1002;
+    transition: left 0.3s ease-in-out;
+    box-shadow: $shadow-lg;
+
+    &.open {
+      left: 0;
+    }
   }
 
-  nav {
-    flex-direction: row;
-    flex-wrap: wrap;
+  .topbar {
+    display: none;
+  }
+
+  .page {
+    padding: $spacing-lg;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .page {
+    padding: $spacing-md;
+  }
+
+  .sidebar {
+    padding: $spacing-lg;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

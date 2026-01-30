@@ -95,7 +95,7 @@
 
   .metric-title {
     margin: 0 0 $spacing-xs 0;
-    font-size: 0.85rem;
+    font-size: $font-sm;
     font-weight: $font-medium;
     color: $text-muted;
     text-transform: uppercase;
@@ -104,7 +104,7 @@
 
   .metric-value {
     margin: 0;
-    font-size: 2rem;
+    font-size: $font-3xl;
     font-weight: $font-bold;
     color: $text-color;
   }
@@ -245,5 +245,125 @@
     margin: 0;
     font-size: 0.95rem;
     color: $text-muted;
+  }
+}
+
+// Mobile Styles
+@media (max-width: $breakpoint-md) {
+  .dashboard {
+    padding: $spacing-lg;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+
+    h2 {
+      font-size: $font-2xl;
+    }
+  }
+
+  .timeframe-filter {
+    width: 100%;
+    margin-top: 0;
+
+    label {
+      font-size: $font-sm;
+    }
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+
+  ::ng-deep .chart-card {
+    .p-card-header,
+    .p-card-content {
+      padding-inline: $spacing-lg;
+    }
+
+    .p-card-header {
+      padding-block: 0 0;
+      padding-top: $spacing-lg;
+    }
+
+    .p-card-content {
+      padding-block: 0 $spacing-lg;
+    }
+  }
+
+  .chart-container {
+    height: 300px;
+  }
+
+  .chart-loading,
+  .chart-empty {
+    min-height: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .dashboard {
+    padding: $spacing-md;
+  }
+
+  .dashboard-header {
+    margin-bottom: $spacing-lg;
+
+    h2 {
+      font-size: $font-xl;
+    }
+  }
+
+  .metrics-grid {
+    gap: $spacing-md;
+
+    ::ng-deep .metric-card .p-card-content {
+      padding: $spacing-lg;
+    }
+  }
+
+  .metric-card-content {
+    gap: $spacing-md;
+  }
+
+  .metric-icon {
+    width: 48px;
+    height: 48px;
+
+    i {
+      font-size: $font-xl;
+    }
+  }
+
+  .metric-text {
+    .metric-title {
+      font-size: $font-xs;
+    }
+
+    .metric-value {
+      font-size: $font-2xl;
+    }
+  }
+
+  ::ng-deep .state-card .p-card-content {
+    padding: $spacing-xl;
+  }
+
+  .loading-state,
+  .error-state,
+  .empty-state {
+    min-height: 300px;
+  }
+
+  .chart-title {
+    font-size: $font-lg;
+  }
+
+  .chart-container {
+    height: 250px;
   }
 }

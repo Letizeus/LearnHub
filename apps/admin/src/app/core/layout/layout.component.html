@@ -1,5 +1,32 @@
 <div class="layout">
-  <aside class="sidebar">
+  <!-- Mobile Header -->
+  <header class="mobile-header">
+    <button
+      pButton
+      type="button"
+      icon="pi pi-bars"
+      class="p-button-text menu-toggle"
+      (click)="toggleMobileMenu()"
+      aria-label="Toggle menu"
+    ></button>
+    <div class="brand-mobile">LearnHub Cockpit</div>
+  </header>
+
+  <!-- Backdrop for mobile menu -->
+  @if (mobileMenuOpen()) {
+    <div
+      class="sidebar-backdrop"
+      role="button"
+      tabindex="0"
+      (click)="closeMobileMenu()"
+      (keydown.enter)="closeMobileMenu()"
+      (keydown.escape)="closeMobileMenu()"
+      aria-label="Close menu"
+    ></div>
+  }
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.open]="mobileMenuOpen()">
     <div class="brand">LearnHub Cockpit</div>
     <nav>
       @for (item of items; track item.path) {
@@ -7,6 +34,7 @@
         [routerLink]="item.path"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: item.exact ?? true }"
+        (click)="closeMobileMenu()"
       >
         <span class="icon" aria-hidden="true">
           <i [class]="item.icon"></i>

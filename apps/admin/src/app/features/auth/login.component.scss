@@ -29,7 +29,7 @@ input {
   padding: 0.65rem $spacing-md;
   border-radius: $border-radius;
   border: 1px solid $border-color;
-  font-size: 1rem;
+  font-size: $font-base;
   transition: border-color $transition;
 
   &:focus {
@@ -45,7 +45,7 @@ button {
   border-radius: $border-radius;
   background: $primary;
   color: $bg-card;
-  font-size: 1rem;
+  font-size: $font-base;
   cursor: pointer;
   transition: background $transition;
 
@@ -56,5 +56,22 @@ button {
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+}
+
+// Mobile Styles
+@media (max-width: $breakpoint-md) {
+  .login-card {
+    margin: 2rem auto;
+    padding: $spacing-xl;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .login-card {
+    max-width: 100%;
+    margin: $spacing-lg;
+    padding: $spacing-lg;
+    box-shadow: $shadow-md;
   }
 }
