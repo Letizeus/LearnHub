@@ -11,7 +11,7 @@ export enum TimeframeFilter {
 export class DashboardMetricsQueryDto {
   @IsEnum(TimeframeFilter)
   @IsOptional()
-  timeframe?: TimeframeFilter = TimeframeFilter.MONTH;
+  timeframe?: TimeframeFilter = TimeframeFilter.ALL;
 }
 
 export interface DashboardMetricsResponseDto {

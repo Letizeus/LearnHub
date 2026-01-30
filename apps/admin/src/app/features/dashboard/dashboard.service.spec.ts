@@ -33,7 +33,7 @@ describe('DashboardService', () => {
       newRegistrations: 10,
       totalUploads: 250,
       activeUsers: 85,
-      timeframe: TimeframeFilter.MONTH,
+      timeframe: TimeframeFilter.ALL,
     };
 
     service.getMetrics().subscribe((metrics) => {
@@ -45,7 +45,7 @@ describe('DashboardService', () => {
       request.url.includes('/admin/dashboard/metrics')
     );
     expect(req.request.method).toBe('GET');
-    expect(req.request.params.get('timeframe')).toBe(TimeframeFilter.MONTH);
+    expect(req.request.params.get('timeframe')).toBe(TimeframeFilter.ALL);
     req.flush(mockMetrics);
   });
 

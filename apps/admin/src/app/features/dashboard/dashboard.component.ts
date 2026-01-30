@@ -48,7 +48,7 @@ export class DashboardComponent {
   protected readonly isChartLoading = signal<boolean>(true);
   protected readonly error = signal<string | null>(null);
   protected readonly selectedTimeframe = signal<TimeframeFilter>(
-    TimeframeFilter.MONTH
+    TimeframeFilter.ALL
   );
 
   // Helper to get CSS variables

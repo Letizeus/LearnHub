@@ -18,7 +18,7 @@ export class DashboardService {
   ) {}
 
   async getMetrics(
-    timeframe: TimeframeFilter = TimeframeFilter.MONTH
+    timeframe: TimeframeFilter = TimeframeFilter.ALL
   ): Promise<DashboardMetricsResponseDto> {
     const startDate = this.getStartDate(timeframe);
 
@@ -41,7 +41,7 @@ export class DashboardService {
   }
 
   async getRegistrationChart(
-    timeframe: TimeframeFilter = TimeframeFilter.MONTH
+    timeframe: TimeframeFilter = TimeframeFilter.ALL
   ): Promise<RegistrationChartResponseDto> {
     const startDate = this.getStartDate(timeframe);
     const groupByFormat = this.getDateGroupFormat(timeframe);

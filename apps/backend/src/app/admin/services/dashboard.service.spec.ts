@@ -42,7 +42,7 @@ describe('DashboardService', () => {
       newRegistrations: 10,
       totalUploads: 250,
       activeUsers: 85,
-      timeframe: TimeframeFilter.MONTH,
+      timeframe: TimeframeFilter.ALL,
     });
   });
 

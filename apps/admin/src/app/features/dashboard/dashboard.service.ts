@@ -34,7 +34,7 @@ export class DashboardService {
   private readonly apiUrl = '/admin/dashboard';
 
   getMetrics(
-    timeframe: TimeframeFilter = TimeframeFilter.MONTH
+    timeframe: TimeframeFilter = TimeframeFilter.ALL
   ): Observable<DashboardMetrics> {
     const params = new HttpParams().set('timeframe', timeframe);
     return this.http.get<DashboardMetrics>(`${this.apiUrl}/metrics`, {
@@ -43,7 +43,7 @@ export class DashboardService {
   }
 
   getRegistrationChart(
-    timeframe: TimeframeFilter = TimeframeFilter.MONTH
+    timeframe: TimeframeFilter = TimeframeFilter.ALL
   ): Observable<RegistrationChartData> {
     const params = new HttpParams().set('timeframe', timeframe);
     return this.http.get<RegistrationChartData>(
