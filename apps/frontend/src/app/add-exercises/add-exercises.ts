@@ -89,7 +89,12 @@ export class AddExercises {
         }
     }
 
+    isValid(){
+        return (this.exercise != "")
+    }
+
     async addExercise(exerciseFileUpload: FileUpload, solutionFileUpload: FileUpload){
+        if(!this.isValid()) return;
         const newExercise = new FormData();
         newExercise.append("text", this.exercise);
         for(const file of this.exerciseFiles){

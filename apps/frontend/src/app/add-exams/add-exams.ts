@@ -67,7 +67,12 @@ export class AddExams {
     }
   }
 
+  isValid(){
+    return (this.title != "" && this.files.length > 0)
+  }
+
   async addExam(fileUpload: FileUpload){
+    if(!this.isValid()) return;
     const newExam = new FormData();
     newExam.append('title', this.title);
     for (const file of this.files){
