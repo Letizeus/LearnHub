@@ -1,3 +1,61 @@
-<div class="page-card">
-  <h2>Configuration</h2>
+<div class="admin-page">
+  <div class="admin-header">
+    <h2>Platform Configuration</h2>
+    <button
+      pButton
+      type="button"
+      label="Save Changes"
+      icon="pi pi-save"
+      (click)="saveConfiguration()"
+      aria-label="Save configuration"
+    ></button>
+  </div>
+
+  <div class="config-grid">
+    <div class="page-card">
+      <h3>Feature Flags</h3>
+      <p class="section-description">Enable or disable platform features</p>
+
+      <div class="config-item">
+        <div class="config-info">
+          <label for="enable-upload">Enable File Upload</label>
+          <small>Allow users to upload files and content</small>
+        </div>
+        <p-toggleSwitch
+          inputId="enable-upload"
+          [(ngModel)]="config().featureFlags.enableFileUpload"
+        />
+      </div>
+
+      <div class="config-item">
+        <div class="config-info">
+          <label for="enable-course-creation">Enable Course Creation</label>
+          <small>Allow users to create new courses</small>
+        </div>
+        <p-toggleSwitch
+          inputId="enable-course-creation"
+          [(ngModel)]="config().featureFlags.enableCourseCreation"
+        />
+      </div>
+    </div>
+
+    <div class="page-card">
+      <h3>Limits</h3>
+      <p class="section-description">Configure platform limits</p>
+
+      <div class="config-item">
+        <div class="config-info">
+          <label for="max-upload-size">Max Upload Size (MB)</label>
+          <small>Maximum file size for uploads</small>
+        </div>
+        <p-inputNumber
+          inputId="max-upload-size"
+          [(ngModel)]="config().limits.maxUploadSizeMB"
+          [min]="1"
+          [max]="1000"
+          [showButtons]="true"
+        />
+      </div>
+    </div>
+  </div>
 </div>

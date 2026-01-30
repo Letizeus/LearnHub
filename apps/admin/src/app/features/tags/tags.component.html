@@ -1,3 +1,286 @@
-<div class="page-card">
-  <h2>Tags & Taggroups</h2>
+<div class="admin-page">
+  <div class="admin-header">
+    <h2>Tags & Tag Groups</h2>
+  </div>
+
+  <div class="tags-layout">
+    <div class="taggroups-section">
+      <div class="section-header">
+        <h3>Tag Groups</h3>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-plus"
+          class="p-button-sm"
+          (click)="openCreateTagGroupDialog()"
+          pTooltip="Create Tag Group"
+          tooltipPosition="top"
+          aria-label="Create tag group"
+        ></button>
+      </div>
+
+      <div class="search-box">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="searchQuery"
+            (input)="onSearch()"
+            placeholder="Search tag groups..."
+            class="search-input"
+          />
+        </span>
+      </div>
+
+      <div class="taggroups-list">
+        @if (tagGroups().length > 0) {
+          @for (tagGroup of tagGroups(); track tagGroup.id) {
+            <div
+              class="taggroup-item"
+              [class.selected]="selectedTagGroup()?.id === tagGroup.id"
+              (click)="selectTagGroup(tagGroup)"
+              (keydown.enter)="selectTagGroup(tagGroup)"
+              tabindex="0"
+              role="button"
+              [attr.aria-label]="'Select ' + tagGroup.name"
+            >
+              <div class="taggroup-info">
+                <i [class]="'pi pi-' + tagGroup.icon" class="taggroup-icon"></i>
+                <div class="taggroup-details">
+                  <span class="taggroup-name">{{ tagGroup.name }}</span>
+                  <span class="taggroup-meta">{{ tagGroup.tags.length }} tags · {{ getVisibilityLabel(tagGroup.visibility) }}</span>
+                </div>
+              </div>
+              <div class="taggroup-actions" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="presentation">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-pencil"
+                  class="p-button-text p-button-sm"
+                  (click)="openEditTagGroupDialog(tagGroup)"
+                  pTooltip="Edit"
+                  tooltipPosition="top"
+                  aria-label="Edit tag group"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-text p-button-sm p-button-danger"
+                  (click)="deleteTagGroup(tagGroup)"
+                  pTooltip="Delete"
+                  tooltipPosition="top"
+                  aria-label="Delete tag group"
+                ></button>
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="empty-state">
+            <i class="pi pi-tags"></i>
+            <p>No tag groups found</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="tags-section">
+      @if (selectedTagGroup(); as tagGroup) {
+        <div class="section-header">
+          <div class="section-title">
+            <h3>Tags in {{ tagGroup.name }}</h3>
+            <span class="tag-count">{{ tagGroup.tags.length }} {{ tagGroup.tags.length === 1 ? 'tag' : 'tags' }}</span>
+          </div>
+          <button
+            pButton
+            type="button"
+            label="Add Tag"
+            icon="pi pi-plus"
+            class="p-button-sm"
+            (click)="openAddTagDialog()"
+            aria-label="Add tag"
+          ></button>
+        </div>
+
+        <div class="tags-grid">
+          @if (tagGroup.tags.length > 0) {
+            @for (tag of tagGroup.tags; track tag.id) {
+              <p-card [class]="'tag-card'">
+                <ng-template pTemplate="content">
+                  <div class="tag-card-header">
+                    <i [class]="'pi pi-' + (tag.icon || 'tag')" class="tag-icon"></i>
+                    <span class="tag-name">{{ tag.name }}</span>
+                  </div>
+                  <div class="tag-card-actions">
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-pencil"
+                      class="p-button-text p-button-sm"
+                      (click)="openEditTagDialog(tag)"
+                      pTooltip="Edit"
+                      tooltipPosition="top"
+                      aria-label="Edit tag"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-trash"
+                      class="p-button-text p-button-sm p-button-danger"
+                      (click)="deleteTag(tag)"
+                      pTooltip="Delete"
+                      tooltipPosition="top"
+                      aria-label="Delete tag"
+                    ></button>
+                  </div>
+                </ng-template>
+              </p-card>
+            }
+          } @else {
+            <div class="empty-state">
+              <i class="pi pi-tag"></i>
+              <p>No tags yet</p>
+              <button
+                pButton
+                type="button"
+                label="Add First Tag"
+                icon="pi pi-plus"
+                class="p-button-sm"
+                (click)="openAddTagDialog()"
+                aria-label="Add first tag"
+              ></button>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <i class="pi pi-arrow-left"></i>
+          <p>Select a tag group to view its tags</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <p-dialog
+    [(visible)]="dialogVisible"
+    [header]="editMode() ? 'Edit Tag Group' : 'Create Tag Group'"
+    [modal]="true"
+    [style]="{ width: '450px' }"
+    (onHide)="closeDialog()"
+  >
+    <ng-template pTemplate="content">
+      <div class="form-group">
+        <label for="taggroup-name">Name *</label>
+        <input
+          pInputText
+          id="taggroup-name"
+          [(ngModel)]="tagGroupForm().name"
+          placeholder="Enter tag group name"
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="taggroup-icon">Icon *</label>
+        <input
+          pInputText
+          id="taggroup-icon"
+          [(ngModel)]="tagGroupForm().icon"
+          placeholder="e.g., book, graduation-cap, etc."
+          class="form-input"
+        />
+        <small>PrimeIcon name (without pi- prefix)</small>
+      </div>
+
+      <div class="form-group">
+        <label for="taggroup-visibility">Visibility *</label>
+        <p-select
+          inputId="taggroup-visibility"
+          [options]="visibilityOptions"
+          [(ngModel)]="tagGroupForm().visibility"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select visibility"
+          appendTo="body"
+          [style]="{ width: '100%' }"
+        ></p-select>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        type="button"
+        class="p-button-text"
+        (click)="closeDialog()"
+      >
+        Cancel
+      </button>
+      <button pButton type="button" (click)="saveTagGroup()">
+        {{ editMode() ? 'Update' : 'Create' }}
+      </button>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="tagDialogVisible"
+    [header]="editingTag() ? 'Edit Tag' : 'Add Tag'"
+    [modal]="true"
+    [style]="{ width: '450px' }"
+    (onHide)="closeTagDialog()"
+  >
+    <ng-template pTemplate="content">
+      <div class="form-group">
+        <label for="tag-name">Name *</label>
+        <input
+          pInputText
+          id="tag-name"
+          [(ngModel)]="tagForm().name"
+          placeholder="Enter tag name"
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="tag-icon">Icon</label>
+        <input
+          pInputText
+          id="tag-icon"
+          [(ngModel)]="tagForm().icon"
+          placeholder="e.g., book, graduation-cap, etc."
+          class="form-input"
+        />
+        <small>PrimeIcon name (without pi- prefix)</small>
+      </div>
+
+      <div class="form-group">
+        <label for="tag-color">Color</label>
+        <input
+          pInputText
+          id="tag-color"
+          [(ngModel)]="tagForm().color"
+          placeholder="e.g., #FF5733"
+          class="form-input"
+        />
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        type="button"
+        class="p-button-text"
+        (click)="closeTagDialog()"
+      >
+        Cancel
+      </button>
+      <button pButton type="button" (click)="saveTag()">
+        {{ editingTag() ? 'Update' : 'Add' }}
+      </button>
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog></p-confirmDialog>
+  <p-toast></p-toast>
 </div>

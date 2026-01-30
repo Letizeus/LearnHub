@@ -1,1 +1,92 @@
+@use '../../../styles/variables' as *;
 
+.admin-header {
+  align-items: flex-start;
+
+  button {
+    margin-top: -6px;
+  }
+}
+
+.config-grid {
+  display: grid;
+  gap: $spacing-xl;
+}
+
+.page-card {
+  h3 {
+    margin: 0 0 $spacing-xs 0;
+    font-size: $font-xl;
+    font-weight: $font-semibold;
+    color: $text-color;
+  }
+
+  .section-description {
+    margin: 0 0 $spacing-xl 0;
+    color: $text-secondary;
+    font-size: $font-sm;
+  }
+}
+
+.config-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  background-color: $surface-50;
+  border-radius: calc($border-radius / 2);
+  gap: $spacing-lg;
+
+  &:not(:last-child) {
+    margin-bottom: $spacing-md;
+  }
+
+  .config-info {
+    flex: 1;
+
+    label {
+      display: block;
+      font-weight: $font-medium;
+      color: $text-color;
+      margin-bottom: $spacing-xs;
+    }
+
+    small {
+      color: $text-secondary;
+      font-size: $font-xs;
+    }
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.config-item-vertical {
+  padding: $spacing-lg;
+  background-color: $surface-50;
+  border-radius: calc($border-radius / 2);
+
+  &:not(:last-child) {
+    margin-bottom: $spacing-md;
+  }
+
+  label {
+    display: block;
+    font-weight: $font-medium;
+    color: $text-color;
+    margin-bottom: $spacing-xs;
+  }
+
+  small {
+    display: block;
+    color: $text-secondary;
+    font-size: $font-xs;
+    margin-bottom: $spacing-md;
+  }
+
+  textarea {
+    width: 100%;
+  }
+}
