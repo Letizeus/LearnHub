@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { ContentService } from './content.service';
-import { Content } from '../schemas';
+import { LearningContent } from '../../../content/learning-content.schema';
 
 describe('ContentService', () => {
   let service: ContentService;
@@ -22,10 +22,10 @@ describe('ContentService', () => {
     downloads: 10,
     likes: 5,
     tags: [{ name: 'test', icon: 'pi pi-tag', color: '#4CAF50', backgroundImage: '' }],
-    relatedCollectionId: 'course1',
+    relatedCollection: { _id: 'course1' },
     text: 'Solve x + 5 = 10',
     createdAt: new Date(),
-    changedAt: new Date(),
+    updatedAt: new Date(),
   };
 
   function mockChainedQuery<T>(result: T) {
@@ -48,7 +48,7 @@ describe('ContentService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ContentService,
-        { provide: getModelToken(Content.name), useValue: mockContentModel },
+        { provide: getModelToken(LearningContent.name), useValue: mockContentModel },
       ],
     }).compile();
 

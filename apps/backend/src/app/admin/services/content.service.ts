@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Content } from '../schemas';
+import { LearningContent } from '../../../content/learning-content.schema';
 import { UpdateContentDto } from '../dto/content.dto';
 import { Tag } from '@learnhub/models';
 
@@ -36,28 +36,28 @@ interface ContentResponse {
 @Injectable()
 export class ContentService {
   constructor(
-    @InjectModel(Content.name)
-    private readonly contentModel: Model<Content>
+    @InjectModel(LearningContent.name)
+    private readonly contentModel: Model<LearningContent>
   ) {}
 
-  private toContentResponse(content: Content): ContentResponse {
+  private toContentResponse(content: LearningContent): ContentResponse {
     return {
       id: content._id.toString(),
       type: content.type,
       keywords: content.keywords,
       downloads: content.downloads,
       likes: content.likes,
-      tags: content.tags as Tag[],
-      relatedCollectionId: content.relatedCollectionId,
-      text: content.text,
-      images: content.images,
-      tip: content.tip,
-      solution: content.solution,
-      solutionImages: content.solutionImages,
-      eval_points: content.eval_points,
-      total_points: content.total_points,
+      tags: content.tags as unknown as Tag[],
+      relatedCollectionId: content.relatedCollection?._id?.toString(),
+      text: (content as any).text,
+      images: (content as any).images,
+      tip: (content as any).tip,
+      solution: (content as any).solution,
+      solutionImages: (content as any).solutionImages,
+      eval_points: (content as any).eval_points,
+      total_points: (content as any).total_points,
       createdAt: content.createdAt,
-      changedAt: content.changedAt,
+      changedAt: content.updatedAt,
     };
   }
 

@@ -25,5 +25,5 @@ export class UpdateCourseDto {
 
   @IsOptional()
   @IsArray()
-  contentIds?: string[];
+  contents?: string[];
 }

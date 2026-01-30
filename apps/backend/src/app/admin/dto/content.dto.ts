@@ -5,14 +5,17 @@ export class TagDto {
   @IsString()
   name!: string;
 
+  @IsOptional()
   @IsString()
-  icon!: string;
+  icon?: string;
 
+  @IsOptional()
   @IsString()
-  color!: string;
+  color?: string;
 
+  @IsOptional()
   @IsString()
-  backgroundImage!: string;
+  backgroundImage?: string;
 }
 
 export class UpdateContentDto {

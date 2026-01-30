@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from '../schemas';
+import { User } from '../../../users/user.schema';
 
 describe('UsersService', () => {
   let service: UsersService;

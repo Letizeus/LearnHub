@@ -22,10 +22,11 @@ export enum TagVisibility {
 }
 
 export interface Tag {
+  id?: string;
   name: string;
-  icon: string;
-  color: string;
-  backgroundImage: string;
+  icon?: string;
+  color?: string;
+  backgroundImage?: string;
 }
 
 export interface TagGroup {
@@ -71,9 +72,8 @@ export interface LearningContentCollection {
   title: string;
   status: Status;
   source?: Source;
-  author?: string;
+  author: string;
   contents: LearningContent[];
-  contentIds?: string[];
   createdAt?: Date;
   changedAt?: Date;
 }

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from '../schemas';
+import { User } from '../../../users/user.schema';
 import { UpdateUserDto } from '../dto/user.dto';
 
 interface FindAllOptions {

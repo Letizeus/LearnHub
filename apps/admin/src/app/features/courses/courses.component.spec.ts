@@ -19,7 +19,6 @@ describe('CoursesComponent', () => {
       status: Status.PUBLISHED,
       author: 'John Doe',
       contents: [],
-      contentIds: ['content1'],
       createdAt: new Date('2024-01-10'),
       changedAt: new Date('2024-01-15'),
     },

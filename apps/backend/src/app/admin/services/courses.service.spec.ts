@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { CoursesService } from './courses.service';
-import { Course } from '../schemas';
+import { LearningContentCollection } from '../../../content/learning-content.schema';
 import { Status } from '@learnhub/models';
 
 describe('CoursesService', () => {
@@ -21,7 +21,7 @@ describe('CoursesService', () => {
     title: 'Test Course',
     status: Status.PUBLISHED,
     author: 'Test Author',
-    contentIds: ['content1'],
+    contents: [],
     createdAt: new Date(),
     changedAt: new Date(),
   };
@@ -46,7 +46,7 @@ describe('CoursesService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CoursesService,
-        { provide: getModelToken(Course.name), useValue: mockCourseModel },
+        { provide: getModelToken(LearningContentCollection.name), useValue: mockCourseModel },
       ],
     }).compile();
 

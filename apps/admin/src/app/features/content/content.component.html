@@ -89,9 +89,11 @@
               @for (tag of content.tags; track tag.name) {
               <span
                 class="tag-badge"
-                [style.background-color]="tag.color"
-                [style.color]="getContrastColor(tag.color)">
+                [style.background-color]="tag.color || '#ccc'"
+                [style.color]="getContrastColor(tag.color || '#ccc')">
+                @if (tag.icon) {
                 <i [class]="tag.icon"></i>
+                }
                 {{ tag.name }}
               </span>
               }
@@ -202,9 +204,11 @@
                 @for (tag of content.tags; track tag.name) {
                 <span
                   class="tag-badge"
-                  [style.background-color]="tag.color"
-                  [style.color]="getContrastColor(tag.color)">
+                  [style.background-color]="tag.color || '#ccc'"
+                  [style.color]="getContrastColor(tag.color || '#ccc')">
+                  @if (tag.icon) {
                   <i [class]="tag.icon"></i>
+                  }
                   {{ tag.name }}
                 </span>
                 }

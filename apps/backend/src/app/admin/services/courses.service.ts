@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Course } from '../schemas';
+import { LearningContentCollection } from '../../../content/learning-content.schema';
 import { UpdateCourseDto } from '../dto/course.dto';
 import { Status, Source } from '@learnhub/models';
 
@@ -28,18 +28,18 @@ interface CourseResponse {
 @Injectable()
 export class CoursesService {
   constructor(
-    @InjectModel(Course.name)
-    private readonly courseModel: Model<Course>
+    @InjectModel(LearningContentCollection.name)
+    private readonly courseModel: Model<LearningContentCollection>
   ) {}
 
-  private toCourseResponse(course: Course): CourseResponse {
+  private toCourseResponse(course: LearningContentCollection): CourseResponse {
     return {
       id: course._id.toString(),
       title: course.title,
       status: course.status as Status,
       source: course.source,
       author: course.author,
-      contentIds: course.contentIds,
+      contentIds: course.contents?.map(c => c._id.toString()) || [],
       createdAt: course.createdAt,
       changedAt: course.changedAt,
     };

@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { DashboardService } from './dashboard.service';
-import { User, Content } from '../schemas';
+import { User } from '../../../users/user.schema';
+import { LearningContent } from '../../../content/learning-content.schema';
 import { TimeframeFilter } from '../dto/dashboard.dto';
 
 describe('DashboardService', () => {
@@ -15,7 +16,7 @@ describe('DashboardService', () => {
       providers: [
         DashboardService,
         { provide: getModelToken(User.name), useValue: mockUserModel },
-        { provide: getModelToken(Content.name), useValue: mockContentModel },
+        { provide: getModelToken(LearningContent.name), useValue: mockContentModel },
       ],
     }).compile();
 

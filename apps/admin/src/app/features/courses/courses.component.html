@@ -91,7 +91,7 @@
               {{ getStatusLabel(course.status) }}
             </span>
           </td>
-          <td>{{ course.contentIds?.length || 0 }}</td>
+          <td>{{ course.contents.length }}</td>
           <td>
             @if (course.changedAt) {
             {{ course.changedAt | date : 'short' }}
@@ -176,7 +176,7 @@
           }
           <div class="detail-row">
             <span class="detail-label">Content Items:</span>
-            <span class="detail-value">{{ course.contentIds?.length || 0 }}</span>
+            <span class="detail-value">{{ course.contents.length }}</span>
           </div>
         </div>
 
