@@ -20,7 +20,7 @@ interface CourseResponse {
   status: Status;
   source?: Source;
   author?: string;
-  contentIds?: string[];
+  contents?: string[];
   createdAt?: Date;
   changedAt?: Date;
 }
@@ -39,7 +39,7 @@ export class CoursesService {
       status: course.status as Status,
       source: course.source,
       author: course.author,
-      contentIds: course.contents?.map(c => c._id.toString()) || [],
+      contents: course.contents?.map(c => c._id.toString()) || [],
       createdAt: course.createdAt,
       changedAt: course.changedAt,
     };

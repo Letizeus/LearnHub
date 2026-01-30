@@ -47,7 +47,7 @@ export class ContentService {
       keywords: content.keywords,
       downloads: content.downloads,
       likes: content.likes,
-      tags: content.tags as unknown as Tag[],
+      tags: (content.tags || []) as Tag[],
       relatedCollectionId: content.relatedCollection?._id?.toString(),
       text: (content as any).text,
       images: (content as any).images,
@@ -81,7 +81,7 @@ export class ContentService {
     }
 
     const [contents, total] = await Promise.all([
-      this.contentModel.find(filter).sort(sort).skip(skip).limit(limit).exec(),
+      this.contentModel.find(filter).sort(sort).skip(skip).limit(limit).populate('tags').exec(),
       this.contentModel.countDocuments(filter).exec(),
     ]);
 
@@ -95,7 +95,7 @@ export class ContentService {
   }
 
   async findOne(id: string): Promise<ContentResponse> {
-    const content = await this.contentModel.findById(id).exec();
+    const content = await this.contentModel.findById(id).populate('tags').exec();
     if (!content) {
       throw new NotFoundException(`Content with ID ${id} not found`);
     }
