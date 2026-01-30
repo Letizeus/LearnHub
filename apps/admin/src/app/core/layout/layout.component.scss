@@ -12,6 +12,9 @@
   flex-direction: column;
   padding: var(--spacing-xl);
   gap: var(--spacing-lg);
+  height: 100vh;
+  position: sticky;
+  top: 0;
 }
 
 .brand {
@@ -60,14 +63,22 @@ nav a.active {
   justify-content: space-between;
   gap: var(--spacing-md);
   font-size: 0.95rem;
-}
 
-.sidebar-footer .link {
-  color: var(--color-primary-light);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
+  .user {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+
+    .user-name {
+      font-weight: var(--font-weight-medium);
+    }
+  }
+
+  .p-button-text {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.08) !important;
+    }
+  }
 }
 
 .content {

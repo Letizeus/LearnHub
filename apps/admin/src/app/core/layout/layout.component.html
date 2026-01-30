@@ -16,15 +16,25 @@
       }
     </nav>
     <div class="sidebar-footer">
-      <div class="user">{{ userLabel() }}</div>
-      <button type="button" class="link" (click)="logout()">Logout</button>
+      <div class="user">
+        <p-avatar icon="pi pi-user" shape="circle" size="normal"></p-avatar>
+        <span class="user-name">{{ userLabel() }}</span>
+      </div>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-sign-out"
+        class="p-button-text p-button-sm"
+        (click)="logout()"
+      >
+        Logout
+      </button>
     </div>
   </aside>
 
   <main class="content">
     <header class="topbar">
       <div class="breadcrumbs">
-        <span>Admin</span>
       </div>
     </header>
     <section class="page">
