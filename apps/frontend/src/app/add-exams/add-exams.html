@@ -5,10 +5,11 @@
                 <input pInputText id="on_label" [(ngModel)]="title" pSize="large" autocomplete="off" fluid/>
                 <label for="on_label">Title</label>
             </p-floatlabel>
-
+            
+            <h2>Upload Exams</h2>
             <p-fileupload 
                 #fileUpload
-                chooseLabel="Upload Pictures and PDFs"
+                chooseLabel="Select images or files"
                 mode="basic"
                 [multiple]="true"
                 accept="image/*, application/pdf"
@@ -33,7 +34,6 @@
             </div>
 
             <p-button
-                class="upload-button"
                 label="Upload"
                 type="button" 
                 severity="primary"

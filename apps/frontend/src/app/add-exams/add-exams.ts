@@ -4,16 +4,28 @@ import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 
 import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { TextareaModule } from 'primeng/textarea';
+import { IftaLabelModule } from 'primeng/iftalabel';
 import { FileSelectEvent, FileUpload, FileUploadModule } from 'primeng/fileupload';
 
 import { ExamHandler } from './exam.handler';
 
 @Component({
   selector: 'app-add-exams',
-  imports: [ScrollPanelModule, CommonModule, FormsModule, InputTextModule, FloatLabelModule, ButtonModule, FileUploadModule],
+  imports: [ScrollPanelModule, 
+    CommonModule,
+    IftaLabelModule,
+    TextareaModule,
+    InputNumberModule,
+    FormsModule,
+    InputTextModule,
+    FloatLabelModule, 
+    ButtonModule, 
+    FileUploadModule],
   templateUrl: './add-exams.html',
   styleUrls: ['./add-exams.scss'],
 })
@@ -34,7 +46,7 @@ export class AddExams {
   }
 
   closePreview(){
-    this.activePreview = null
+    this.activePreview = null;
   }
 
   removeChosenFile(index: number){
