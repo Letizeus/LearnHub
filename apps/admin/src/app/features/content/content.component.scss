@@ -1,11 +1,13 @@
+@use '../../../styles/variables' as *;
+
 .type-badge {
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  border-radius: var(--radius-sm);
+  border-radius: calc($border-radius / 2);
   font-size: 0.875rem;
-  font-weight: var(--font-weight-medium);
-  background-color: rgba(59, 130, 246, 0.1);
-  color: rgb(59, 130, 246);
+  font-weight: $font-medium;
+  background-color: color-mix(in srgb, $blue-500 10%, transparent);
+  color: $blue-500;
   text-transform: capitalize;
 }
 
@@ -13,15 +15,15 @@
 .tags-list {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-xs);
+  gap: $spacing-xs;
 }
 
 .tag-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: calc($border-radius / 2);
   font-size: 0.875rem;
   font-weight: 500;
 
@@ -33,24 +35,24 @@
 .content-details {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xl);
-  padding: var(--spacing-md);
+  gap: $spacing-xl;
+  padding: $spacing-md;
 }
 
 ::ng-deep .content-table {
   min-width: 60rem;
 
   .p-datatable-thead > tr > th {
-    background-color: var(--color-surface-alt);
-    color: var(--color-text);
-    font-weight: var(--font-weight-semibold);
+    background-color: $surface-100;
+    color: $text-color;
+    font-weight: $font-semibold;
   }
 
   .p-datatable-tbody > tr {
-    transition: background-color var(--transition-fast);
+    transition: background-color $transition;
 
     &:hover {
-      background-color: var(--color-surface-hover);
+      background-color: $bg-hover;
     }
   }
 }

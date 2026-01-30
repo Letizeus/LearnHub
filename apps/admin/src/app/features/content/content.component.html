@@ -89,8 +89,8 @@
               @for (tag of content.tags; track tag.name) {
               <span
                 class="tag-badge"
-                [style.background-color]="tag.color || '#ccc'"
-                [style.color]="getContrastColor(tag.color || '#ccc')">
+                [style.background-color]="tag.color || 'var(--p-surface-200)'"
+                [style.color]="getContrastColor(tag.color || 'var(--p-surface-200)')">
                 @if (tag.icon) {
                 <i [class]="tag.icon"></i>
                 }
@@ -204,8 +204,8 @@
                 @for (tag of content.tags; track tag.name) {
                 <span
                   class="tag-badge"
-                  [style.background-color]="tag.color || '#ccc'"
-                  [style.color]="getContrastColor(tag.color || '#ccc')">
+                  [style.background-color]="tag.color || 'var(--p-surface-200)'"
+                  [style.color]="getContrastColor(tag.color || 'var(--p-surface-200)')">
                   @if (tag.icon) {
                   <i [class]="tag.icon"></i>
                   }

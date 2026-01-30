@@ -68,8 +68,8 @@ export class DashboardComponent {
       };
     }
 
-    const purpleColor = this.getCSSVariable('--color-metric-purple');
-    const surfaceColor = this.getCSSVariable('--color-surface');
+    const emeraldColor = this.getCSSVariable('--p-emerald-600');
+    const surfaceColor = this.getCSSVariable('--p-surface-0');
 
     return {
       labels: data.data.map((d) => d.date),
@@ -79,18 +79,18 @@ export class DashboardComponent {
           label: 'New Registrations',
           fill: true,
           tension: 0.4,
-          borderColor: purpleColor,
-          backgroundColor: `${purpleColor}1a`,
-          pointBackgroundColor: purpleColor,
+          borderColor: emeraldColor,
+          backgroundColor: this.getCSSVariable('--p-emerald-100'),
+          pointBackgroundColor: emeraldColor,
           pointBorderColor: surfaceColor,
           pointHoverBackgroundColor: surfaceColor,
-          pointHoverBorderColor: purpleColor,
+          pointHoverBorderColor: emeraldColor,
         },
       ],
     };
   });
 
-  protected readonly lineChartOptions = {
+  protected readonly lineChartOptions = computed(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -98,12 +98,12 @@ export class DashboardComponent {
         display: false,
       },
       tooltip: {
-        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+        backgroundColor: this.getCSSVariable('--p-surface-900'),
         padding: 12,
         cornerRadius: 8,
         titleFont: {
           size: 14,
-          weight: 'bold',
+          weight: 'bold' as const,
         },
         bodyFont: {
           size: 13,
@@ -116,6 +116,7 @@ export class DashboardComponent {
           display: false,
         },
         ticks: {
+          color: this.getCSSVariable('--p-text-muted-color'),
           font: {
             size: 12,
           },
@@ -125,16 +126,17 @@ export class DashboardComponent {
         beginAtZero: true,
         ticks: {
           precision: 0,
+          color: this.getCSSVariable('--p-text-muted-color'),
           font: {
             size: 12,
           },
         },
         grid: {
-          color: this.getCSSVariable('--color-border-light'),
+          color: this.getCSSVariable('--p-surface-200'),
         },
       },
     },
-  };
+  }));
 
   // Timeframe options for the dropdown
   protected readonly timeframeOptions: TimeframeOption[] = [
@@ -155,25 +157,25 @@ export class DashboardComponent {
         title: 'Total Users',
         value: data.totalUsers,
         icon: 'pi pi-users',
-        colorClass: 'metric-icon-slate',
+        colorClass: 'metric-icon-emerald-400',
       },
       {
         title: 'Active Users',
         value: data.activeUsers,
         icon: 'pi pi-check-circle',
-        colorClass: 'metric-icon-emerald',
+        colorClass: 'metric-icon-emerald-500',
       },
       {
         title: 'New Registrations',
         value: data.newRegistrations,
         icon: 'pi pi-user-plus',
-        colorClass: 'metric-icon-purple',
+        colorClass: 'metric-icon-emerald-600',
       },
       {
         title: 'Total Uploads',
         value: data.totalUploads,
         icon: 'pi pi-cloud-upload',
-        colorClass: 'metric-icon-cyan',
+        colorClass: 'metric-icon-emerald-700',
       },
     ];
   });

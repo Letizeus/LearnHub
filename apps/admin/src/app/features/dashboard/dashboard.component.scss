@@ -1,20 +1,22 @@
+@use '../../../styles/variables' as *;
+
 .dashboard {
   max-width: 1400px;
   margin: 0 auto;
-  padding: var(--spacing-xl);
+  padding: $spacing-xl;
 }
 
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: $spacing-2xl;
 
   h2 {
     margin: 0;
-    font-size: 1.75rem;
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text);
+    font-size: $font-3xl;
+    font-weight: $font-bold;
+    color: $text-color;
     line-height: 1.2;
   }
 }
@@ -22,19 +24,19 @@
 .timeframe-filter {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: $spacing-md;
   margin-top: -6px;
 
   label {
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-muted);
+    font-weight: $font-medium;
+    color: $text-muted;
   }
 }
 
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-xl);
+  gap: $spacing-xl;
 
   ::ng-deep .metric-card {
     height: 100%;
@@ -45,7 +47,7 @@
     }
 
     .p-card-content {
-      padding: var(--spacing-xl);
+      padding: $spacing-xl;
       height: 100%;
     }
   }
@@ -54,13 +56,13 @@
 .metric-card-content {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: $spacing-lg;
 }
 
 .metric-icon {
   width: 56px;
   height: 56px;
-  border-radius: var(--radius-md);
+  border-radius: $border-radius;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,23 +70,23 @@
 
   i {
     font-size: 1.5rem;
-    color: white;
+    color: var(--p-surface-0);
   }
 
-  &.metric-icon-slate {
-    background-color: var(--color-metric-slate);
+  &.metric-icon-emerald-400 {
+    background-color: var(--p-emerald-400);
   }
 
-  &.metric-icon-emerald {
-    background-color: var(--color-metric-emerald);
+  &.metric-icon-emerald-500 {
+    background-color: var(--p-emerald-500);
   }
 
-  &.metric-icon-purple {
-    background-color: var(--color-metric-purple);
+  &.metric-icon-emerald-600 {
+    background-color: var(--p-emerald-600);
   }
 
-  &.metric-icon-cyan {
-    background-color: var(--color-metric-cyan);
+  &.metric-icon-emerald-700 {
+    background-color: var(--p-emerald-700);
   }
 }
 
@@ -92,10 +94,10 @@
   flex: 1;
 
   .metric-title {
-    margin: 0 0 var(--spacing-xs) 0;
+    margin: 0 0 $spacing-xs 0;
     font-size: 0.85rem;
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-muted);
+    font-weight: $font-medium;
+    color: $text-muted;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -103,8 +105,8 @@
   .metric-value {
     margin: 0;
     font-size: 2rem;
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text);
+    font-weight: $font-bold;
+    color: $text-color;
   }
 }
 
@@ -114,7 +116,7 @@
   }
 
   .p-card-content {
-    padding: var(--spacing-2xl);
+    padding: $spacing-2xl;
   }
 }
 
@@ -132,56 +134,56 @@
 .loading-state {
   .loading-icon {
     font-size: 3rem;
-    color: var(--color-primary);
-    margin-bottom: var(--spacing-lg);
+    color: $primary;
+    margin-bottom: $spacing-lg;
   }
 
   p {
     margin: 0;
-    font-size: 1rem;
-    color: var(--color-text-muted);
+    font-size: $font-base;
+    color: $text-muted;
   }
 }
 
 .error-state {
   .error-icon {
     font-size: 3rem;
-    color: #ef4444;
-    margin-bottom: var(--spacing-lg);
+    color: $error;
+    margin-bottom: $spacing-lg;
   }
 
   p {
-    margin: 0 0 var(--spacing-lg) 0;
-    font-size: 1rem;
-    color: var(--color-text);
+    margin: 0 0 $spacing-lg 0;
+    font-size: $font-base;
+    color: $text-color;
   }
 }
 
 .empty-state {
   .empty-icon {
     font-size: 3rem;
-    color: var(--color-text-muted);
-    margin-bottom: var(--spacing-lg);
+    color: $text-muted;
+    margin-bottom: $spacing-lg;
   }
 
   p {
     margin: 0;
-    font-size: 1rem;
-    color: var(--color-text);
+    font-size: $font-base;
+    color: $text-color;
   }
 
   .empty-subtitle {
-    margin-top: var(--spacing-sm);
+    margin-top: $spacing-sm;
     font-size: 0.9rem;
-    color: var(--color-text-muted);
+    color: $text-muted;
   }
 }
 
 ::ng-deep .chart-card {
-  margin-top: var(--spacing-2xl);
+  margin-top: $spacing-2xl;
 
   .p-card-header {
-    padding: var(--spacing-xl) var(--spacing-xl) 0 var(--spacing-xl);
+    padding: $spacing-xl $spacing-xl 0 $spacing-xl;
   }
 
   .p-card-body {
@@ -189,22 +191,22 @@
   }
 
   .p-card-content {
-    padding: 0 var(--spacing-xl) var(--spacing-xl) var(--spacing-xl);
+    padding: 0 $spacing-xl $spacing-xl $spacing-xl;
   }
 }
 
 .chart-title {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text);
+  font-size: $font-xl;
+  font-weight: $font-bold;
+  color: $text-color;
 }
 
 .chart-container {
   position: relative;
   height: 350px;
   width: 100%;
-  margin-top: var(--spacing-xl);
+  margin-top: $spacing-xl;
 
   ::ng-deep p-chart {
     display: block;
@@ -231,17 +233,17 @@
   justify-content: center;
   min-height: 350px;
   text-align: center;
-  margin-top: var(--spacing-xl);
+  margin-top: $spacing-xl;
 
   i {
     font-size: 2rem;
-    color: var(--color-primary);
-    margin-bottom: var(--spacing-md);
+    color: $primary;
+    margin-bottom: $spacing-md;
   }
 
   p {
     margin: 0;
     font-size: 0.95rem;
-    color: var(--color-text-muted);
+    color: $text-muted;
   }
 }
