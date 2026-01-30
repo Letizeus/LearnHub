@@ -1,1 +1,13 @@
-<app-add-exams></app-add-exams>
+
+<html>
+    <body>
+        <div class ="select-sidebar">
+            <p-selectbutton [options]="addModeSelectionOptions" [(ngModel)]="addMode" optionLabel="label" optionValue="value" aria-labelledby="basic" />
+        </div>
+        @if(this.addMode == "automatic"){
+            <app-add-exams></app-add-exams>
+        } @else {
+            <app-add-exercises></app-add-exercises>
+        }
+    </body>
+</html>

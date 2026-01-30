@@ -1,8 +1,7 @@
 <html>
     <body>
-        <div>
-            <h2>Create Exercise</h2>
-            <h3>Exercise</h3>
+        <div class="view">
+            <h2>Create exercises manually</h2>
             <p-iftalabel>
                 <textarea pTextarea id="exericse" [(ngModel)]="exercise" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
                 <label for="exericse">Exercise</label>
@@ -29,10 +28,6 @@
                     </div>
                 </p-scrollPanel>
             }
-
-
-            
-            <h3>Solution</h3>
             <p-iftalabel>
                 <textarea pTextarea id="solution" [(ngModel)]="solution" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
                 <label for="solution">Solution</label>
@@ -62,7 +57,7 @@
             }
             
             <div>
-                <label for="integeronly">Total points </label>
+                <label for="integeronly"><b>Total points</b></label>
                 <p-inputnumber inputId="integeronly" [(ngModel)]="totalPoints" />
             </div>
 

@@ -1,14 +1,22 @@
 
 
 body {
-    padding: 1rem;
+    padding: 0.15rem;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
     'Segoe UI', sans-serif;
+}
+
+h2 {
+    margin-bottom: 0.5rem;
 }
 
 button {
     background: none;
     border: none;
+}
+
+label {
+    margin-right: 0.5rem;
 }
 
 .view {
@@ -83,4 +91,8 @@ button {
 
 .p-fileupload-filename {
     display: none;
+}
+
+.select-sidebar {
+    text-align: center;
 }
