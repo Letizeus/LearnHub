@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-categories',
+  selector: 'app-tags',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './categories.component.html',
-  styleUrl: './categories.component.scss',
+  templateUrl: './tags.component.html',
+  styleUrl: './tags.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CategoriesComponent {}
+export class TagsComponent {}

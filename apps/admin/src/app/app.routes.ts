@@ -56,12 +56,12 @@ export const appRoutes: Route[] = [
         canActivate: [authGuard],
       },
       {
-        path: 'categories',
+        path: 'tags',
         loadComponent: () =>
-          import('./features/categories/categories.component').then(
-            (m) => m.CategoriesComponent
+          import('./features/tags/tags.component').then(
+            (m) => m.TagsComponent
           ),
-        data: { breadcrumb: 'Categories' },
+        data: { breadcrumb: 'Tags' },
         canActivate: [authGuard],
       },
       {

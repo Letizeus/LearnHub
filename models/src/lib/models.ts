@@ -78,19 +78,6 @@ export interface LearningContentCollection {
   changedAt?: Date;
 }
 
-export interface Category {
-  id: string;
-  name: string;
-  disabled?: boolean;
-  usageCount?: number;
-}
-
-export interface PlatformConfig {
-  featureFlags: Record<string, boolean>;
-  limits?: Record<string, number>;
-  banners?: { id: string; message: string; active: boolean }[];
-}
-
 export interface UserSession {
   token: string;
   user: Pick<User, 'id' | 'username' | 'email' | 'displayName'>;
