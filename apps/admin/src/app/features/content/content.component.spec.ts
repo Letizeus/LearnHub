@@ -87,7 +87,7 @@ describe('ContentComponent', () => {
     jest.spyOn(contentService, 'getContent').mockReturnValue(of(mockResponse));
     createComponent();
 
-    expect(component.getContrastColor('#FFFFFF')).toBe('#000000');
-    expect(component.getContrastColor('#000000')).toBe('#FFFFFF');
+    expect(component.getContrastColor('#FFFFFF')).toBe('var(--p-text-color)');
+    expect(component.getContrastColor('#000000')).toBe('var(--p-surface-0)');
   });
 });

@@ -91,7 +91,7 @@ describe('DashboardComponent', () => {
 
     const cards = component.metricCards();
     expect(cards).toHaveLength(4);
-    expect(cards[0]).toEqual({ title: 'Total Users', value: 100, icon: 'pi pi-users', colorClass: 'metric-icon-slate' });
+    expect(cards[0]).toEqual({ title: 'Total Users', value: 100, icon: 'pi pi-users', colorClass: 'metric-icon-emerald-400' });
   });
 
   it('should generate chart data from API response', () => {
