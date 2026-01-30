@@ -33,7 +33,9 @@ describe('ContentService', () => {
       sort: jest.fn().mockReturnValue({
         skip: jest.fn().mockReturnValue({
           limit: jest.fn().mockReturnValue({
-            exec: jest.fn().mockResolvedValue(result),
+            populate: jest.fn().mockReturnValue({
+              exec: jest.fn().mockResolvedValue(result),
+            }),
           }),
         }),
       }),
@@ -42,6 +44,14 @@ describe('ContentService', () => {
 
   function mockExecQuery<T>(result: T) {
     return { exec: jest.fn().mockResolvedValue(result) };
+  }
+
+  function mockPopulateQuery<T>(result: T) {
+    return {
+      populate: jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(result),
+      }),
+    };
   }
 
   beforeEach(async () => {
@@ -86,7 +96,7 @@ describe('ContentService', () => {
 
   describe('findOne', () => {
     it('should return a content item by id', async () => {
-      mockContentModel.findById.mockReturnValue(mockExecQuery(mockContent));
+      mockContentModel.findById.mockReturnValue(mockPopulateQuery(mockContent));
 
       const result = await service.findOne('1');
 
@@ -95,7 +105,7 @@ describe('ContentService', () => {
     });
 
     it('should throw NotFoundException if content not found', async () => {
-      mockContentModel.findById.mockReturnValue(mockExecQuery(null));
+      mockContentModel.findById.mockReturnValue(mockPopulateQuery(null));
 
       await expect(service.findOne('999')).rejects.toThrow(NotFoundException);
     });
