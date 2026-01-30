@@ -1,14 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
-import { AddExams } from './add-exams/add-exams';
-import { AddExercises } from './add-exercises/add-exercises';
+import { AddView } from './add-view/add-view';
 
 @Component({
   imports: [
     RouterModule, 
-    AddExercises,
-    AddExams
+    AddView
   ],
   selector: 'app-root',
   templateUrl: './app.html',

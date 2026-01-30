@@ -1,12 +1,11 @@
 <html>
     <body>
         <div class="view">
-             <p-floatlabel variant="on">
+            <h2>Upload Exams</h2>
+            <p-floatlabel variant="on">
                 <input pInputText id="on_label" [(ngModel)]="title" pSize="large" autocomplete="off" fluid/>
                 <label for="on_label">Title</label>
             </p-floatlabel>
-            
-            <h2>Upload Exams</h2>
             <p-fileupload 
                 #fileUpload
                 chooseLabel="Select images or files"
@@ -18,16 +17,18 @@
                 [customUpload]="true">
             </p-fileupload>
             
-            <p-scrollPanel styleClass="previewScroll" [style]="{ width: '100%', height: '100px' }">
-                <div class="previews">
-                    <div class="preview" *ngFor="let img of this.previews; let i = index;">
-                        <button type="button" (click)="openPreview(img)">
-                            <img [src]="img"/>
-                        </button>
-                        <button class="removeImg" (click)="removeChosenFile(i)">x</button>
+            @if(this.previews.length != 0){
+                <p-scrollPanel styleClass="previewScroll" [style]="{ width: '100%', height: '100px' }">
+                    <div class="previews">
+                        <div class="preview" *ngFor="let img of this.previews; let i = index;">
+                            <button type="button" (click)="openPreview(img)">
+                                <img [src]="img"/>
+                            </button>
+                            <button class="removeImg" (click)="removeChosenFile(i)">x</button>
+                        </div>
                     </div>
-                </div>
-            </p-scrollPanel>
+                </p-scrollPanel>
+            }
 
             <div class="singlePreview" *ngIf="activePreview" (click)="closePreview()">
                 <img [src]="activePreview"/>

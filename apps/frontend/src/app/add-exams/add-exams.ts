@@ -27,7 +27,7 @@ import { ExamHandler } from './exam.handler';
     ButtonModule, 
     FileUploadModule],
   templateUrl: './add-exams.html',
-  styleUrls: ['./add-exams.scss'],
+  styleUrls: ['../add-view/add-view.scss','./add-exams.scss'],
 })
 export class AddExams {
   private _examHandler: ExamHandler

@@ -27,7 +27,7 @@ import {ExerciseHandler} from './exercise.handler';
     ButtonModule, 
     FileUploadModule],
     templateUrl: './add-exercises.html',
-    styleUrls: ['./add-exercises.scss']
+    styleUrls: ['../add-view/add-view.scss','./add-exercises.scss']
 })
 export class AddExercises {
     private _exerciseHandler: ExerciseHandler
