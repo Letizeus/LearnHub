@@ -8,7 +8,7 @@
                 <label for="exericse">Exercise</label>
             </p-iftalabel>
             <p-fileupload 
-                #fileUpload
+                #exerciseFileUpload
                 chooseLabel="Select exercise images and files"
                 mode="basic"
                 [multiple]="true"
@@ -38,7 +38,7 @@
                 <label for="solution">Solution</label>
             </p-iftalabel>
             <p-fileupload 
-                #fileUpload
+                #solutionFileUpload
                 chooseLabel="Select solution images and files"
                 mode="basic"
                 [multiple]="true"
@@ -74,7 +74,7 @@
                 label="Upload"
                 type="button" 
                 severity="primary"
-                (onClick)="addExercise(fileUpload)">
+                (onClick)="addExercise(exerciseFileUpload, solutionFileUpload)">
             </p-button>
         </div>
     </body>

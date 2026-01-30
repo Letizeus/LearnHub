@@ -89,7 +89,7 @@ export class AddExercises {
         }
     }
 
-    async addExercise(fileUpload: FileUpload){
+    async addExercise(exerciseFileUpload: FileUpload, solutionFileUpload: FileUpload){
         const newExercise = new FormData();
         newExercise.append("text", this.exercise);
         for(const file of this.exerciseFiles){
@@ -106,15 +106,16 @@ export class AddExercises {
         try {
             const saved = await firstValueFrom(this._exerciseHandler.addExercise(newExercise));
             console.log(saved);
-            this.resetForm(fileUpload);
+            this.resetForm(exerciseFileUpload, solutionFileUpload);
         } catch (err) {
             console.error('Upload failed', err);
-            this.resetForm(fileUpload);
+            this.resetForm(exerciseFileUpload, solutionFileUpload);
         }
     }
 
-    resetForm(fileUpload: FileUpload){
-        fileUpload.clear();
+    resetForm(exerciseFileUpload: FileUpload, solutionFileUpload: FileUpload){
+        exerciseFileUpload.clear();
+        solutionFileUpload.clear();
         this.exercise = "";
         this.exerciseFiles, this.exercisePreviews = [];
         this.solution = "";
