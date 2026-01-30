@@ -7,8 +7,9 @@ import { Exercise } from "./exercise";
 
 @Injectable()
 export class ExerciseService{
-    private readonly bucketE: string = "exercises";
-    private readonly bucketS: string = "solutions";
+    private readonly bucket: string = "exercises"
+    private readonly bucketPathExercise: string = "exercises";
+    private readonly bucketPathSolution: string = "solutions";
     
     private readonly s3: S3Client
     constructor(@InjectModel(Exercise.name) private exerciseModel: Model<Exercise>){
@@ -24,36 +25,35 @@ export class ExerciseService{
     }
 
     async create(
-        exercise: string,
+        text: string,
         solution: string,
         totalPoints: string,
         exerciseImages: Express.Multer.File[],
         solutionImages: Express.Multer.File[]
     ){
-        await this.createBucketIfNotExist(this.bucketE);
-        await this.createBucketIfNotExist(this.bucketS);
+        await this.createBucketIfNotExist(this.bucket);
 
-        const exerciseImagesMetadata = await Promise.all(exerciseImages.map(f => this.uploadFile(this.bucketE, f)));
-        const solutionImagesMetadata = await Promise.all(solutionImages.map(f => this.uploadFile(this.bucketS, f)));
+        const exerciseImagesMetadata = await Promise.all(exerciseImages.map(f => this.uploadFile(this.bucketPathExercise, f)));
+        const solutionImagesMetadata = await Promise.all(solutionImages.map(f => this.uploadFile(this.bucketPathSolution, f)));
 
         return await this.exerciseModel.create(
             {
-                exercise: exercise,
+                text: text,
                 solution: solution,
                 totalPoints: totalPoints,
-                exerciseImages: exerciseImages,
-                solutionImages: solutionImages
+                exerciseImages: exerciseImagesMetadata,
+                solutionImages: solutionImagesMetadata
             }
         )
     }
 
-    private async uploadFile(bucket: string, f: Express.Multer.File){
+    private async uploadFile(folder: string, f: Express.Multer.File){
         const safeName = f.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
-        const filePath = `exams/${randomUUID()}-${Date.now()}-${safeName}`; //instead of randomUUID: user_id + exam_id
+        const filePath = `${folder}/${randomUUID()}-${Date.now()}-${safeName}`; //instead of randomUUID: user_id + exam_id
 
         await this.s3.send(
             new PutObjectCommand({
-                Bucket: bucket,
+                Bucket: this.bucket,
                 Key: filePath,
                 Body: f.buffer,
                 ContentType: f.mimetype

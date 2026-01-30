@@ -93,7 +93,7 @@ export class AddExercises {
         const newExercise = new FormData();
         newExercise.append("text", this.exercise);
         for(const file of this.exerciseFiles){
-            newExercise.append("images", file);
+            newExercise.append("exerciseImages", file);
         }
 
         newExercise.append("solution", this.solution);

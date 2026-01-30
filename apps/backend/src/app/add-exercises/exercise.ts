@@ -3,7 +3,7 @@ import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose"
 @Schema()
 export class Exercise {
     @Prop({ required: true })
-    exercise: string;
+    text: string;
     
     @Prop()
     solution: string;

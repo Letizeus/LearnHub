@@ -16,6 +16,6 @@ export class ExerciseHandler {
                 console.log('  size:', value.size);
             }
         });
-        return this.http.post(baseUrl+'exercises/add', newExercise);
+        return this.http.post(baseUrl+'/exercises/add', newExercise);
     }
 }
