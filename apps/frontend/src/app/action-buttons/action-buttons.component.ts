@@ -18,18 +18,14 @@ export class ActionButtonsComponent {
   id = input.required<string>();
   small = input<boolean>(false);
 
-  activeContent = computed(() => this.contentService.learningContent().find(content => content.id === this.id()));
-  liked = computed<boolean>(() => this.folderService.likedFolder().documents.includes(this.id()));
+  liked = computed<boolean>(() => {
+    if (!this.folderService.likedFolder()) return false;
+    else return this.folderService.likedFolder().content.includes(this.id());
+  });
 
   constructor() {}
 
   handleLike() {
-    if (this.liked()) {
-      this.contentService.removeLike(this.id());
-      this.folderService.removeFromFolder(this.id(), 'liked');
-    } else {
-      this.contentService.addLike(this.id());
-      this.folderService.addToFolder(this.id(), 'liked');
-    }
+    this.folderService.like(this.id());
   }
 }

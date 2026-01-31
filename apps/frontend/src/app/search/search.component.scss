@@ -161,10 +161,21 @@ a {
   scrollbar-width: none;
   padding-bottom: 1rem;
   align-items: center;
+
 }
 
-.selected {
-  background-color: color-mix(in srgb, theme.$primary, white 90%);
+.tags-drawer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  .chip {
+    cursor: pointer;
+  }
+}
+
+.tags-section {
+  margin-bottom: 1rem;
 }
 
 .skeleton-container {

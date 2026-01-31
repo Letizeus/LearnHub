@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { SearchQuery } from './content-data.service';
+import { SearchQuery } from 'models';
 
 @Injectable({
   providedIn: 'root',

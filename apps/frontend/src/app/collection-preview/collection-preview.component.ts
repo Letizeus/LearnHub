@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, computed, inject, input, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { FastAverageColor } from 'fast-average-color';
 import { Router, RouterLink } from '@angular/router';
-import { LearningContentCollection } from '../content-data.service';
+import { LearningContentCollection } from 'models';
 
 @Component({
   selector: 'lh-collection-preview',
@@ -33,4 +33,10 @@ export class CollectionPreviewComponent {
     }
     return 'black';
   });
+
+  constructor() {
+    effect(() => {
+      console.log(this.data());
+    });
+  }
 }

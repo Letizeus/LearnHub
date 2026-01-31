@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { Folder, FolderService } from '../folder.service';
+import { FolderService } from '../folder.service';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Button } from 'primeng/button';
 import { Listbox } from 'primeng/listbox';
 import { FormsModule } from '@angular/forms';
+import { Folder } from 'models';
 
 @Component({
   selector: 'lh-folder-select-modal',
@@ -14,9 +15,12 @@ import { FormsModule } from '@angular/forms';
 export class FolderSelectModalComponent {
   protected folderService = inject(FolderService);
 
-  selection: Folder = { id: 'unknown', name: 'none', documents: [] };
+  selection: Folder = { id: 'unknown', name: 'none', content: [], length: 0 };
 
-  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig) {}
+  constructor(
+    public ref: DynamicDialogRef,
+    public config: DynamicDialogConfig,
+  ) {}
 
   select(event: any) {
     this.close(event.value.id);

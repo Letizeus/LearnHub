@@ -16,16 +16,14 @@ export class CreateFolderModalComponent {
   private folderService = inject(FolderService);
   nameInput: string = '';
 
-  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig) {}
+  constructor(
+    public ref: DynamicDialogRef,
+    public config: DynamicDialogConfig,
+  ) {}
 
   create() {
-    this.folderService.createNewFolder(this.nameInput).subscribe({
-      next: id => {
-        if (id) this.close(id);
-        this.close();
-      },
-      error: () => this.close(),
-    });
+    this.folderService.createNewFolder(this.nameInput);
+    this.close();
   }
 
   close(folderId?: string) {

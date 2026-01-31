@@ -1,16 +1,11 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
-import { ContentDataService, LearningContent } from './content-data.service';
+import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
+import { ContentDataService } from './content-data.service';
 import { HttpClient } from '@angular/common/http';
-import { LHMessage } from './toast.service';
-
-export type Folder = {
-  id: string;
-  name: string;
-  icon?: string;
-  documents: string[];
-};
+import { Exercise, Folder } from 'models';
+import { MessageService } from 'primeng/api';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -18,153 +13,127 @@ export type Folder = {
 export class FolderService {
   private http = inject(HttpClient);
   private contentDataService = inject(ContentDataService);
+  private messageService = inject(MessageService);
+  private router = inject(Router);
 
-  private _folders = signal<Folder[]>([
-    {
-      id: 'liked',
-      name: 'Liked',
-      icon: 'star',
-      documents: ['0', '1', '2', '3'],
-    },
-    {
-      id: '0',
-      name: 'Test 1',
-      documents: ['0', '1', '2', '3'],
-    },
-    {
-      id: '1',
-      name: 'Test 2',
-      documents: ['0', '1', '2', '3'],
-    },
-    {
-      id: '2',
-      name: 'Test 3',
-      documents: ['0', '1', '2', '3'],
-    },
-  ]);
+  private _folders = signal<Folder[]>([]);
   public readonly folders = this._folders.asReadonly();
 
-  selectFolder = signal<string | null>(null);
-  activeFolder = computed(() => this.folders().find(f => f.id === this.selectFolder()));
-  folderContent = computed(() => this.contentDataService.exercises().filter(e => e.id in this.activeFolder()!.documents || []));
+  selectFolderId = signal<string | null>(null);
+  activeFolder = computed(() => this.folders().find(f => f.id === this.selectFolderId()));
+  folderContent = computed<Exercise[] | undefined>(() => {
+    this.contentDataService.fetchMissingContent(this.activeFolder()?.content ?? []);
+    return this.activeFolder()?.content.map(id => this.contentDataService.exercises().get(id)!);
+  });
 
   likedFolder = computed(() => this.folders().find(f => f.id === 'liked')!);
 
-  // Error
-  error = signal<
-    {
-      msg: string;
-      error: any;
-      time: Date;
-    }[]
-  >([]);
-  messages = computed<LHMessage[]>(() =>
-    this.error().map(({ msg, error, time }) => ({
-      message: msg,
-      severity: 'error',
-      time,
-    }))
-  );
-  latestError = computed(() => this.error().slice(-1)[0]);
+  selectMode = signal<string>('');
 
-  constructor() {}
-
-  fetchFolder(id: string) {
-    return this.http.get<Folder>(`/api/folder/${id}`).pipe(
-      tap(folder => {
-        this._folders.update(folders => [...folders, folder]);
-      })
-    );
+  constructor() {
+    this.fetchFolders();
+    this.router.events.subscribe(() => this.selectMode.set(''));
   }
 
-  getFolderById(id: string) {
+  fetchFolders() {
+    return this.http.get<Folder[]>('/api/folder').subscribe({
+      next: folders => {
+        this._folders.set(folders);
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: "Couldn't load folders. Please try again later." });
+      },
+    });
+  }
+
+  /*getFolderById(id: string) {
     const cachedItem = this._folders().find(c => c.id === id);
 
     if (cachedItem) return of(cachedItem);
     return this.fetchFolder(id);
-  }
+  }*/
 
   updateFolder(id: string, changes: Partial<Folder>, errorMsg = "Couldn't perform update. Please try again later.") {
-    this.getFolderById(id).pipe(
-      switchMap(item => {
-        const payload = { ...item, ...changes };
-
-        return this.http.put<Folder>(`/api/folder/${id}`, payload).pipe(
-          tap(savedItem => {
-            this._folders.update(folders => folders.map(c => (c.id === id ? savedItem : c)));
-          })
-        );
-      }),
-      catchError(err => {
-        this.error.update(c => [
-          ...c,
-          {
-            msg: errorMsg,
-            error: err,
-            time: new Date(),
-          },
-        ]);
-        return of(null);
-      })
-    );
+    this.http.put<Folder>(`/api/folder`, { ...changes, id }).subscribe({
+      next: () => {
+        this.fetchFolders();
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: errorMsg });
+      },
+    });
   }
 
   addToFolder(id: string, folderId: string) {
-    this.getFolderById(folderId).pipe(
-      tap(folder => {
-        this.updateFolder(folderId, { documents: [...folder.documents, id] });
-      })
-    );
+    const folderToAdd = this._folders().find(f => f.id === folderId);
+    if (!folderToAdd) {
+      this.messageService.add({
+        severity: 'error',
+        summary: "Couldn't find folder to add to. Please try again later.",
+      });
+      return;
+    }
+    console.log(id);
+    this.updateFolder(folderId, { content: [...(folderToAdd.content ?? []), id] });
   }
 
   removeFromFolder(id: string, folderId: string) {
-    this.getFolderById(folderId).pipe(
-      tap(folder => {
-        this.updateFolder(folderId, { documents: folder.documents.filter(doc => doc !== id) });
-      })
-    );
+    const folder = this._folders().find(f => f.id === folderId);
+    if (!folder) {
+      this.messageService.add({
+        severity: 'error',
+        summary: "Couldn't find folder to remove from. Please try again later.",
+      });
+      return;
+    }
+    this.updateFolder(folderId, { content: folder.content.filter(doc => doc !== id) });
   }
 
   isInFolder(id: string, folderId: string) {
-    return this.getFolderById(folderId).pipe(map(folder => folder?.documents.includes(id) || false));
+    const folder = this._folders().find(f => f.id === folderId);
+    if (!folder) return false;
+    return folder.content?.includes(id) ?? false;
+  }
+
+  isInSelectedFolder(id: string) {
+    return this.selectFolderId() ? this.isInFolder(id, this.selectFolderId()!) : false;
   }
 
   createNewFolder(name: string) {
-    return this.http.post<Folder>('/api/folder', { name }).pipe(
-      tap(folder => {
-        this._folders.update(folders => [...folders, folder]);
-      }),
-      map(folder => folder.id),
-      catchError(err => {
-        this.error.update(c => [
-          ...c,
-          {
-            msg: "Couldn't create new folder. Please try again later.",
-            error: err,
-            time: new Date(),
-          },
-        ]);
-        return of(null);
-      })
-    );
+    this.http.post<Folder>('/api/folder', { name }).subscribe({
+      next: () => {
+        this.fetchFolders();
+        this.messageService.add({ severity: 'success', summary: 'Folder created successfully.' });
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: "Couldn't create folder. Please try again later." });
+      },
+    });
   }
 
   deleteFolder(id: string) {
-    const oldState = this._folders();
-
-    this._folders.update(folders => folders.filter(f => f.id !== id));
-
     this.http.delete(`/api/folder/${id}`, {}).subscribe({
+      next: () => {
+        this.fetchFolders();
+        this.messageService.add({ severity: 'success', summary: 'Folder deleted successfully.' });
+      },
       error: (err: any) => {
-        this._folders.update(folders => oldState);
-        this.error.update(c => [
-          ...c,
-          {
-            msg: "Couldn't remove Folder. Please try again later.",
-            error: err,
-            time: new Date(),
-          },
-        ]);
+        this.messageService.add({ severity: 'error', summary: "Couldn't delete folder. Please try again later." });
+      },
+    });
+  }
+
+  like(id: string) {
+    this.http.post(`/api/content/like/${id}`, {}).subscribe({
+      next: like => {
+        if (like) {
+          this.addToFolder(id, 'liked');
+        } else {
+          this.removeFromFolder(id, 'liked');
+        }
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: "Couldn't like the content. Please try again later." });
       },
     });
   }

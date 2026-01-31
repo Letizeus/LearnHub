@@ -1,0 +1,67 @@
+<p-drawer [visible]="quickAction()" (onHide)="quickAction.set(false)" header="Add to a folder" position="right">
+  <div class="quickactions">
+    <lh-folder [content]="data().id" />
+    <lh-action-buttons [id]="data().id" [small]="true" class="actionButtons" />
+  </div>
+</p-drawer>
+@if (!folderService.selectMode()) {
+  <div role="button" [routerLink]="`/content/${data().id}`" [replaceUrl]="true" ngxLongPress2 (onLongPress)="handleLongPressMenu()">
+    <div class="container">
+      <p class="text" [innerHTML]="data()!.text | math"></p>
+      <div class="bar">
+        <div>
+          <mat-icon>book_5</mat-icon>
+          <span [innerText]="data()!.relatedCollection.title"></span>
+        </div>
+        @if (data()!.relatedCollection.source.publishedAt) {
+          <div>
+            <mat-icon>calendar_month</mat-icon>
+            <span [innerText]="data()!.relatedCollection.source.publishedAt | date: 'yyyy'"></span>
+          </div>
+        }
+        <div>
+          <mat-icon>school</mat-icon>
+          <span>{{ data()!.relatedCollection.source.organisation }} , {{ data()!.relatedCollection.source.publisher }}</span>
+        </div>
+        <div>
+          <mat-icon>star</mat-icon>
+          <span>{{ data()!.likes }}</span>
+        </div>
+        <div>
+          <mat-icon>download</mat-icon>
+          <span>{{ data()!.downloads }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div role="button" (click)="addToFolder()">
+    <div class="container" [class.selected]="isSelected()">
+      <p class="text" [innerHTML]="data()!.text | math"></p>
+      <div class="bar">
+        <div>
+          <mat-icon>book_5</mat-icon>
+          <span [innerText]="data()!.relatedCollection.title"></span>
+        </div>
+        @if (data()!.relatedCollection.source.publishedAt) {
+          <div>
+            <mat-icon>calendar_month</mat-icon>
+            <span [innerText]="data()!.relatedCollection.source.publishedAt | date: 'yyyy'"></span>
+          </div>
+        }
+        <div>
+          <mat-icon>school</mat-icon>
+          <span>{{ data()!.relatedCollection.source.organisation }} , {{ data()!.relatedCollection.source.publisher }}</span>
+        </div>
+        <div>
+          <mat-icon>star</mat-icon>
+          <span>{{ data()!.likes }}</span>
+        </div>
+        <div>
+          <mat-icon>download</mat-icon>
+          <span>{{ data()!.downloads }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+}

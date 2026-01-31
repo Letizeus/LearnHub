@@ -1,19 +1,16 @@
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FolderService } from '../folder.service';
-import { SearchItemComponent } from '../search-item/search-item.component';
-import { ContentDataService, Exercise, LearningContent } from '../content-data.service';
-import { Folder } from '../folder.service';
 import { Button } from 'primeng/button';
 import { MatIcon } from '@angular/material/icon';
-import { DatePipe } from '@angular/common';
 import { FolderItemsComponent } from './folder-items/folder-items.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ContentPreviewComponent } from '../content-preview/content-preview.component';
 
 @Component({
   selector: 'lh-folder-view',
-  imports: [SearchItemComponent, Button, MatIcon, FolderItemsComponent, ConfirmDialogModule],
+  imports: [Button, MatIcon, FolderItemsComponent, ConfirmDialogModule, ContentPreviewComponent],
   providers: [ConfirmationService],
   templateUrl: './folder-view.component.html',
   styleUrl: './folder-view.component.scss',
@@ -29,7 +26,7 @@ export class FolderViewComponent {
   editMode = false;
 
   constructor() {
-    this.folderService.selectFolder.set(this.route.snapshot.paramMap.get('id')!);
+    this.folderService.selectFolderId.set(this.route.snapshot.paramMap.get('id')!);
     if (!this.folderService.activeFolder()) {
       this.router.navigate(['/folder']);
       return;

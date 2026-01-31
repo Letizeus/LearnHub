@@ -1,7 +1,6 @@
 import { Component, computed, effect, inject, input, resource, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { MatIcon } from '@angular/material/icon';
-import { SearchItemComponent } from '../search-item/search-item.component';
 import { Button, ButtonModule } from 'primeng/button';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { SectionComponent } from '../section/section.component';
@@ -18,12 +17,16 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FolderSelectModalComponent } from '../folder-select-modal/folder-select-modal.component';
 import { FolderService } from '../folder.service';
 import { CollectionPreviewComponent } from '../collection-preview/collection-preview.component';
-import { TagGroup, TagGroupPopulated, TagID, TagService, TagVisibilityPlace } from '../tag.service';
+import { TagGroupPopulated, TagService } from '../tag.service';
 import { firstValueFrom, forkJoin } from 'rxjs';
 import { Skeleton } from 'primeng/skeleton';
+import { LearningContentCollection, SearchQuery, TagGroup, TagID, TagVisibilityPlace } from 'models';
+import { FormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ContentPreviewComponent } from '../content-preview/content-preview.component';
 
 const visibilityFilter = (visibility: TagVisibilityPlace) => {
-  return (e: TagGroup) => {
+  return (e: TagGroupPopulated) => {
     for (const visibility of e.visibility) {
       if (visibility.place === TagVisibilityPlace.SEARCH_PAGE) return true;
     }
@@ -32,7 +35,7 @@ const visibilityFilter = (visibility: TagVisibilityPlace) => {
 };
 
 const visibilitySort = (visibility: TagVisibilityPlace) => {
-  return (a: TagGroup, b: TagGroup) => {
+  return (a: TagGroupPopulated, b: TagGroupPopulated) => {
     const aPos = a.visibility.find(v => v.place === visibility)?.position ?? -1;
     const bPos = b.visibility.find(v => v.place === visibility)?.position ?? -1;
     return aPos - bPos;
@@ -44,7 +47,6 @@ const visibilitySort = (visibility: TagVisibilityPlace) => {
   imports: [
     InputTextModule,
     MatIcon,
-    SearchItemComponent,
     Button,
     ButtonModule,
     SelectButtonModule,
@@ -52,12 +54,11 @@ const visibilitySort = (visibility: TagVisibilityPlace) => {
     Chip,
     SlicePipe,
     DrawerModule,
-    LongPressDirective,
     TableModule,
-    FolderComponent,
-    ActionButtonsComponent,
     CollectionPreviewComponent,
     Skeleton,
+    FormsModule,
+    ContentPreviewComponent,
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
@@ -74,106 +75,33 @@ export class SearchComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  searchTagResource = resource({
-    params: () => ({ tags: this.contentDataService.searchQuery()?.tags ?? [] }),
-    loader: ({ params }) => {
-      return Promise.all(params.tags.map(value => firstValueFrom(this.tagService.getTagById(value))));
-    },
-  });
+  searchString = '';
 
   searchTags = computed(() => {
-    if (this.searchTagResource.hasValue()) {
-      return this.searchTagResource.value();
-    }
-    return [];
+    if (!this.contentDataService.searchQuery() || !this.contentDataService.searchQuery()!.tags) return [];
+    return this.contentDataService.searchQuery()?.tags?.map(e => this.tagService.tags().get(e));
   });
 
-  tagGroupsMainPage = resource<TagGroupPopulated[], { groups: TagGroup[] }>({
-    params: () => ({ groups: this.tagService.tagGroupsArray() }),
-    loader: async ({ params }) => {
-      const groups = params.groups
-        .filter(visibilityFilter(TagVisibilityPlace.SEARCH_PAGE))
-        .sort(visibilitySort(TagVisibilityPlace.SEARCH_PAGE));
-      return await firstValueFrom(forkJoin(groups.map(group => this.tagService.populateTagGroup(group))));
-    },
+  collection = computed<LearningContentCollection | undefined>(() => {
+    if (!this.contentDataService.searchQuery() || !this.contentDataService.searchQuery()?.collection) return undefined;
+    return this.contentDataService.learningContentCollections().get(this.contentDataService.searchQuery()!.collection!);
   });
 
-  tagGroupsSelect = resource<TagGroupPopulated[], { groups: TagGroup[] }>({
-    params: () => ({ groups: this.tagService.tagGroupsArray() }),
-    loader: async ({ params }) => {
-      const groups = params.groups
-        .filter(visibilityFilter(TagVisibilityPlace.TAG_SELECT))
-        .sort(visibilitySort(TagVisibilityPlace.TAG_SELECT));
-      return await firstValueFrom(forkJoin(groups.map(group => this.tagService.populateTagGroup(group))));
-    },
+  tagGroupsMainPage = computed<TagGroupPopulated[]>(() => {
+    return this.tagService
+      .tagGroupsPopulated()
+      .filter(visibilityFilter(TagVisibilityPlace.SEARCH_PAGE))
+      .sort(visibilitySort(TagVisibilityPlace.SEARCH_PAGE));
+  });
+
+  tagGroupsSelect = computed<TagGroupPopulated[]>(() => {
+    return this.tagService
+      .tagGroupsPopulated()
+      .filter(visibilityFilter(TagVisibilityPlace.TAG_SELECT))
+      .sort(visibilitySort(TagVisibilityPlace.TAG_SELECT));
   });
 
   tagSelect = false;
-  foundExercises = [
-    {
-      id: '0',
-      text: 'Bestimmen Sie die Inverse der Matrix $A$ über dem Körper $\\mathbb{R}$ mithilfe des Gauß-Jordan-Algorithmus: $$A = \\begin{pmatrix} 1 & 2 & 3 \\\\ 0 & 1 & 4 \\\\ 5 & 6 & 0 \\end{pmatrix}$$',
-      course: 'Lineare Algebra',
-      year: 'WS25/26',
-      institution: 'RWTH Aachen',
-    },
-    {
-      id: '1',
-      text: 'Untersuchen Sie die folgende Reihe auf Konvergenz und absolute Konvergenz: $$\\sum_{n=1}^{\\infty} (-1)^n \\frac{n^2 + 1}{2n^3 + n}$$',
-      course: 'Analysis I',
-      year: 'WS25/26',
-      institution: 'RWTH Aachen',
-    },
-    {
-      id: '2',
-      text: 'Konstruieren Sie einen deterministischen endlichen Automaten (DFA), der die Sprache $L = \\{w \\in \\{0,1\\}^* \\mid w \\text{ enthält die Teilfolge } 101\\}$ erkennt.',
-      course: 'Formale Systeme, Automaten, Prozesse',
-      year: 'SS25',
-      institution: 'RWTH Aachen',
-    },
-    {
-      id: '3',
-      text: 'Geben Sie die asymptotische Laufzeit (O-Notation) für den folgenden Algorithmus in Abhängigkeit von $n$ an und begründen Sie Ihre Antwort: \\n\\n```python\\ndef example(n):\\n  sum = 0\\n  for i in range(n):\\n    for j in range(1, n, 2*j):\\n      sum += 1\\n  return sum\\n```',
-      course: 'Datenstrukturen und Algorithmen',
-      year: 'SS25',
-      institution: 'RWTH Aachen',
-    },
-    {
-      id: '4',
-      text: 'Berechnen Sie die Wahrscheinlichkeit dafür, dass bei einem fairen Würfelwurf die Summe von zwei Würfeln genau 8 ergibt, unter der Bedingung, dass mindestens einer der Würfel eine 4 zeigt.',
-      course: 'Stochastik für Informatiker',
-      year: 'WS25/26',
-      institution: 'RWTH Aachen',
-    },
-    {
-      id: '5',
-      text: 'Überführen Sie die folgende aussagenlogische Formel mithilfe der Äquivalenzgesetze in Konjunktive Normalform (KNF): $$F = \\neg (A \\lor (B \\land C)) \\to (A \\leftrightarrow B)$$',
-      course: 'Mathematische Logik',
-      year: 'SS25',
-      institution: 'RWTH Aachen',
-    },
-  ];
-
-  folder = [
-    {
-      id: '0',
-      name: 'Liked',
-      icon: 'star',
-      amount: 10,
-    },
-    {
-      id: '1',
-      name: 'Test 1',
-      amount: 12,
-    },
-    {
-      id: '2',
-      name: 'Test2',
-      amount: 1,
-    },
-  ];
-
-  quickAction = signal<string>('');
 
   isSearch = computed<boolean>(() => {
     const q = this.contentDataService.searchQuery();
@@ -181,105 +109,47 @@ export class SearchComponent {
 
     const hasQuery = (q.query?.trim()?.length ?? 0) > 0;
     const hasTags = (q.tags?.length ?? 0) > 0;
+    const hasCollection = !!q.collection;
 
-    return hasQuery || hasTags;
+    return hasQuery || hasTags || hasCollection;
   });
 
-  selectMode = signal<string>('');
-
   constructor() {
-    // Search query
-    const initialQ = this.route.snapshot.queryParamMap.get('q') ?? '';
-    if (initialQ) {
-      this.setSearchQuery(initialQ);
-    }
-
-    // Tags (including collections and institutions)
-    const initialT = this.route.snapshot.queryParamMap.get('t') ?? '';
-    if (initialT) {
-      const tags = initialT.split(',');
-      this.addTags(tags);
-    }
-
-    effect(() => {
-      const q = this.contentDataService.searchQuery()?.query ?? '';
-      const tags = this.contentDataService.searchQuery()?.tags ?? [];
-      const currentQ = this.route.snapshot.queryParamMap.get('q') ?? '';
-      const currentT = this.route.snapshot.queryParamMap.get('t') ?? '';
-
-      if (q === currentQ && tags.join(',') === currentT) return;
-
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: {
-          q: q || undefined,
-          t: tags.length > 0 ? tags.join(',') : undefined,
-        },
-        queryParamsHandling: 'merge',
-        replaceUrl: true,
-      });
-    });
+    this.tagService.init();
   }
 
   protected addTag(id: TagID) {
-    this.contentDataService.searchQuery.update(q => {
-      if (q) {
-        if (q.tags && q.tags.length > 0) {
-          return { ...q, tags: [...q.tags, id] };
-        }
-        return { ...q, tags: [id] };
-      }
-      return { query: '', tags: [id] };
-    });
-  }
-
-  private addTags(ids: TagID[]) {
-    this.contentDataService.searchQuery.update(q => {
-      if (q) {
-        if (q.tags && q.tags.length > 0) {
-          return { ...q, tags: [...q.tags, ...ids] };
-        }
-        return { ...q, tags: ids };
-      }
-      return { query: '', tags: ids };
+    this.tagSelect = false;
+    if (this.contentDataService.searchQuery()?.tags?.includes(id)) return;
+    this.router.navigate(['/search'], {
+      queryParams: { t: id },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
   }
 
   protected removeTag(id: TagID) {
-    this.contentDataService.searchQuery.update(q => {
-      if (q) {
-        if (q.tags && q.tags.length > 0) {
-          let prevTags = q.tags;
-          prevTags.splice(prevTags.indexOf(id), 1);
-          return { ...q, tags: prevTags };
-        }
-        return { ...q };
-      }
-      return { query: '' };
+    const currentTags = this.contentDataService.searchQuery()?.tags ?? [];
+    const newTags = currentTags.filter(e => e !== id);
+    this.router.navigate(['/search'], {
+      queryParams: { t: newTags.length ? newTags : null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
-  }
-
-  private setSearchQuery(q: string) {
-    this.contentDataService.searchQuery.update(() => ({ query: q }));
-  }
-
-  handleCategorySelect(category: string) {
-    // @ts-ignore
-    this.contentDataService.searchQuery.update(q => ({ ...q, tags: category }));
   }
 
   handleSearch(event: Event) {
     const input = event.target as HTMLInputElement;
-    this.contentDataService.searchQuery.update(q => ({ ...q, query: input.value }));
-  }
-
-  handleLongPressMenu(id: string) {
-    this.quickAction.update(() => id);
+    this.router.navigate(['/search'], {
+      queryParams: { q: input.value !== '' ? input.value : null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   folderSelect() {
-    if (this.selectMode() != '') {
-      this.selectMode.update(() => '');
+    if (this.folderService.selectMode() != '') {
+      this.folderService.selectMode.update(() => '');
       return;
     }
     const ref = this.dialogService.open(FolderSelectModalComponent, {
@@ -287,17 +157,25 @@ export class SearchComponent {
     });
     ref?.onClose.subscribe(folderId => {
       if (folderId) {
-        this.selectMode.update(() => folderId);
+        this.folderService.selectMode.update(() => folderId);
       }
     });
   }
 
   addToFolder(id: string) {
-    if (this.folderService.isInFolder(id, this.selectMode())) {
-      this.folderService.removeFromFolder(id, this.selectMode());
+    if (this.folderService.isInFolder(id, this.folderService.selectMode())) {
+      this.folderService.removeFromFolder(id, this.folderService.selectMode());
       return;
     }
-    this.folderService.addToFolder(id, this.selectMode());
+    this.folderService.addToFolder(id, this.folderService.selectMode());
+  }
+
+  removeCollection() {
+    this.router.navigate(['/search'], {
+      queryParams: { c: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   protected readonly Math = Math;
