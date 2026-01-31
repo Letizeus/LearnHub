@@ -60,17 +60,6 @@
                 <label for="integeronly"><b>Total points</b></label>
                 <p-inputnumber inputId="integeronly" [(ngModel)]="totalPoints" />
             </div>
-
-            <div class="singlePreview" *ngIf="activePreview" (click)="closePreview()">
-                <img [src]="activePreview"/>
-            </div>
-
-            <p-button
-                label="Upload"
-                type="button" 
-                severity="primary"
-                (onClick)="addExercise(exerciseFileUpload, solutionFileUpload)">
-            </p-button>
         </div>
     </body>
 </html>

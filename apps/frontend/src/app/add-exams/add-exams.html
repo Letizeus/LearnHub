@@ -29,17 +29,6 @@
                     </div>
                 </p-scrollPanel>
             }
-
-            <div class="singlePreview" *ngIf="activePreview" (click)="closePreview()">
-                <img [src]="activePreview"/>
-            </div>
-
-            <p-button
-                label="Upload"
-                type="button" 
-                severity="primary"
-                (onClick)="addExam(fileUpload)">
-            </p-button>
         </div>
     </body>
 </html>
