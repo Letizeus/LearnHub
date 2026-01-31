@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from "@angular/common";
+import { HttpClient } from "@angular/common/http";
 
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -32,6 +33,8 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
         FileUpload
     ],
 }) export class AddView {
+    constructor(private http: HttpClient){}
+
     protected activePreview: string | null = null;
 
     //LearningContentCollectionForm
@@ -58,8 +61,39 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
     }
 
     upload(){
+        const fd = new FormData();
+        fd.append('title', this.title);
+        const payload = this.learningContents.map(lc => ({
+            type: lc.type,
+            keywords: lc.keywords,
+            exercise: {
+                text: lc.exercise.text,
+                tip: lc.exercise.tip,
+                solution: lc.exercise.solution,
+                total_points: lc.exercise.total_points
+            }
+        }))
 
-    } 
+        fd.append('learningContents', new Blob([JSON.stringify(payload)], {type: 'application/json'}));
+        this.learningContents.forEach((lc, i) => {
+            lc.exercise.images.forEach((file, j) => {
+            fd.append(`exerciseImages[${i}][]`, file);
+            });
+
+            lc.exercise.solutionImages.forEach((file, j) => {
+            fd.append(`solutionImages[${i}][]`, file);
+            });
+        });
+        this.http.post('http://localhost:3000/api/uploadLearningContents', fd);
+        fd.forEach((value, key) => {
+            console.log(key, value);
+            if (value instanceof File) {
+                console.log('  name:', value.name);
+                console.log('  type:', value.type);
+                console.log('  size:', value.size);
+            }
+        });
+    }  
 }
 
 export class LearningContentForm {
