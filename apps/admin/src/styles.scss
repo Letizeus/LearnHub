@@ -336,11 +336,6 @@ body {
     }
   }
 
-  p-drawer .p-drawer {
-    width: 100vw;
-    max-width: 100vw;
-  }
-
   .p-dialog-footer {
     flex-direction: column-reverse;
     gap: $spacing-sm;
@@ -349,6 +344,29 @@ body {
       width: 100%;
     }
   }
+}
+
+// =============================================================================
+// Global Dialog & Drawer Styles
+// =============================================================================
+
+.p-dialog {
+  width: $dialog-width-sm !important;
+  max-width: calc(100vw - $spacing-2xl) !important;
+}
+
+p-dialog.dialog-md .p-dialog,
+p-drawer .p-dialog {
+  width: $dialog-width-md !important;
+}
+
+p-dialog.dialog-lg .p-dialog {
+  width: $dialog-width-lg !important;
+}
+
+.p-drawer {
+  width: $drawer-width !important;
+  max-width: calc(100vw - $spacing-2xl) !important;
 }
 
 @media (max-width: $breakpoint-sm) {

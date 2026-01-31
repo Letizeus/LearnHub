@@ -179,3 +179,9 @@ $sidebar-bg: var(--p-surface-900);
 $sidebar-text: var(--p-surface-0);
 $sidebar-hover: color-mix(in srgb, var(--p-surface-0) 8%, transparent);
 $sidebar-active: color-mix(in srgb, var(--p-blue-500) 15%, transparent);
+
+// --- Dialog & Drawer Sizes ---
+$dialog-width-sm: 400px;
+$dialog-width-md: 450px;
+$dialog-width-lg: 600px;
+$drawer-width: 450px;

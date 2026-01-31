@@ -1,32 +1,30 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Tag, TagGroup, TagVisibility } from '@learnhub/models';
-import { TagsService } from './tags.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { DialogModule } from 'primeng/dialog';
+import { ColorPickerModule } from 'primeng/colorpicker';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
-import { SelectModule } from 'primeng/select';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { TagsService } from './tags.service';
 
 @Component({
   selector: 'app-tags',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ButtonModule,
-    CardModule,
-    InputTextModule,
-    DialogModule,
+    ColorPickerModule,
     ConfirmDialogModule,
+    DialogModule,
+    InputTextModule,
+    SelectModule,
     ToastModule,
     TooltipModule,
-    SelectModule,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './tags.component.html',
@@ -38,23 +36,30 @@ export class TagsComponent {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
 
-  // State signals
   readonly tagGroups = signal<TagGroup[]>([]);
   readonly selectedTagGroup = signal<TagGroup | null>(null);
-  readonly dialogVisible = signal<boolean>(false);
-  readonly tagDialogVisible = signal<boolean>(false);
-
-  // Form state
-  readonly searchQuery = signal<string>('');
-  readonly editMode = signal<boolean>(false);
+  readonly dialogVisible = signal(false);
+  readonly tagDialogVisible = signal(false);
+  readonly searchQuery = signal('');
+  readonly editMode = signal(false);
   readonly editingTag = signal<Tag | null>(null);
   readonly tagGroupForm = signal<Partial<TagGroup>>({});
   readonly tagForm = signal<Partial<Tag>>({});
 
-  // Visibility options
   readonly visibilityOptions = [
     { label: 'Search Page', value: TagVisibility.SEARCH_PAGE },
     { label: 'Tag Select', value: TagVisibility.TAG_SELECT },
+  ];
+
+  readonly iconOptions = [
+    { label: 'Tag', value: 'tag', icon: 'pi-tag' },
+    { label: 'Folder', value: 'folder', icon: 'pi-folder' },
+    { label: 'Book', value: 'book', icon: 'pi-book' },
+    { label: 'Document', value: 'file-pdf', icon: 'pi-file-pdf' },
+    { label: 'Video', value: 'video', icon: 'pi-video' },
+    { label: 'Pencil', value: 'pencil', icon: 'pi-pencil' },
+    { label: 'Calculator', value: 'calculator', icon: 'pi-calculator' },
+    { label: 'Graduation Cap', value: 'graduation-cap', icon: 'pi-graduation-cap' },
   ];
 
   constructor() {
@@ -83,7 +88,7 @@ export class TagsComponent {
 
   openCreateTagGroupDialog(): void {
     this.editMode.set(false);
-    this.tagGroupForm.set({ name: '', icon: '', visibility: TagVisibility.SEARCH_PAGE });
+    this.tagGroupForm.set({ name: '', icon: 'folder', visibility: TagVisibility.SEARCH_PAGE });
     this.dialogVisible.set(true);
   }
 
@@ -95,6 +100,9 @@ export class TagsComponent {
 
   closeDialog(): void {
     this.dialogVisible.set(false);
+  }
+
+  onDialogHide(): void {
     this.tagGroupForm.set({});
   }
 
@@ -177,7 +185,7 @@ export class TagsComponent {
 
   openAddTagDialog(): void {
     this.editingTag.set(null);
-    this.tagForm.set({ name: '' });
+    this.tagForm.set({ name: '', icon: 'tag' });
     this.tagDialogVisible.set(true);
   }
 
@@ -189,6 +197,9 @@ export class TagsComponent {
 
   closeTagDialog(): void {
     this.tagDialogVisible.set(false);
+  }
+
+  onTagDialogHide(): void {
     this.tagForm.set({});
     this.editingTag.set(null);
   }
@@ -277,7 +288,7 @@ export class TagsComponent {
   }
 
   getVisibilityLabel(visibility: TagVisibility): string {
-    return visibility === TagVisibility.SEARCH_PAGE ? 'Search Page' : 'Tag Select';
+    return this.visibilityOptions.find((opt) => opt.value === visibility)?.label ?? 'Unknown';
   }
 
   private loadTagGroups(): void {

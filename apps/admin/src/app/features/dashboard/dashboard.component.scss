@@ -25,7 +25,7 @@
   display: flex;
   align-items: center;
   gap: $spacing-md;
-  margin-top: -6px;
+  margin-top: calc(-1 * $spacing-sm);
 
   label {
     font-weight: $font-medium;
@@ -69,7 +69,7 @@
   flex-shrink: 0;
 
   i {
-    font-size: 1.5rem;
+    font-size: $font-2xl;
     color: var(--p-surface-0);
   }
 
@@ -174,7 +174,7 @@
 
   .empty-subtitle {
     margin-top: $spacing-sm;
-    font-size: 0.9rem;
+    font-size: $font-sm;
     color: $text-muted;
   }
 }
@@ -243,7 +243,7 @@
 
   p {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: $font-sm;
     color: $text-muted;
   }
 }

@@ -64,7 +64,7 @@ nav a.active {
 }
 
 .icon {
-  width: 1.5rem;
+  width: $font-xl;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -107,7 +107,7 @@ nav a.active {
   justify-content: space-between;
   padding: $spacing-lg $spacing-xl;
   background: $bg-card;
-  border-bottom: 1px solid var(--p-surface-200);
+  border-bottom: 1px solid $surface-200;
 }
 
 .page {
@@ -127,7 +127,7 @@ nav a.active {
     gap: $spacing-md;
     padding: $spacing-md $spacing-lg;
     background: $bg-card;
-    border-bottom: 1px solid var(--p-surface-200);
+    border-bottom: 1px solid $surface-200;
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -141,9 +141,9 @@ nav a.active {
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: $mask-bg;
     z-index: 1001;
-    animation: fadeIn 0.2s ease-in-out;
+    animation: fadeIn $transition ease-in-out;
   }
 
   .sidebar {
@@ -153,7 +153,7 @@ nav a.active {
     width: 280px;
     max-width: 85vw;
     z-index: 1002;
-    transition: left 0.3s ease-in-out;
+    transition: left $transition ease-in-out;
     box-shadow: $shadow-lg;
 
     &.open {

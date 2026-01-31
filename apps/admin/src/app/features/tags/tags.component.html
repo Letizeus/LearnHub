@@ -106,10 +106,16 @@
         <div class="tags-grid">
           @if (tagGroup.tags.length > 0) {
             @for (tag of tagGroup.tags; track tag.id) {
-              <p-card [class]="'tag-card'">
-                <ng-template pTemplate="content">
+              <div class="tag-card"
+                   [style.--tag-color]="tag.color || 'var(--p-primary-color)'"
+                   [style.background-image]="tag.backgroundImage ? 'url(' + tag.backgroundImage + ')' : 'none'"
+                   [class.has-background]="!!tag.backgroundImage">
+                <div class="tag-card-color-bar"></div>
+                <div class="tag-card-content">
                   <div class="tag-card-header">
-                    <i [class]="'pi pi-' + (tag.icon || 'tag')" class="tag-icon"></i>
+                    <div class="tag-icon-wrapper">
+                      <i [class]="'pi pi-' + (tag.icon || 'tag')" class="tag-icon"></i>
+                    </div>
                     <span class="tag-name">{{ tag.name }}</span>
                   </div>
                   <div class="tag-card-actions">
@@ -134,22 +140,13 @@
                       aria-label="Delete tag"
                     ></button>
                   </div>
-                </ng-template>
-              </p-card>
+                </div>
+              </div>
             }
           } @else {
             <div class="empty-state">
               <i class="pi pi-tag"></i>
               <p>No tags yet</p>
-              <button
-                pButton
-                type="button"
-                label="Add First Tag"
-                icon="pi pi-plus"
-                class="p-button-sm"
-                (click)="openAddTagDialog()"
-                aria-label="Add first tag"
-              ></button>
             </div>
           }
         </div>
@@ -166,8 +163,7 @@
     [(visible)]="dialogVisible"
     [header]="editMode() ? 'Edit Tag Group' : 'Create Tag Group'"
     [modal]="true"
-    [style]="{ width: '450px' }"
-    (onHide)="closeDialog()"
+    (onHide)="onDialogHide()"
   >
     <ng-template pTemplate="content">
       <div class="form-group">
@@ -183,14 +179,29 @@
 
       <div class="form-group">
         <label for="taggroup-icon">Icon *</label>
-        <input
-          pInputText
-          id="taggroup-icon"
+        <p-select
+          inputId="taggroup-icon"
+          [options]="iconOptions"
           [(ngModel)]="tagGroupForm().icon"
-          placeholder="e.g., book, graduation-cap, etc."
-          class="form-input"
-        />
-        <small>PrimeIcon name (without pi- prefix)</small>
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select an icon"
+          appendTo="body"
+          [style]="{ width: '100%' }"
+        >
+          <ng-template pTemplate="selectedItem" let-option>
+            <div class="icon-option">
+              <i [class]="'pi ' + option.icon"></i>
+              <span>{{ option.label }}</span>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="item" let-option>
+            <div class="icon-option">
+              <i [class]="'pi ' + option.icon"></i>
+              <span>{{ option.label }}</span>
+            </div>
+          </ng-template>
+        </p-select>
       </div>
 
       <div class="form-group">
@@ -209,17 +220,8 @@
     </ng-template>
 
     <ng-template pTemplate="footer">
-      <button
-        pButton
-        type="button"
-        class="p-button-text"
-        (click)="closeDialog()"
-      >
-        Cancel
-      </button>
-      <button pButton type="button" (click)="saveTagGroup()">
-        {{ editMode() ? 'Update' : 'Create' }}
-      </button>
+      <button pButton type="button" label="Cancel" class="p-button-text" (click)="closeDialog()"></button>
+      <button pButton type="button" [label]="editMode() ? 'Update' : 'Create'" (click)="saveTagGroup()"></button>
     </ng-template>
   </p-dialog>
 
@@ -227,8 +229,7 @@
     [(visible)]="tagDialogVisible"
     [header]="editingTag() ? 'Edit Tag' : 'Add Tag'"
     [modal]="true"
-    [style]="{ width: '450px' }"
-    (onHide)="closeTagDialog()"
+    (onHide)="onTagDialogHide()"
   >
     <ng-template pTemplate="content">
       <div class="form-group">
@@ -244,43 +245,71 @@
 
       <div class="form-group">
         <label for="tag-icon">Icon</label>
-        <input
-          pInputText
-          id="tag-icon"
+        <p-select
+          inputId="tag-icon"
+          [options]="iconOptions"
           [(ngModel)]="tagForm().icon"
-          placeholder="e.g., book, graduation-cap, etc."
-          class="form-input"
-        />
-        <small>PrimeIcon name (without pi- prefix)</small>
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select an icon"
+          appendTo="body"
+          [style]="{ width: '100%' }"
+        >
+          <ng-template pTemplate="selectedItem" let-option>
+            <div class="icon-option">
+              <i [class]="'pi ' + option.icon"></i>
+              <span>{{ option.label }}</span>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="item" let-option>
+            <div class="icon-option">
+              <i [class]="'pi ' + option.icon"></i>
+              <span>{{ option.label }}</span>
+            </div>
+          </ng-template>
+        </p-select>
       </div>
 
       <div class="form-group">
         <label for="tag-color">Color</label>
+        <div class="color-picker-container">
+          <p-colorPicker
+            inputId="tag-color"
+            [(ngModel)]="tagForm().color"
+            [inline]="false"
+            appendTo="body"
+          ></p-colorPicker>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="tagForm().color"
+            placeholder="#FF0000"
+            class="color-input"
+            maxlength="7"
+          />
+        </div>
+        <small>Click the color box or enter a hex color code</small>
+      </div>
+
+      <div class="form-group">
+        <label for="tag-background">Background Image</label>
         <input
           pInputText
-          id="tag-color"
-          [(ngModel)]="tagForm().color"
-          placeholder="e.g., #FF5733"
+          id="tag-background"
+          [(ngModel)]="tagForm().backgroundImage"
+          placeholder="https://example.com/image.jpg"
           class="form-input"
         />
+        <small>URL to a background image (optional)</small>
       </div>
     </ng-template>
 
     <ng-template pTemplate="footer">
-      <button
-        pButton
-        type="button"
-        class="p-button-text"
-        (click)="closeTagDialog()"
-      >
-        Cancel
-      </button>
-      <button pButton type="button" (click)="saveTag()">
-        {{ editingTag() ? 'Update' : 'Add' }}
-      </button>
+      <button pButton type="button" label="Cancel" class="p-button-text" (click)="closeTagDialog()"></button>
+      <button pButton type="button" [label]="editingTag() ? 'Update' : 'Add'" (click)="saveTag()"></button>
     </ng-template>
   </p-dialog>
 
-  <p-confirmDialog></p-confirmDialog>
-  <p-toast></p-toast>
+  <p-confirmDialog />
+  <p-toast />
 </div>

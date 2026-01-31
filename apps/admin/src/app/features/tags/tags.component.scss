@@ -1,17 +1,14 @@
 @use '../../../styles/variables' as *;
 
-// Component variables
 $sidebar-width: 350px;
 $sidebar-width-md: 300px;
-$layout-min-height: 600px;
-$taggroups-max-height: 600px;
+$section-min-height: 600px;
 $tag-card-min-width: 200px;
 
 .tags-layout {
   display: grid;
   grid-template-columns: $sidebar-width 1fr;
   gap: $spacing-xl;
-  min-height: $layout-min-height;
 
   @media (max-width: $breakpoint-lg) {
     grid-template-columns: $sidebar-width-md 1fr;
@@ -29,6 +26,7 @@ $tag-card-min-width: 200px;
   padding: $spacing-xl;
   border-radius: $border-radius;
   box-shadow: $shadow-md;
+  min-height: $section-min-height;
 
   @media (max-width: $breakpoint-md) {
     padding: $spacing-lg;
@@ -88,7 +86,7 @@ $tag-card-min-width: 200px;
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
-  max-height: $taggroups-max-height;
+  max-height: $section-min-height;
   overflow-y: auto;
   padding-right: $spacing-xs;
 }
@@ -171,38 +169,79 @@ $tag-card-min-width: 200px;
   }
 }
 
-::ng-deep .tag-card {
+.tag-card {
+  position: relative;
+  background: $bg-card;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
   transition: all $transition;
+  border: 1px solid $surface-200;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  &.has-background {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, color-mix(in srgb, $surface-0 70%, transparent) 0%, color-mix(in srgb, $surface-0 80%, transparent) 100%);
+      z-index: 0;
+    }
+
+    .tag-card-color-bar,
+    .tag-card-content {
+      position: relative;
+      z-index: 1;
+    }
+  }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-sm;
+    box-shadow: $shadow-md;
+    border-color: var(--tag-color);
   }
 
-  .p-card-body {
-    padding: $spacing-md;
+  .tag-card-color-bar {
+    height: $spacing-xs;
+    background: var(--tag-color);
   }
 
-  .p-card-content {
-    padding: 0;
+  .tag-card-content {
+    padding: $spacing-lg;
   }
 
   .tag-card-header {
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-sm;
+    gap: $spacing-md;
+    margin-bottom: $spacing-md;
 
-    .tag-icon {
-      color: $text-secondary;
-      font-size: $font-lg;
+    .tag-icon-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: $spacing-2xl;
+      height: $spacing-2xl;
+      border-radius: calc($border-radius / 2);
+      background: color-mix(in srgb, var(--tag-color) 20%, $surface-0);
+      flex-shrink: 0;
+      box-shadow: $shadow-sm;
+
+      .tag-icon {
+        color: var(--tag-color);
+        font-size: $font-lg;
+        filter: brightness(0.8);
+      }
     }
 
     .tag-name {
-      font-weight: $font-medium;
+      font-weight: $font-semibold;
       color: $text-color;
       font-size: $font-base;
       word-break: break-word;
+      flex: 1;
+      text-shadow: $shadow-sm;
     }
   }
 
@@ -240,11 +279,56 @@ $tag-card-min-width: 200px;
     color: $text-muted;
     font-size: $font-xs;
   }
+
+  .color-picker-container {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    ::ng-deep .p-colorpicker {
+      .p-colorpicker-preview {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: calc($border-radius / 2);
+        border: 2px solid $surface-300;
+        cursor: pointer;
+        transition: all $transition;
+
+        &:hover {
+          border-color: $primary;
+          box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color) 20%, transparent);
+        }
+      }
+    }
+
+    .color-input {
+      flex: 1;
+      font-family: monospace;
+      text-transform: uppercase;
+    }
+  }
+}
+
+.icon-option {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  i {
+    font-size: $font-lg;
+    color: $primary;
+  }
 }
 
 .empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: $spacing-2xl;
   text-align: center;
+  min-height: 450px;
 
   i {
     font-size: 3rem;
@@ -257,17 +341,20 @@ $tag-card-min-width: 200px;
   }
 }
 
+.tags-section > .empty-state {
+  padding-top: 135px;
+}
+
 @media (max-width: $breakpoint-md) {
   .taggroup-actions,
   .tag-card-actions {
     opacity: 1 !important;
   }
-}
 
-@media (max-width: $breakpoint-sm) {
-  ::ng-deep .p-dialog {
-    width: calc(100vw - 2rem) !important;
-    max-width: 450px;
-    margin: 1rem;
+  .tags-section > .empty-state {
+    i {
+      transform: rotate(90deg);
+    }
   }
 }
+

@@ -4,7 +4,7 @@
   align-items: flex-start;
 
   button {
-    margin-top: -6px;
+    margin-top: calc(-1 * $spacing-sm);
   }
 }
 

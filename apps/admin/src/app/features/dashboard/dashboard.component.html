@@ -17,7 +17,7 @@
 
   <!-- Loading State -->
   @if (isLoading()) {
-  <p-card styleClass="state-card">
+  <p-card class="state-card">
     <ng-template pTemplate="content">
       <div class="loading-state">
         <i class="pi pi-spin pi-spinner loading-icon"></i>
@@ -29,7 +29,7 @@
 
   <!-- Error State -->
   @else if (error()) {
-  <p-card styleClass="state-card">
+  <p-card class="state-card">
     <ng-template pTemplate="content">
       <div class="error-state">
         <i class="pi pi-exclamation-triangle error-icon"></i>
@@ -51,7 +51,7 @@
   @else if (metricCards().length > 0) {
   <div class="metrics-grid">
     @for (card of metricCards(); track card.title) {
-    <p-card styleClass="metric-card">
+    <p-card class="metric-card">
       <ng-template pTemplate="content">
         <div class="metric-card-content">
           <div class="metric-icon" [class]="card.colorClass">
@@ -70,7 +70,7 @@
 
   <!-- Empty State (if no metrics) -->
   @else {
-  <p-card styleClass="state-card">
+  <p-card class="state-card">
     <ng-template pTemplate="content">
       <div class="empty-state">
         <i class="pi pi-inbox empty-icon"></i>
@@ -85,7 +85,7 @@
 
   <!-- Registration Chart Section -->
   @if (!isLoading() && !error()) {
-  <p-card styleClass="chart-card">
+  <p-card class="chart-card">
     <ng-template pTemplate="header">
       <h3 class="chart-title">User Registrations Over Time</h3>
     </ng-template>

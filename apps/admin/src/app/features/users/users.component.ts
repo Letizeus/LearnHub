@@ -145,7 +145,8 @@ export class UsersComponent {
     this.confirmationService.confirm({
       message: `Are you sure you want to unlock user "${user.displayName}"? They will regain access to the platform.`,
       header: 'Unlock User',
-      icon: 'pi pi-question-circle',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.usersService.unlockUser(user.id).subscribe({
           next: () => {

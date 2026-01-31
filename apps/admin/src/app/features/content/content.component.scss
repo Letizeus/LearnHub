@@ -2,7 +2,7 @@
 
 .type-badge {
   display: inline-block;
-  padding: 0.25rem 0.75rem;
+  padding: $spacing-xs $spacing-md;
   border-radius: calc($border-radius / 2);
   font-size: $font-sm;
   font-weight: $font-medium;
