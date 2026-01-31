@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { ContentService } from './content.service';
-import { LearningContent } from '../../../content/learning-content.schema';
+import { LearningContent, LearningContentCollection } from '../../../content/learning-content.schema';
 
 describe('ContentService', () => {
   let service: ContentService;
@@ -13,6 +13,11 @@ describe('ContentService', () => {
     findByIdAndUpdate: jest.fn(),
     findByIdAndDelete: jest.fn(),
     countDocuments: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockCollectionModel = {
+    findByIdAndUpdate: jest.fn(),
   };
 
   const mockContent = {
@@ -59,6 +64,7 @@ describe('ContentService', () => {
       providers: [
         ContentService,
         { provide: getModelToken(LearningContent.name), useValue: mockContentModel },
+        { provide: getModelToken(LearningContentCollection.name), useValue: mockCollectionModel },
       ],
     }).compile();
 
@@ -114,11 +120,13 @@ describe('ContentService', () => {
   describe('deleteContent', () => {
     it('should delete a content item and return success', async () => {
       mockContentModel.findByIdAndDelete.mockReturnValue(mockExecQuery(mockContent));
+      mockCollectionModel.findByIdAndUpdate.mockReturnValue(mockExecQuery({}));
 
       const result = await service.deleteContent('1');
 
       expect(result.success).toBe(true);
       expect(result.id).toBe('1');
+      expect(mockCollectionModel.findByIdAndUpdate).toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if content not found', async () => {

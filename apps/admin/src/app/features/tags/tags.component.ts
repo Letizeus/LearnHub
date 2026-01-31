@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { Tag, TagGroup, TagVisibility } from '@learnhub/models';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -7,6 +8,7 @@ import { ColorPickerModule } from 'primeng/colorpicker';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
@@ -22,6 +24,7 @@ import { TagsService } from './tags.service';
     ConfirmDialogModule,
     DialogModule,
     InputTextModule,
+    MultiSelectModule,
     SelectModule,
     ToastModule,
     TooltipModule,
@@ -38,13 +41,19 @@ export class TagsComponent {
 
   readonly tagGroups = signal<TagGroup[]>([]);
   readonly selectedTagGroup = signal<TagGroup | null>(null);
+  readonly ungroupedTags = signal<Tag[]>([]);
+  readonly showingUngrouped = signal(false);
   readonly dialogVisible = signal(false);
   readonly tagDialogVisible = signal(false);
+  readonly addToGroupDialogVisible = signal(false);
   readonly searchQuery = signal('');
   readonly editMode = signal(false);
   readonly editingTag = signal<Tag | null>(null);
   readonly tagGroupForm = signal<Partial<TagGroup>>({});
   readonly tagForm = signal<Partial<Tag>>({});
+  readonly selectedTagForGrouping = signal<Tag | null>(null);
+  readonly selectedGroupIds = signal<string[]>([]);
+  readonly availableGroupsForTag = signal<TagGroup[]>([]);
 
   readonly visibilityOptions = [
     { label: 'Search Page', value: TagVisibility.SEARCH_PAGE },
@@ -71,6 +80,7 @@ export class TagsComponent {
   }
 
   selectTagGroup(tagGroup: TagGroup): void {
+    this.showingUngrouped.set(false);
     this.tagsService.getTagGroup(tagGroup.id).subscribe({
       next: (detailedTagGroup) => {
         this.selectedTagGroup.set(detailedTagGroup);
@@ -84,6 +94,12 @@ export class TagsComponent {
         });
       },
     });
+  }
+
+  selectUngrouped(): void {
+    this.showingUngrouped.set(true);
+    this.selectedTagGroup.set(null);
+    this.loadUngroupedTags();
   }
 
   openCreateTagGroupDialog(): void {
@@ -153,7 +169,7 @@ export class TagsComponent {
 
   deleteTagGroup(tagGroup: TagGroup): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete tag group "${tagGroup.name}"? This will also delete all associated tags.`,
+      message: `Are you sure you want to delete tag group "${tagGroup.name}"? This will not delete the tags, but they will no longer be grouped.`,
       header: 'Delete Tag Group',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
@@ -189,6 +205,10 @@ export class TagsComponent {
     this.tagDialogVisible.set(true);
   }
 
+  openAddUngroupedTagDialog(): void {
+    this.openAddTagDialog();
+  }
+
   openEditTagDialog(tag: Tag): void {
     this.editingTag.set(tag);
     this.tagForm.set({ ...tag });
@@ -208,12 +228,22 @@ export class TagsComponent {
     const form = this.tagForm();
     const tagGroup = this.selectedTagGroup();
     const editingTag = this.editingTag();
+    const isUngrouped = this.showingUngrouped();
 
-    if (!form.name || !tagGroup) {
+    if (!form.name) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validation Error',
         detail: 'Tag name is required',
+      });
+      return;
+    }
+
+    if (!tagGroup && !isUngrouped) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation Error',
+        detail: 'Please select a tag group or ungrouped tags',
       });
       return;
     }
@@ -227,52 +257,210 @@ export class TagsComponent {
       return;
     }
 
-    const operation = editingTag && editingTag.id
-      ? this.tagsService.updateTag(tagGroup.id, editingTag.id, form)
-      : this.tagsService.addTag(tagGroup.id, form);
+    if (editingTag && editingTag.id) {
+      this.tagsService.updateTag(editingTag.id, form).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Tag updated successfully',
+          });
+          if (isUngrouped) {
+            this.loadUngroupedTags();
+          } else if (tagGroup) {
+            this.selectTagGroup(tagGroup);
+          }
+          this.loadTagGroups();
+          this.closeTagDialog();
+        },
+        error: (err) => {
+          console.error('Failed to update tag:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update tag',
+          });
+        },
+      });
+    } else if (isUngrouped) {
+      this.tagsService.createTag(form).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Tag created successfully',
+          });
+          this.loadUngroupedTags();
+          this.closeTagDialog();
+        },
+        error: (err) => {
+          console.error('Failed to create tag:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to create tag',
+          });
+        },
+      });
+    } else if (tagGroup) {
+      this.tagsService.createTag(form).subscribe({
+        next: (createdTag) => {
+          this.tagsService.addTagToGroup(tagGroup.id, createdTag.id!).subscribe({
+            next: (updatedTagGroup) => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Tag created and added to group successfully',
+              });
+              this.selectedTagGroup.set(updatedTagGroup);
+              this.loadTagGroups();
+              this.closeTagDialog();
+            },
+            error: (err) => {
+              console.error('Failed to add tag to group:', err);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Tag created but failed to add to group',
+              });
+            },
+          });
+        },
+        error: (err) => {
+          console.error('Failed to create tag:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to create tag',
+          });
+        },
+      });
+    }
+  }
 
-    operation.subscribe({
-      next: (updatedTagGroup) => {
+  removeFromGroup(tag: Tag): void {
+    const tagId = tag.id;
+    const tagGroup = this.selectedTagGroup();
+    if (!tagId || !tagGroup) return;
+
+    this.confirmationService.confirm({
+      message: `Remove "${tag.name}" from "${tagGroup.name}"?`,
+      header: 'Remove from Group',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.tagsService.removeTagFromGroup(tagGroup.id, tagId).subscribe({
+          next: (updatedTagGroup: any) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Tag removed from group',
+            });
+            this.selectedTagGroup.set(updatedTagGroup);
+            this.loadTagGroups();
+          },
+          error: (err: any) => {
+            console.error('Failed to remove tag from group:', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to remove tag from group',
+            });
+          },
+        });
+      },
+    });
+  }
+
+  openAddToGroupDialog(tag: Tag): void {
+    this.selectedTagForGrouping.set(tag);
+    this.selectedGroupIds.set([]);
+
+    // Filter out groups that already contain this tag
+    const availableGroups = this.tagGroups().filter(group =>
+      !group.tags.some(t => t.id === tag.id)
+    );
+    this.availableGroupsForTag.set(availableGroups);
+
+    this.addToGroupDialogVisible.set(true);
+  }
+
+  closeAddToGroupDialog(): void {
+    this.addToGroupDialogVisible.set(false);
+    this.selectedTagForGrouping.set(null);
+    this.selectedGroupIds.set([]);
+  }
+
+  addToGroup(): void {
+    const tag = this.selectedTagForGrouping();
+    const groupIds = this.selectedGroupIds();
+
+    if (!tag?.id || !groupIds || groupIds.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation Error',
+        detail: 'Please select at least one tag group',
+      });
+      return;
+    }
+
+    const addRequests = groupIds.map(groupId =>
+      this.tagsService.addTagToGroup(groupId, tag.id!)
+    );
+
+    forkJoin(addRequests).subscribe({
+      next: () => {
+        const groupText = groupIds.length === 1 ? 'group' : `${groupIds.length} groups`;
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: `Tag ${this.editingTag() ? 'updated' : 'added'} successfully`,
+          detail: `Tag added to ${groupText} successfully`,
         });
-        this.selectedTagGroup.set(updatedTagGroup);
+        this.loadUngroupedTags();
         this.loadTagGroups();
-        this.closeTagDialog();
+        const selectedGroup = this.selectedTagGroup();
+        if (selectedGroup) {
+          this.selectTagGroup(selectedGroup);
+        }
+        this.closeAddToGroupDialog();
       },
       error: (err) => {
-        console.error('Failed to save tag:', err);
+        console.error('Failed to add tag to groups:', err);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to save tag',
+          detail: 'Failed to add tag to some groups',
         });
       },
     });
   }
 
   deleteTag(tag: Tag): void {
-    const tagGroup = this.selectedTagGroup();
     const tagId = tag.id;
-    if (!tagGroup || !tagId) return;
+    if (!tagId) return;
 
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete tag "${tag.name}"?`,
+      message: `Are you sure you want to delete tag "${tag.name}"? This will remove it from all groups.`,
       header: 'Delete Tag',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.tagsService.deleteTag(tagGroup.id, tagId).subscribe({
-          next: (updatedTagGroup) => {
+        this.tagsService.deleteTag(tagId).subscribe({
+          next: () => {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
               detail: 'Tag deleted successfully',
             });
-            this.selectedTagGroup.set(updatedTagGroup);
-            this.loadTagGroups();
+            if (this.showingUngrouped()) {
+              this.loadUngroupedTags();
+            } else {
+              const tagGroup = this.selectedTagGroup();
+              if (tagGroup) {
+                this.selectTagGroup(tagGroup);
+              }
+              this.loadTagGroups();
+            }
           },
           error: (err) => {
             console.error('Failed to delete tag:', err);
@@ -305,6 +493,22 @@ export class TagsComponent {
           severity: 'error',
           summary: 'Error',
           detail: 'Failed to load tag groups',
+        });
+      },
+    });
+  }
+
+  private loadUngroupedTags(): void {
+    this.tagsService.getUngroupedTags().subscribe({
+      next: (response) => {
+        this.ungroupedTags.set(response.data);
+      },
+      error: (err) => {
+        console.error('Failed to load ungrouped tags:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load ungrouped tags',
         });
       },
     });

@@ -14,47 +14,85 @@ export interface TagGroupResponse {
   total: number;
 }
 
+export interface TagResponse {
+  data: Tag[];
+  total: number;
+}
+
+export interface TagFilters {
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class TagsService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/admin/taggroups';
+  private readonly tagGroupsUrl = 'http://localhost:3000/api/admin/taggroups';
+  private readonly tagsUrl = 'http://localhost:3000/api/admin/tags';
 
-  getTagGroups(filters: TagGroupFilters = {}): Observable<TagGroupResponse> {
+  private buildParams(filters: TagFilters | TagGroupFilters): Record<string, string> {
     const params: Record<string, string> = {};
     if (filters.search) params['search'] = filters.search;
     if (filters.page) params['page'] = filters.page.toString();
     if (filters.limit) params['limit'] = filters.limit.toString();
+    return params;
+  }
 
-    return this.http.get<TagGroupResponse>(this.apiUrl, { params });
+  // Tag Group operations
+  getTagGroups(filters: TagGroupFilters = {}): Observable<TagGroupResponse> {
+    return this.http.get<TagGroupResponse>(this.tagGroupsUrl, { params: this.buildParams(filters) });
   }
 
   getTagGroup(id: string): Observable<TagGroup> {
-    return this.http.get<TagGroup>(`${this.apiUrl}/${id}`);
+    return this.http.get<TagGroup>(`${this.tagGroupsUrl}/${id}`);
   }
 
   createTagGroup(tagGroup: Partial<TagGroup>): Observable<TagGroup> {
-    return this.http.post<TagGroup>(this.apiUrl, tagGroup);
+    return this.http.post<TagGroup>(this.tagGroupsUrl, tagGroup);
   }
 
   updateTagGroup(id: string, tagGroup: Partial<TagGroup>): Observable<TagGroup> {
-    return this.http.put<TagGroup>(`${this.apiUrl}/${id}`, tagGroup);
+    return this.http.put<TagGroup>(`${this.tagGroupsUrl}/${id}`, tagGroup);
   }
 
   deleteTagGroup(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.tagGroupsUrl}/${id}`);
   }
 
-  addTag(tagGroupId: string, tag: Partial<Tag>): Observable<TagGroup> {
-    return this.http.post<TagGroup>(`${this.apiUrl}/${tagGroupId}/tags`, tag);
+  // Tag operations (standalone)
+  getTags(filters: TagFilters = {}): Observable<TagResponse> {
+    return this.http.get<TagResponse>(this.tagsUrl, { params: this.buildParams(filters) });
   }
 
-  updateTag(tagGroupId: string, tagId: string, tag: Partial<Tag>): Observable<TagGroup> {
-    return this.http.put<TagGroup>(`${this.apiUrl}/${tagGroupId}/tags/${tagId}`, tag);
+  getTag(id: string): Observable<Tag> {
+    return this.http.get<Tag>(`${this.tagsUrl}/${id}`);
   }
 
-  deleteTag(tagGroupId: string, tagId: string): Observable<TagGroup> {
-    return this.http.delete<TagGroup>(`${this.apiUrl}/${tagGroupId}/tags/${tagId}`);
+  createTag(tag: Partial<Tag>): Observable<Tag> {
+    return this.http.post<Tag>(this.tagsUrl, tag);
+  }
+
+  updateTag(tagId: string, tag: Partial<Tag>): Observable<Tag> {
+    return this.http.put<Tag>(`${this.tagsUrl}/${tagId}`, tag);
+  }
+
+  deleteTag(tagId: string): Observable<void> {
+    return this.http.delete<void>(`${this.tagsUrl}/${tagId}`);
+  }
+
+  getUngroupedTags(filters: TagFilters = {}): Observable<TagResponse> {
+    return this.http.get<TagResponse>(`${this.tagsUrl}/ungrouped`, { params: this.buildParams(filters) });
+  }
+
+  // Tag-Group association operations
+  addTagToGroup(tagGroupId: string, tagId: string): Observable<TagGroup> {
+    return this.http.post<TagGroup>(`${this.tagGroupsUrl}/${tagGroupId}/tags`, { tagId });
+  }
+
+  removeTagFromGroup(tagGroupId: string, tagId: string): Observable<TagGroup> {
+    return this.http.delete<TagGroup>(`${this.tagGroupsUrl}/${tagGroupId}/tags/${tagId}`);
   }
 }

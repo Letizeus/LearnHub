@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Tag, TagGroup } from '../../../content/tag.schema';
-import { CreateTagGroupDto, UpdateTagGroupDto, TagDto } from '../dto/taggroup.dto';
+import { CreateTagGroupDto, UpdateTagGroupDto } from '../dto/taggroup.dto';
 import {
   TagGroup as TagGroupResponse,
   Tag as TagResponse,
@@ -19,7 +19,9 @@ interface FindAllOptions {
 export class TagGroupsService {
   constructor(
     @InjectModel(TagGroup.name)
-    private readonly tagGroupModel: Model<TagGroup>
+    private readonly tagGroupModel: Model<TagGroup>,
+    @InjectModel(Tag.name)
+    private readonly tagModel: Model<Tag>
   ) {}
 
   private toTagResponse(tag: Tag): TagResponse {
@@ -33,13 +35,22 @@ export class TagGroupsService {
   }
 
   private toTagGroupResponse(tagGroup: TagGroup): TagGroupResponse {
+    const populatedTags = tagGroup.tags as unknown as Tag[];
     return {
       id: tagGroup._id.toString(),
       name: tagGroup.name,
       icon: tagGroup.icon,
-      tags: (tagGroup.tags || []).map((tag) => this.toTagResponse(tag)),
+      tags: populatedTags.map((tag) => this.toTagResponse(tag)),
       visibility: tagGroup.visibility,
     };
+  }
+
+  private async findOnePopulated(id: string): Promise<TagGroup> {
+    const tagGroup = await this.tagGroupModel.findById(id).populate('tags').exec();
+    if (!tagGroup) {
+      throw new NotFoundException(`Tag group with ID ${id} not found`);
+    }
+    return tagGroup;
   }
 
   async findAll(options: FindAllOptions) {
@@ -52,7 +63,7 @@ export class TagGroupsService {
     }
 
     const [tagGroups, total] = await Promise.all([
-      this.tagGroupModel.find(filter).skip(skip).limit(limit).exec(),
+      this.tagGroupModel.find(filter).skip(skip).limit(limit).populate('tags').exec(),
       this.tagGroupModel.countDocuments(filter).exec(),
     ]);
 
@@ -63,27 +74,36 @@ export class TagGroupsService {
   }
 
   async findOne(id: string): Promise<TagGroupResponse> {
-    const tagGroup = await this.tagGroupModel.findById(id).exec();
-    if (!tagGroup) {
-      throw new NotFoundException(`Tag group with ID ${id} not found`);
-    }
+    const tagGroup = await this.findOnePopulated(id);
     return this.toTagGroupResponse(tagGroup);
   }
 
   async create(createDto: CreateTagGroupDto): Promise<TagGroupResponse> {
+    if (createDto.tagIds && createDto.tagIds.length > 0) {
+      const existingTags = await this.tagModel.countDocuments({
+        _id: { $in: createDto.tagIds },
+      }).exec();
+      if (existingTags !== createDto.tagIds.length) {
+        throw new BadRequestException('One or more tag IDs do not exist');
+      }
+    }
+
     const tagGroup = new this.tagGroupModel({
       name: createDto.name,
       icon: createDto.icon,
       visibility: createDto.visibility || TagVisibility.SEARCH_PAGE,
-      tags: createDto.tags || [],
+      tags: createDto.tagIds || [],
     });
     await tagGroup.save();
-    return this.toTagGroupResponse(tagGroup);
+
+    const populatedGroup = await this.findOnePopulated(tagGroup._id.toString());
+    return this.toTagGroupResponse(populatedGroup);
   }
 
   async update(id: string, updateDto: UpdateTagGroupDto): Promise<TagGroupResponse> {
     const tagGroup = await this.tagGroupModel
       .findByIdAndUpdate(id, updateDto, { new: true })
+      .populate('tags')
       .exec();
     if (!tagGroup) {
       throw new NotFoundException(`Tag group with ID ${id} not found`);
@@ -98,51 +118,53 @@ export class TagGroupsService {
     }
   }
 
-  async addTag(tagGroupId: string, tagDto: TagDto): Promise<TagGroupResponse> {
+  async addTagToGroup(tagGroupId: string, tagId: string): Promise<TagGroupResponse> {
     const tagGroup = await this.tagGroupModel.findById(tagGroupId).exec();
     if (!tagGroup) {
       throw new NotFoundException(`Tag group with ID ${tagGroupId} not found`);
     }
 
-    tagGroup.tags.push(tagDto as Tag);
-    await tagGroup.save();
-    return this.toTagGroupResponse(tagGroup);
-  }
-
-  async updateTag(
-    tagGroupId: string,
-    tagId: string,
-    tagDto: TagDto
-  ): Promise<TagGroupResponse> {
-    const tagGroup = await this.tagGroupModel.findById(tagGroupId).exec();
-    if (!tagGroup) {
-      throw new NotFoundException(`Tag group with ID ${tagGroupId} not found`);
-    }
-
-    const tag = tagGroup.tags.find((t) => t._id.toString() === tagId);
+    const tag = await this.tagModel.findById(tagId).exec();
     if (!tag) {
       throw new NotFoundException(`Tag with ID ${tagId} not found`);
     }
 
-    Object.assign(tag, tagDto);
+    if (tagGroup.tags.some((id) => id.toString() === tagId)) {
+      throw new BadRequestException('Tag is already in this group');
+    }
+
+    tagGroup.tags.push(tag._id);
     await tagGroup.save();
-    return this.toTagGroupResponse(tagGroup);
+
+    const populatedGroup = await this.findOnePopulated(tagGroupId);
+    return this.toTagGroupResponse(populatedGroup);
   }
 
-  async deleteTag(tagGroupId: string, tagId: string): Promise<TagGroupResponse> {
+  async removeTagFromGroup(tagGroupId: string, tagId: string): Promise<TagGroupResponse> {
     const tagGroup = await this.tagGroupModel.findById(tagGroupId).exec();
     if (!tagGroup) {
       throw new NotFoundException(`Tag group with ID ${tagGroupId} not found`);
     }
 
     const initialLength = tagGroup.tags.length;
-    tagGroup.tags = tagGroup.tags.filter((t) => t._id.toString() !== tagId);
+    tagGroup.tags = tagGroup.tags.filter((id) => id.toString() !== tagId);
 
     if (tagGroup.tags.length === initialLength) {
-      throw new NotFoundException(`Tag with ID ${tagId} not found`);
+      throw new NotFoundException(`Tag with ID ${tagId} not found in this group`);
     }
 
     await tagGroup.save();
-    return this.toTagGroupResponse(tagGroup);
+
+    const populatedGroup = await this.findOnePopulated(tagGroupId);
+    return this.toTagGroupResponse(populatedGroup);
+  }
+
+  async deleteTagFromAllGroups(tagId: string): Promise<void> {
+    await this.tagGroupModel.updateMany(
+      { tags: tagId },
+      { $pull: { tags: tagId } }
+    ).exec();
+
+    await this.tagModel.findByIdAndDelete(tagId).exec();
   }
 }

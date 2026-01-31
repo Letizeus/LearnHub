@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Body,
   Param,
@@ -9,12 +10,12 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { CoursesService } from '../services/courses.service';
-import { UpdateCourseDto } from '../dto/course.dto';
+import { CollectionsService } from '../services/collections.service';
+import { CreateCollectionDto, UpdateCollectionDto } from '../dto/collection.dto';
 
-@Controller('admin/courses')
-export class CoursesController {
-  constructor(private readonly coursesService: CoursesService) {}
+@Controller('admin/collections')
+export class CollectionsController {
+  constructor(private readonly collectionsService: CollectionsService) {}
 
   @Get()
   async findAll(
@@ -25,7 +26,7 @@ export class CoursesController {
     @Query('page') page?: number,
     @Query('limit') limit?: number
   ) {
-    return this.coursesService.findAll({
+    return this.collectionsService.findAll({
       search,
       status,
       sortBy,
@@ -37,20 +38,26 @@ export class CoursesController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.coursesService.findOne(id);
+    return this.collectionsService.findOne(id);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() createCollectionDto: CreateCollectionDto) {
+    return this.collectionsService.create(createCollectionDto);
   }
 
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateCourseDto: UpdateCourseDto
+    @Body() updateCollectionDto: UpdateCollectionDto
   ) {
-    return this.coursesService.update(id, updateCourseDto);
+    return this.collectionsService.update(id, updateCollectionDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string) {
-    return this.coursesService.deleteCourse(id);
+    return this.collectionsService.delete(id);
   }
 }

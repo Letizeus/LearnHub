@@ -1,12 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { TagVisibility } from '@learnhub/models';
 
 @Schema()
-export class Tag {
-  _id?: any;
-
-  @Prop({ required: true, unique: true })
+export class Tag extends Document {
+  @Prop({ required: true })
   name: string;
 
   @Prop()
@@ -29,8 +27,8 @@ export class TagGroup extends Document {
   @Prop({ required: true })
   icon: string;
 
-  @Prop({ type: [TagSchema], default: [] })
-  tags: Tag[];
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Tag' }], default: [] })
+  tags: Types.ObjectId[];
 
   @Prop({
     type: String,

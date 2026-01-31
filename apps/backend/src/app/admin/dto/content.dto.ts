@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, IsArray, ValidateNested } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsArray, ValidateNested, MinLength } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class TagDto {
@@ -16,6 +16,53 @@ export class TagDto {
   @IsOptional()
   @IsString()
   backgroundImage?: string;
+}
+
+export class CreateContentDto {
+  @IsString()
+  type: string;
+
+  @IsString()
+  @MinLength(10)
+  text: string;
+
+  @IsOptional()
+  @IsArray()
+  images?: string[];
+
+  @IsOptional()
+  @IsString()
+  tip?: string;
+
+  @IsOptional()
+  @IsString()
+  solution?: string;
+
+  @IsOptional()
+  @IsArray()
+  solutionImages?: string[];
+
+  @IsOptional()
+  @IsNumber()
+  eval_points?: number;
+
+  @IsOptional()
+  @IsNumber()
+  total_points?: number;
+
+  @IsOptional()
+  @IsString()
+  relatedCollectionId?: string;
+
+  @IsOptional()
+  @IsString()
+  keywords?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TagDto)
+  tags?: TagDto[];
 }
 
 export class UpdateContentDto {

@@ -1,43 +1,49 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ContentComponent } from './content.component';
 import { ContentService } from './content.service';
+import { CollectionsService } from './collections.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { Exercise } from '@learnhub/models';
+import { LearningContentCollection, Exercise, Status } from '@learnhub/models';
 
 describe('ContentComponent', () => {
   let component: ContentComponent;
   let fixture: ComponentFixture<ContentComponent>;
-  let contentService: ContentService;
+  let collectionsService: CollectionsService;
 
-  const mockContentItems: Exercise[] = [
+  const mockCollections: LearningContentCollection[] = [
     {
       id: '1',
-      type: 'EXERCISE',
-      keywords: 'exercise, basics',
-      downloads: 42,
-      likes: 15,
-      tags: [{ name: 'beginner', icon: 'pi pi-star', color: '#4CAF50', backgroundImage: '' }],
-      relatedCollectionId: 'course1',
-      text: 'What is 2 + 2?',
-      tip: 'Add the numbers',
-      solution: '4',
-      eval_points: 10,
-      total_points: 10,
-      createdAt: new Date('2024-01-15'),
-      changedAt: new Date('2024-01-15'),
+      title: 'Math Basics',
+      status: Status.PUBLISHED,
+      author: 'Test Author',
+      contents: [
+        {
+          id: 'ex1',
+          type: 'EXERCISE',
+          text: 'What is 2 + 2?',
+          tip: 'Add the numbers',
+          solution: '4',
+          downloads: 10,
+          likes: 5,
+          tags: [],
+        } as Exercise,
+      ],
+      createdAt: new Date(),
+      changedAt: new Date(),
     },
   ];
 
-  const mockResponse = { data: mockContentItems, total: 1, page: 1, limit: 20, totalPages: 1 };
+  const mockCollectionsResponse = { data: mockCollections, total: 1, page: 1, limit: 20, totalPages: 1 };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ContentComponent],
       providers: [
         ContentService,
+        CollectionsService,
         ConfirmationService,
         MessageService,
         provideHttpClient(),
@@ -45,7 +51,7 @@ describe('ContentComponent', () => {
       ],
     }).compileComponents();
 
-    contentService = TestBed.inject(ContentService);
+    collectionsService = TestBed.inject(CollectionsService);
   });
 
   function createComponent(): void {
@@ -53,41 +59,39 @@ describe('ContentComponent', () => {
     component = fixture.componentInstance;
   }
 
-  it('should create and load content on initialization', () => {
-    jest.spyOn(contentService, 'getContent').mockReturnValue(of(mockResponse));
+  it('should create and load collections on initialization', () => {
+    jest.spyOn(collectionsService, 'getCollections').mockReturnValue(of(mockCollectionsResponse));
     createComponent();
 
     expect(component).toBeTruthy();
-    expect(component.contentItems()).toEqual(mockContentItems);
-    expect(component.totalRecords()).toBe(1);
+    expect(component.collections()).toEqual(mockCollections);
   });
 
-  it('should reset to page 1 on filter change', () => {
-    jest.spyOn(contentService, 'getContent').mockReturnValue(of(mockResponse));
+  it('should select a collection and load its contents', () => {
+    jest.spyOn(collectionsService, 'getCollections').mockReturnValue(of(mockCollectionsResponse));
+    jest.spyOn(collectionsService, 'getCollection').mockReturnValue(of(mockCollections[0]));
     createComponent();
-    component.currentPage.set(2);
 
-    component.onFilterChange();
+    component.selectCollection(mockCollections[0]);
 
-    expect(component.currentPage()).toBe(1);
+    expect(component.selectedCollection()).toEqual(mockCollections[0]);
   });
 
-  it('should view content details', () => {
-    jest.spyOn(contentService, 'getContent').mockReturnValue(of(mockResponse));
-    jest.spyOn(contentService, 'getContentItem').mockReturnValue(of(mockContentItems[0]));
+  it('should open create collection dialog', () => {
+    jest.spyOn(collectionsService, 'getCollections').mockReturnValue(of(mockCollectionsResponse));
     createComponent();
 
-    component.viewContent(mockContentItems[0]);
+    component.openCreateCollectionDialog();
 
-    expect(component.selectedContent()).toEqual(mockContentItems[0]);
-    expect(component.drawerVisible()).toBe(true);
+    expect(component.collectionDialogVisible()).toBe(true);
+    expect(component.collectionEditMode()).toBe(false);
   });
 
-  it('should calculate contrast color correctly', () => {
-    jest.spyOn(contentService, 'getContent').mockReturnValue(of(mockResponse));
+  it('should get status label', () => {
+    jest.spyOn(collectionsService, 'getCollections').mockReturnValue(of(mockCollectionsResponse));
     createComponent();
 
-    expect(component.getContrastColor('#FFFFFF')).toBe('var(--p-text-color)');
-    expect(component.getContrastColor('#000000')).toBe('var(--p-surface-0)');
+    expect(component.getStatusLabel(Status.DRAFT)).toBe('Draft');
+    expect(component.getStatusLabel(Status.PUBLISHED)).toBe('Published');
   });
 });

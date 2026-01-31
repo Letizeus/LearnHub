@@ -38,15 +38,6 @@ export const appRoutes: Route[] = [
         canActivate: [authGuard],
       },
       {
-        path: 'courses',
-        loadComponent: () =>
-          import('./features/courses/courses.component').then(
-            (m) => m.CoursesComponent
-          ),
-        data: { breadcrumb: 'Courses' },
-        canActivate: [authGuard],
-      },
-      {
         path: 'content',
         loadComponent: () =>
           import('./features/content/content.component').then(

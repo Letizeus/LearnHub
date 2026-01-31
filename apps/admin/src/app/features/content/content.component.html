@@ -1,302 +1,587 @@
 <div class="admin-page">
   <div class="admin-header">
-    <h2>Content</h2>
+    <h2>Learning Content Collections</h2>
   </div>
 
-  <div class="page-card">
-    <!-- Filters Toolbar -->
-    <div class="filters-toolbar">
+  <div class="content-layout">
+    <div class="collections-section">
+      <div class="section-header">
+        <h3>Collections</h3>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-plus"
+          class="p-button-sm"
+          (click)="openCreateCollectionDialog()"
+          pTooltip="Create Collection"
+          tooltipPosition="top"
+          aria-label="Create collection"
+        ></button>
+      </div>
+
       <div class="search-box">
         <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
           <input
             pInputText
             type="text"
-            [(ngModel)]="searchQuery"
-            (keyup.enter)="onFilterChange()"
-            placeholder="Search content by title..."
+            [(ngModel)]="collectionSearchQuery"
+            (input)="onCollectionSearch()"
+            placeholder="Search collections..."
             class="search-input"
           />
         </span>
-        <button
-          pButton
-          type="button"
-          label="Search"
-          icon="pi pi-search"
-          (click)="onFilterChange()"
-          class="search-button"
-          aria-label="Search content"
-        ></button>
       </div>
 
-      <div class="filter-group">
-        <label for="type-filter">Type:</label>
+      <div class="filter-box">
         <p-select
-          inputId="type-filter"
-          [options]="typeOptions"
-          [(ngModel)]="typeFilter"
-          (ngModelChange)="onFilterChange()"
+          [options]="statusOptions"
+          [(ngModel)]="collectionStatusFilter"
+          (onChange)="onStatusFilterChange()"
           optionLabel="label"
           optionValue="value"
-          [style]="{ width: '180px' }"
+          placeholder="Filter by status"
+          appendTo="body"
+          [style]="{ width: '100%' }"
         ></p-select>
+      </div>
+
+      <div class="collections-list">
+        <div
+          class="collection-item"
+          [class.selected]="showingUngrouped()"
+          (click)="selectUngrouped()"
+          (keydown.enter)="selectUngrouped()"
+          tabindex="0"
+          role="button"
+          aria-label="Select Ungrouped Content"
+        >
+          <div class="collection-info">
+            <div class="collection-details">
+              <span class="collection-title">Ungrouped Content</span>
+              <span class="collection-meta">Content without a collection</span>
+            </div>
+          </div>
+        </div>
+
+        @if (collections().length > 0) {
+          @for (collection of collections(); track collection.id) {
+            <div
+              class="collection-item"
+              [class.selected]="selectedCollection()?.id === collection.id && !showingUngrouped()"
+              (click)="selectCollection(collection)"
+              (keydown.enter)="selectCollection(collection)"
+              tabindex="0"
+              role="button"
+              [attr.aria-label]="'Select ' + collection.title"
+            >
+              <div class="collection-info">
+                <div class="collection-details">
+                  <span class="collection-name">{{ collection.title }}</span>
+                  <span class="collection-meta">
+                    {{ collection.contents.length || 0 }} exercises · {{ getStatusLabel(collection.status) }}
+                  </span>
+                  <span class="collection-author">by {{ collection.author }}</span>
+                </div>
+              </div>
+              <div class="collection-actions" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="presentation">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-pencil"
+                  class="p-button-text p-button-sm"
+                  (click)="openEditCollectionDialog(collection)"
+                  pTooltip="Edit"
+                  tooltipPosition="top"
+                  aria-label="Edit collection"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-text p-button-sm p-button-danger"
+                  (click)="deleteCollection(collection)"
+                  pTooltip="Delete"
+                  tooltipPosition="top"
+                  aria-label="Delete collection"
+                ></button>
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="empty-state">
+            <i class="pi pi-book"></i>
+            <p>No collections found</p>
+          </div>
+        }
       </div>
     </div>
 
-    <!-- Content Table -->
-    <p-table
-      [value]="contentItems()"
-      [lazy]="true"
-      [paginator]="true"
-      [rows]="rowsPerPage()"
-      [totalRecords]="totalRecords()"
-      [rowsPerPageOptions]="[10, 20, 50]"
-      (onPage)="onPageChange($any($event))"
-      (onSort)="onSort($any($event))"
-      [sortField]="'createdAt'"
-      [sortOrder]="-1"
-      class="content-table"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th pSortableColumn="type">
-            Type <p-sortIcon field="type"></p-sortIcon>
-          </th>
-          <th pSortableColumn="downloads">
-            Downloads <p-sortIcon field="downloads"></p-sortIcon>
-          </th>
-          <th pSortableColumn="likes">
-            Likes <p-sortIcon field="likes"></p-sortIcon>
-          </th>
-          <th>Tags</th>
-          <th pSortableColumn="changedAt">
-            Changed At <p-sortIcon field="changedAt"></p-sortIcon>
-          </th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
-
-      <ng-template pTemplate="body" let-content>
-        <tr>
-          <td>
-            <span class="type-badge">{{ content.type || 'Unknown' }}</span>
-          </td>
-          <td>{{ content.downloads || 0 }}</td>
-          <td>{{ content.likes || 0 }}</td>
-          <td>
-            @if (content.tags && content.tags.length > 0) {
-            <div class="tags-display">
-              @for (tag of content.tags; track tag.name) {
-              <span
-                class="tag-badge"
-                [style.background-color]="tag.color || 'var(--p-surface-200)'"
-                [style.color]="getContrastColor(tag.color || 'var(--p-surface-200)')">
-                @if (tag.icon) {
-                <i [class]="tag.icon"></i>
-                }
-                {{ tag.name }}
-              </span>
-              }
-            </div>
-            } @else {
-            <span class="text-muted">No tags</span>
-            }
-          </td>
-          <td>
-            @if (content.changedAt) {
-            {{ content.changedAt | date : 'short' }}
-            } @else {
-            <span class="text-muted">Unknown</span>
-            }
-          </td>
-          <td>
-            <div class="action-buttons">
-              <button
-                pButton
-                type="button"
-                icon="pi pi-eye"
-                class="p-button-text p-button-sm"
-                (click)="viewContent(content)"
-                pTooltip="View Details"
-                tooltipPosition="top"
-                aria-label="View content details"
-              ></button>
-              <button
-                pButton
-                type="button"
-                icon="pi pi-trash"
-                class="p-button-text p-button-sm p-button-danger"
-                (click)="deleteContent(content)"
-                pTooltip="Delete Content"
-                tooltipPosition="top"
-                aria-label="Delete content"
-              ></button>
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="6" class="empty-message">
-            <div class="empty-state">
-              <i class="pi pi-file empty-icon"></i>
-              <p>No content found</p>
-              @if (searchQuery() || typeFilter()) {
-              <p class="empty-subtitle">Try adjusting your filters</p>
-              }
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
-
-  <!-- Content Detail Drawer -->
-  <p-drawer
-    [(visible)]="drawerVisible"
-    position="right"
-    (onHide)="closeDrawer()"
-  >
-    <ng-template pTemplate="header">
-      <span class="drawer-title">Content Details</span>
-    </ng-template>
-
-    <ng-template pTemplate="content">
-      @if (selectedContent(); as content) {
-      <div class="content-details">
-        <div class="detail-section">
-          <h4>Basic Information</h4>
-          <div class="detail-row">
-            <span class="detail-label">Type:</span>
-            <span class="type-badge">{{ content.type || 'Unknown' }}</span>
+    <div class="contents-section">
+      @if (showingUngrouped()) {
+        <div class="section-header">
+          <div class="section-title">
+            <h3>Ungrouped Content</h3>
+            <span class="content-count">{{ ungroupedContent().length }} {{ ungroupedContent().length === 1 ? 'exercise' : 'exercises' }}</span>
           </div>
-          @if (content.keywords) {
-          <div class="detail-row">
-            <span class="detail-label">Keywords:</span>
-            <span class="detail-value">{{ content.keywords }}</span>
-          </div>
-          }
-          @if (content.relatedCollectionId) {
-          <div class="detail-row">
-            <span class="detail-label">Collection:</span>
-            <span class="detail-value">{{ content.relatedCollectionId }}</span>
-          </div>
-          }
+          <button
+            pButton
+            type="button"
+            label="Add Exercise"
+            icon="pi pi-plus"
+            class="p-button-sm"
+            (click)="openAddContentDialog()"
+            aria-label="Add exercise"
+          ></button>
         </div>
 
-        <div class="detail-section">
-          <h4>Engagement</h4>
-          <div class="detail-row">
-            <span class="detail-label">Downloads:</span>
-            <span class="detail-value">{{ content.downloads || 0 }}</span>
+        <div class="contents-grid">
+          @if (ungroupedContent().length > 0) {
+            @for (content of ungroupedContent(); track content.id) {
+              <div class="content-card">
+                <div class="content-card-header">
+                  <i class="pi pi-file-edit content-icon"></i>
+                  <span class="content-type">Exercise</span>
+                </div>
+                <div class="content-card-body">
+                  <p class="content-text">{{ content.text || '(No exercise text)' }}</p>
+                  @if (content.tags && content.tags.length > 0) {
+                    <div class="content-tags">
+                      @for (tag of content.tags; track tag.name) {
+                        <span
+                          class="tag-badge"
+                          [style.background-color]="tag.color || 'var(--p-surface-200)'"
+                          [style.color]="getContrastColor(tag.color || 'var(--p-surface-200)')">
+                          @if (tag.icon) {
+                            <i [class]="'pi pi-' + tag.icon"></i>
+                          }
+                          {{ tag.name }}
+                        </span>
+                      }
+                    </div>
+                  }
+                  <div class="content-indicators">
+                    @if (content.tip) {
+                      <div class="content-hint">
+                        <i class="pi pi-lightbulb"></i>
+                        <span>Has tip</span>
+                      </div>
+                    }
+                    @if (content.solution) {
+                      <div class="content-solution-indicator">
+                        <i class="pi pi-check-circle"></i>
+                        <span>Has solution</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+                <div class="content-card-footer">
+                  <div class="content-meta">
+                    <span pTooltip="Downloads" tooltipPosition="top">
+                      <i class="pi pi-download"></i> {{ content.downloads || 0 }}
+                    </span>
+                    <span pTooltip="Likes" tooltipPosition="top">
+                      <i class="pi pi-heart"></i> {{ content.likes || 0 }}
+                    </span>
+                    @if (content.total_points !== undefined) {
+                      <span pTooltip="Points" tooltipPosition="top">
+                        <i class="pi pi-star"></i> {{ content.eval_points || 0 }}/{{ content.total_points }}
+                      </span>
+                    }
+                  </div>
+                  <div class="content-card-actions">
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-pencil"
+                      class="p-button-text p-button-sm"
+                      (click)="openEditContentDialog(content)"
+                      pTooltip="Edit"
+                      tooltipPosition="top"
+                      aria-label="Edit exercise"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-plus"
+                      class="p-button-text p-button-sm"
+                      (click)="openAddToCollectionDialog(content)"
+                      pTooltip="Add to Collection"
+                      tooltipPosition="top"
+                      aria-label="Add to collection"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-trash"
+                      class="p-button-text p-button-sm p-button-danger"
+                      (click)="deleteContent(content)"
+                      pTooltip="Delete"
+                      tooltipPosition="top"
+                      aria-label="Delete exercise"
+                    ></button>
+                  </div>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="empty-state">
+              <i class="pi pi-file-edit"></i>
+              <p>No ungrouped content</p>
+            </div>
+          }
+        </div>
+      } @else if (selectedCollection(); as collection) {
+        <div class="section-header">
+          <div class="section-title">
+            <h3>Exercises in {{ collection.title }}</h3>
+            <span class="content-count">{{ collection.contents.length || 0 }} {{ collection.contents.length === 1 ? 'exercise' : 'exercises' }}</span>
           </div>
-          <div class="detail-row">
-            <span class="detail-label">Likes:</span>
-            <span class="detail-value">{{ content.likes || 0 }}</span>
-          </div>
-          @if (content.tags && content.tags.length > 0) {
-          <div class="detail-row">
-            <span class="detail-label">Tags:</span>
-            <span class="detail-value">
-              <div class="tags-list">
-                @for (tag of content.tags; track tag.name) {
+          <button
+            pButton
+            type="button"
+            label="Add Exercise"
+            icon="pi pi-plus"
+            class="p-button-sm"
+            (click)="openAddContentDialog()"
+            aria-label="Add exercise"
+          ></button>
+        </div>
+
+        <div class="contents-grid">
+          @if (collection.contents && collection.contents.length > 0) {
+            @for (content of collection.contents; track content.id) {
+              <div class="content-card">
+                <div class="content-card-header">
+                  <i class="pi pi-file-edit content-icon"></i>
+                  <span class="content-type">Exercise</span>
+                </div>
+                <div class="content-card-body">
+                  <p class="content-text">{{ asExercise(content).text || '(No exercise text)' }}</p>
+                  @if (content.tags && content.tags.length > 0) {
+                    <div class="content-tags">
+                      @for (tag of content.tags; track tag.name) {
+                        <span
+                          class="tag-badge"
+                          [style.background-color]="tag.color || 'var(--p-surface-200)'"
+                          [style.color]="getContrastColor(tag.color || 'var(--p-surface-200)')">
+                          @if (tag.icon) {
+                            <i [class]="'pi pi-' + tag.icon"></i>
+                          }
+                          {{ tag.name }}
+                        </span>
+                      }
+                    </div>
+                  }
+                  <div class="content-indicators">
+                    @if (asExercise(content).tip) {
+                      <div class="content-hint">
+                        <i class="pi pi-lightbulb"></i>
+                        <span>Has tip</span>
+                      </div>
+                    }
+                    @if (asExercise(content).solution) {
+                      <div class="content-solution-indicator">
+                        <i class="pi pi-check-circle"></i>
+                        <span>Has solution</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+                <div class="content-card-footer">
+                  <div class="content-meta">
+                    <span pTooltip="Downloads" tooltipPosition="top">
+                      <i class="pi pi-download"></i> {{ content.downloads || 0 }}
+                    </span>
+                    <span pTooltip="Likes" tooltipPosition="top">
+                      <i class="pi pi-heart"></i> {{ content.likes || 0 }}
+                    </span>
+                    @if (asExercise(content).total_points !== undefined) {
+                      <span pTooltip="Points" tooltipPosition="top">
+                        <i class="pi pi-star"></i> {{ asExercise(content).eval_points || 0 }}/{{ asExercise(content).total_points }}
+                      </span>
+                    }
+                  </div>
+                  <div class="content-card-actions">
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-pencil"
+                      class="p-button-text p-button-sm"
+                      (click)="openEditContentDialog(asExercise(content))"
+                      pTooltip="Edit"
+                      tooltipPosition="top"
+                      aria-label="Edit exercise"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-plus"
+                      class="p-button-text p-button-sm p-button-success"
+                      (click)="openAddToCollectionDialog(asExercise(content))"
+                      pTooltip="Add to Another Collection"
+                      tooltipPosition="top"
+                      aria-label="Add to another collection"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-minus"
+                      class="p-button-text p-button-sm p-button-warning"
+                      (click)="removeFromCollection(asExercise(content))"
+                      pTooltip="Remove from Collection"
+                      tooltipPosition="top"
+                      aria-label="Remove from collection"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-trash"
+                      class="p-button-text p-button-sm p-button-danger"
+                      (click)="deleteContent(asExercise(content))"
+                      pTooltip="Delete"
+                      tooltipPosition="top"
+                      aria-label="Delete exercise"
+                    ></button>
+                  </div>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="empty-state">
+              <i class="pi pi-file"></i>
+              <p>No exercises yet</p>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <i class="pi pi-arrow-left"></i>
+          <p>Select a collection to view exercises</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <p-dialog
+    [(visible)]="collectionDialogVisible"
+    [header]="collectionEditMode() ? 'Edit Collection' : 'Create Collection'"
+    [modal]="true"
+    (onHide)="onCollectionDialogHide()"
+  >
+    <ng-template pTemplate="content">
+      <div class="form-group">
+        <label for="collection-title">Title *</label>
+        <input
+          pInputText
+          id="collection-title"
+          [ngModel]="collectionForm().title"
+          (ngModelChange)="updateCollectionForm('title', $event)"
+          placeholder="Enter collection title"
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="collection-author">Author *</label>
+        <input
+          pInputText
+          id="collection-author"
+          [ngModel]="collectionForm().author"
+          (ngModelChange)="updateCollectionForm('author', $event)"
+          placeholder="Enter author name"
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="collection-status">Status *</label>
+        <p-select
+          inputId="collection-status"
+          [options]="statusOptions.slice(1)"
+          [ngModel]="collectionForm().status"
+          (ngModelChange)="updateCollectionForm('status', $event)"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select status"
+          appendTo="body"
+          [style]="{ width: '100%' }"
+        ></p-select>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <button pButton type="button" label="Cancel" class="p-button-text" (click)="closeCollectionDialog()"></button>
+      <button pButton type="button" [label]="collectionEditMode() ? 'Update' : 'Create'" (click)="saveCollection()"></button>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="contentDialogVisible"
+    [header]="editingContent() ? 'Edit Exercise' : 'Add Exercise'"
+    [modal]="true"
+    (onHide)="onContentDialogHide()"
+    [style]="{ width: '600px' }"
+  >
+    <ng-template pTemplate="content">
+      <div class="form-group">
+        <label for="content-text">Exercise Text *</label>
+        <textarea
+          pTextarea
+          id="content-text"
+          [ngModel]="contentForm().text"
+          (ngModelChange)="updateContentForm('text', $event)"
+          placeholder="Enter the exercise question or task..."
+          rows="4"
+          class="form-input"
+        ></textarea>
+        <small>Minimum 10 characters required</small>
+      </div>
+
+      <div class="form-group">
+        <label for="content-tip">Tip</label>
+        <textarea
+          pTextarea
+          id="content-tip"
+          [ngModel]="contentForm().tip"
+          (ngModelChange)="updateContentForm('tip', $event)"
+          placeholder="Optional hint for students..."
+          rows="2"
+          class="form-input"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="content-solution">Solution</label>
+        <textarea
+          pTextarea
+          id="content-solution"
+          [ngModel]="contentForm().solution"
+          (ngModelChange)="updateContentForm('solution', $event)"
+          placeholder="Enter the solution or answer..."
+          rows="3"
+          class="form-input"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="content-tags">Tags</label>
+        <p-multiSelect
+          inputId="content-tags"
+          [options]="availableTags()"
+          [ngModel]="selectedTags()"
+          (ngModelChange)="selectedTags.set($event)"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          placeholder="Select tags..."
+          appendTo="body"
+          [style]="{ width: '100%' }"
+          [showHeader]="false"
+        >
+          <ng-template pTemplate="selectedItems" let-items>
+            <div class="selected-tags">
+              @for (tag of items; track tag.name) {
                 <span
                   class="tag-badge"
                   [style.background-color]="tag.color || 'var(--p-surface-200)'"
                   [style.color]="getContrastColor(tag.color || 'var(--p-surface-200)')">
                   @if (tag.icon) {
-                  <i [class]="tag.icon"></i>
+                    <i [class]="'pi pi-' + tag.icon"></i>
                   }
                   {{ tag.name }}
                 </span>
-                }
-              </div>
-            </span>
-          </div>
-          }
-        </div>
-
-        @if (content.type === 'EXERCISE' && content.text) {
-        <div class="detail-section">
-          <h4>Exercise Details</h4>
-          <div class="detail-row">
-            <span class="detail-label">Exercise Text:</span>
-            <span class="detail-value">{{ content.text }}</span>
-          </div>
-          @if (content.tip) {
-          <div class="detail-row">
-            <span class="detail-label">Tip:</span>
-            <span class="detail-value">{{ content.tip }}</span>
-          </div>
-          }
-          @if (content.solution) {
-          <div class="detail-row">
-            <span class="detail-label">Solution:</span>
-            <span class="detail-value">{{ content.solution }}</span>
-          </div>
-          }
-          @if (content.eval_points !== undefined && content.total_points) {
-          <div class="detail-row">
-            <span class="detail-label">Points:</span>
-            <span class="detail-value"
-              >{{ content.eval_points }} / {{ content.total_points }}</span
-            >
-          </div>
-          }
-          @if (content.images && content.images.length > 0) {
-          <div class="detail-row">
-            <span class="detail-label">Images:</span>
-            <span class="detail-value">{{ content.images.length }} image(s)</span>
-          </div>
-          }
-        </div>
-        }
-
-        <div class="detail-section">
-          <h4>Timestamps</h4>
-          <div class="detail-row">
-            <span class="detail-label">Created At:</span>
-            <span class="detail-value">
-              @if (content.createdAt) {
-              {{ content.createdAt | date : 'medium' }}
-              } @else {
-              <span class="text-muted">Unknown</span>
               }
-            </span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Changed At:</span>
-            <span class="detail-value">
-              @if (content.changedAt) {
-              {{ content.changedAt | date : 'medium' }}
-              } @else {
-              <span class="text-muted">Unknown</span>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="item" let-tag>
+            <div class="tag-option">
+              @if (tag.icon) {
+                <i [class]="'pi pi-' + tag.icon" [style.color]="tag.color || 'var(--p-primary-color)'"></i>
               }
-            </span>
-          </div>
+              <span>{{ tag.name }}</span>
+            </div>
+          </ng-template>
+        </p-multiSelect>
+        <small>Select one or more tags to categorize this exercise</small>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="content-eval-points">Earned Points</label>
+          <input
+            pInputText
+            id="content-eval-points"
+            type="number"
+            [ngModel]="contentForm().eval_points"
+            (ngModelChange)="updateContentForm('eval_points', $event)"
+            placeholder="0"
+            class="form-input"
+            min="0"
+          />
         </div>
 
-        <div class="detail-actions">
-          <h4>Actions</h4>
-          <button
-            pButton
-            type="button"
-            label="Delete Content"
-            icon="pi pi-trash"
-            class="p-button-danger p-button-outlined action-btn"
-            (click)="deleteContent(content)"
-            aria-label="Delete content"
-          ></button>
+        <div class="form-group">
+          <label for="content-total-points">Total Points</label>
+          <input
+            pInputText
+            id="content-total-points"
+            type="number"
+            [ngModel]="contentForm().total_points"
+            (ngModelChange)="updateContentForm('total_points', $event)"
+            placeholder="0"
+            class="form-input"
+            min="0"
+          />
         </div>
       </div>
-      }
     </ng-template>
-  </p-drawer>
 
-  <!-- Confirmation Dialog -->
-  <p-confirmDialog></p-confirmDialog>
+    <ng-template pTemplate="footer">
+      <button pButton type="button" label="Cancel" class="p-button-text" (click)="closeContentDialog()"></button>
+      <button pButton type="button" [label]="editingContent() ? 'Update' : 'Add'" (click)="saveContent()"></button>
+    </ng-template>
+  </p-dialog>
 
-  <!-- Toast Messages -->
-  <p-toast></p-toast>
+  <p-dialog
+    [(visible)]="addToCollectionDialogVisible"
+    header="Add Content to Collection"
+    [modal]="true"
+    (onHide)="closeAddToCollectionDialog()"
+  >
+    <ng-template pTemplate="content">
+      <div class="form-group">
+        <label for="select-collection">Select Collections *</label>
+        @if (availableCollectionsForContent().length > 0) {
+          <p-multiselect
+            inputId="select-collection"
+            [options]="availableCollectionsForContent()"
+            [(ngModel)]="selectedCollectionIds"
+            optionLabel="title"
+            optionValue="id"
+            placeholder="Select one or more collections"
+            appendTo="body"
+            [style]="{ width: '100%' }"
+          >
+          <ng-template pTemplate="item" let-option>
+            <div class="icon-option">
+              <span>{{ option.title }}</span>
+              <small class="text-muted"> - {{ option.contents?.length || 0 }} exercises</small>
+            </div>
+          </ng-template>
+        </p-multiselect>
+        } @else {
+          <p class="text-muted">This content is already in all available collections.</p>
+        }
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <button pButton type="button" label="Cancel" class="p-button-text" (click)="closeAddToCollectionDialog()"></button>
+      <button pButton type="button" [label]="selectedCollectionIds().length > 0 ? 'Add to ' + selectedCollectionIds().length + ' Collection' + (selectedCollectionIds().length === 1 ? '' : 's') : 'Add to Collections'" (click)="addToCollection()" [disabled]="selectedCollectionIds().length === 0"></button>
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog />
+  <p-toast />
 </div>

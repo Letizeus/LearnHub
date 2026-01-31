@@ -34,11 +34,29 @@
       </div>
 
       <div class="taggroups-list">
+        <div
+          class="taggroup-item"
+          [class.selected]="showingUngrouped()"
+          (click)="selectUngrouped()"
+          (keydown.enter)="selectUngrouped()"
+          tabindex="0"
+          role="button"
+          aria-label="Select Ungrouped Tags"
+        >
+          <div class="taggroup-info">
+            <i class="pi pi-tag taggroup-icon"></i>
+            <div class="taggroup-details">
+              <span class="taggroup-name">Ungrouped Tags</span>
+              <span class="taggroup-meta">Tags without a group</span>
+            </div>
+          </div>
+        </div>
+
         @if (tagGroups().length > 0) {
           @for (tagGroup of tagGroups(); track tagGroup.id) {
             <div
               class="taggroup-item"
-              [class.selected]="selectedTagGroup()?.id === tagGroup.id"
+              [class.selected]="selectedTagGroup()?.id === tagGroup.id && !showingUngrouped()"
               (click)="selectTagGroup(tagGroup)"
               (keydown.enter)="selectTagGroup(tagGroup)"
               tabindex="0"
@@ -86,7 +104,81 @@
     </div>
 
     <div class="tags-section">
-      @if (selectedTagGroup(); as tagGroup) {
+      @if (showingUngrouped()) {
+        <div class="section-header">
+          <div class="section-title">
+            <h3>Ungrouped Tags</h3>
+            <span class="tag-count">{{ ungroupedTags().length }} {{ ungroupedTags().length === 1 ? 'tag' : 'tags' }}</span>
+          </div>
+          <button
+            pButton
+            type="button"
+            label="Add Tag"
+            icon="pi pi-plus"
+            class="p-button-sm"
+            (click)="openAddUngroupedTagDialog()"
+            aria-label="Add ungrouped tag"
+          ></button>
+        </div>
+
+        <div class="tags-grid">
+          @if (ungroupedTags().length > 0) {
+            @for (tag of ungroupedTags(); track tag.id) {
+              <div class="tag-card"
+                   [style.--tag-color]="tag.color || 'var(--p-primary-color)'"
+                   [style.background-image]="tag.backgroundImage ? 'url(' + tag.backgroundImage + ')' : 'none'"
+                   [class.has-background]="!!tag.backgroundImage">
+                <div class="tag-card-color-bar"></div>
+                <div class="tag-card-content">
+                  <div class="tag-card-header">
+                    <div class="tag-icon-wrapper">
+                      <i [class]="'pi pi-' + (tag.icon || 'tag')" class="tag-icon"></i>
+                    </div>
+                    <span class="tag-name">{{ tag.name }}</span>
+                  </div>
+                  <div class="tag-card-actions">
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-pencil"
+                      class="p-button-text p-button-sm"
+                      (click)="openEditTagDialog(tag)"
+                      pTooltip="Edit"
+                      tooltipPosition="top"
+                      aria-label="Edit tag"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-plus"
+                      class="p-button-text p-button-sm"
+                      (click)="openAddToGroupDialog(tag)"
+                      pTooltip="Add to Group"
+                      tooltipPosition="top"
+                      aria-label="Add tag to group"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-trash"
+                      class="p-button-text p-button-sm p-button-danger"
+                      (click)="deleteTag(tag)"
+                      pTooltip="Delete"
+                      tooltipPosition="top"
+                      aria-label="Delete tag"
+                    ></button>
+                  </div>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="empty-state">
+              <i class="pi pi-tag"></i>
+              <p>No ungrouped tags</p>
+            </div>
+          }
+        </div>
+      } @else if (selectedTagGroup(); as tagGroup) {
         <div class="section-header">
           <div class="section-title">
             <h3>Tags in {{ tagGroup.name }}</h3>
@@ -132,10 +224,30 @@
                     <button
                       pButton
                       type="button"
+                      icon="pi pi-plus"
+                      class="p-button-text p-button-sm p-button-success"
+                      (click)="openAddToGroupDialog(tag)"
+                      pTooltip="Add to Another Group"
+                      tooltipPosition="top"
+                      aria-label="Add tag to another group"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
+                      icon="pi pi-minus"
+                      class="p-button-text p-button-sm p-button-warning"
+                      (click)="removeFromGroup(tag)"
+                      pTooltip="Remove from This Group"
+                      tooltipPosition="top"
+                      aria-label="Remove tag from this group"
+                    ></button>
+                    <button
+                      pButton
+                      type="button"
                       icon="pi pi-trash"
                       class="p-button-text p-button-sm p-button-danger"
                       (click)="deleteTag(tag)"
-                      pTooltip="Delete"
+                      pTooltip="Delete Tag"
                       tooltipPosition="top"
                       aria-label="Delete tag"
                     ></button>
@@ -307,6 +419,45 @@
     <ng-template pTemplate="footer">
       <button pButton type="button" label="Cancel" class="p-button-text" (click)="closeTagDialog()"></button>
       <button pButton type="button" [label]="editingTag() ? 'Update' : 'Add'" (click)="saveTag()"></button>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="addToGroupDialogVisible"
+    header="Add Tag to Group"
+    [modal]="true"
+    (onHide)="closeAddToGroupDialog()"
+  >
+    <ng-template pTemplate="content">
+      <div class="form-group">
+        <label for="select-group">Select Tag Groups *</label>
+        @if (availableGroupsForTag().length > 0) {
+          <p-multiselect
+            inputId="select-group"
+            [options]="availableGroupsForTag()"
+            [(ngModel)]="selectedGroupIds"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Select one or more groups"
+            appendTo="body"
+            [style]="{ width: '100%' }"
+          >
+          <ng-template pTemplate="item" let-option>
+            <div class="icon-option">
+              <i [class]="'pi pi-' + option.icon"></i>
+              <span>{{ option.name }}</span>
+            </div>
+          </ng-template>
+        </p-multiselect>
+        } @else {
+          <p class="text-muted">This tag is already in all available groups.</p>
+        }
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <button pButton type="button" label="Cancel" class="p-button-text" (click)="closeAddToGroupDialog()"></button>
+      <button pButton type="button" [label]="selectedGroupIds().length > 0 ? 'Add to ' + selectedGroupIds().length + ' Group' + (selectedGroupIds().length === 1 ? '' : 's') : 'Add to Groups'" (click)="addToGroup()"></button>
     </ng-template>
   </p-dialog>
 

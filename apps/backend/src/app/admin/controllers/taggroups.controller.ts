@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { TagGroupsService } from '../services/taggroups.service';
-import { CreateTagGroupDto, UpdateTagGroupDto, TagDto } from '../dto/taggroup.dto';
+import { CreateTagGroupDto, UpdateTagGroupDto, AddTagToGroupDto } from '../dto/taggroup.dto';
 
 @Controller('admin/taggroups')
 export class TagGroupsController {
@@ -52,21 +52,12 @@ export class TagGroupsController {
   }
 
   @Post(':id/tags')
-  async addTag(@Param('id') id: string, @Body() tagDto: TagDto) {
-    return this.tagGroupsService.addTag(id, tagDto);
-  }
-
-  @Put(':id/tags/:tagId')
-  async updateTag(
-    @Param('id') id: string,
-    @Param('tagId') tagId: string,
-    @Body() tagDto: TagDto
-  ) {
-    return this.tagGroupsService.updateTag(id, tagId, tagDto);
+  async addTagToGroup(@Param('id') id: string, @Body() dto: AddTagToGroupDto) {
+    return this.tagGroupsService.addTagToGroup(id, dto.tagId);
   }
 
   @Delete(':id/tags/:tagId')
-  async deleteTag(@Param('id') id: string, @Param('tagId') tagId: string) {
-    return this.tagGroupsService.deleteTag(id, tagId);
+  async removeTagFromGroup(@Param('id') id: string, @Param('tagId') tagId: string) {
+    return this.tagGroupsService.removeTagFromGroup(id, tagId);
   }
 }

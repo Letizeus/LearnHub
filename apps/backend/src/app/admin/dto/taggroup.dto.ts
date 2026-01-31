@@ -1,23 +1,5 @@
-import { IsString, IsOptional, IsEnum, IsArray, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsString, IsOptional, IsEnum, IsArray } from 'class-validator';
 import { TagVisibility } from '@learnhub/models';
-
-export class TagDto {
-  @IsString()
-  name: string;
-
-  @IsOptional()
-  @IsString()
-  icon?: string;
-
-  @IsOptional()
-  @IsString()
-  color?: string;
-
-  @IsOptional()
-  @IsString()
-  backgroundImage?: string;
-}
 
 export class CreateTagGroupDto {
   @IsString()
@@ -32,9 +14,8 @@ export class CreateTagGroupDto {
 
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => TagDto)
-  tags?: TagDto[];
+  @IsString({ each: true })
+  tagIds?: string[];
 }
 
 export class UpdateTagGroupDto {
@@ -49,4 +30,9 @@ export class UpdateTagGroupDto {
   @IsOptional()
   @IsEnum(TagVisibility)
   visibility?: TagVisibility;
+}
+
+export class AddTagToGroupDto {
+  @IsString()
+  tagId: string;
 }

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import mongoose from 'mongoose';
-import { Tag } from './tag.schema';
+import { Tag, TagSchema } from './tag.schema';
 
 @Schema({
   discriminatorKey: 'type',
@@ -21,11 +21,11 @@ export class LearningContent extends Document {
   @Prop({ default: 0 })
   likes: number;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }] })
+  @Prop({ type: [TagSchema], default: [] })
   tags: Tag[];
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'LearningContentCollection' })
-  relatedCollection: any; // Use forwardRef or string name to avoid circular dependency
+  relatedCollection?: any;
 
   @Prop({ type: Object })
   analytics: any;
