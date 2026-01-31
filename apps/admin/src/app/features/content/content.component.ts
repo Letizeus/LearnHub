@@ -77,6 +77,10 @@ export class ContentComponent {
     { label: 'Archived', value: Status.ARCHIVED },
   ];
 
+  readonly contentTypeOptions = [
+    { label: 'Exercise', value: 'EXERCISE' },
+  ];
+
   constructor() {
     this.loadCollections();
     this.loadAvailableTags();
@@ -263,7 +267,7 @@ export class ContentComponent {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validation Error',
-        detail: 'Exercise text is required and must be at least 10 characters',
+        detail: 'Content text is required and must be at least 10 characters',
       });
       return;
     }
@@ -308,7 +312,7 @@ export class ContentComponent {
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: `Exercise ${editing ? 'updated' : 'created'} successfully`,
+          detail: `Content ${editing ? 'updated' : 'created'} successfully`,
         });
         this.closeContentDialog();
         this.loadCollections();
@@ -319,7 +323,7 @@ export class ContentComponent {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: err?.error?.message || 'Failed to save exercise',
+          detail: err?.error?.message || 'Failed to save content',
         });
       },
     });
@@ -327,8 +331,8 @@ export class ContentComponent {
 
   deleteContent(content: Exercise): void {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this exercise? This action cannot be undone.',
-      header: 'Delete Exercise',
+      message: 'Are you sure you want to delete this content? This action cannot be undone.',
+      header: 'Delete Content',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
@@ -337,7 +341,7 @@ export class ContentComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Exercise deleted successfully',
+              detail: 'Content deleted successfully',
             });
             const collection = this.selectedCollection();
             if (collection) {
@@ -351,7 +355,7 @@ export class ContentComponent {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to delete exercise',
+              detail: 'Failed to delete content',
             });
           },
         });
@@ -467,7 +471,7 @@ export class ContentComponent {
     if (!contentId || !collection) return;
 
     this.confirmationService.confirm({
-      message: `Remove this exercise from "${collection.title}"?`,
+      message: `Remove this content from "${collection.title}"?`,
       header: 'Remove from Collection',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
@@ -477,7 +481,7 @@ export class ContentComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Exercise removed from collection',
+              detail: 'Content removed from collection',
             });
             this.selectCollection(collection);
             this.loadCollections();
@@ -487,7 +491,7 @@ export class ContentComponent {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to remove exercise from collection',
+              detail: 'Failed to remove content from collection',
             });
           },
         });
