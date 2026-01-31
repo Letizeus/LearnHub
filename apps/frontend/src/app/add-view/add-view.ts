@@ -10,6 +10,10 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     styleUrls: ['./add-view.scss'],
     imports: [AddExams, AddExercises, FormsModule, SelectButtonModule],
 }) export class AddView {
+    protected title: string = "";
+
     protected addMode: string = "automatic";
     protected addModeSelectionOptions = [{label: "Automatic", value: "automatic"}, {label: "Manually", value: "manual"}] 
+
+
 }

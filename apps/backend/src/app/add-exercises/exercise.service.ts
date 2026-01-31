@@ -3,7 +3,7 @@ import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { CreateBucketCommand, HeadBucketCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { randomUUID } from 'crypto';
-import { Exercise } from "./exercise";
+import { Exercise } from "../../models/exercise";
 
 @Injectable()
 export class ExerciseService{

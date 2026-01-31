@@ -1,7 +1,7 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose"
-
+import { LearningContent } from "./learning-content";
 @Schema()
-export class Exercise {
+export class Exercise extends LearningContent {
     @Prop({ required: true })
     text: string;
     

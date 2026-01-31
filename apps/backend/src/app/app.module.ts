@@ -6,20 +6,21 @@ import { ExamController } from './add-exams/exam.controller';
 import { ExerciseController } from './add-exercises/exercise.controller';
 
 import { AppService } from './app.service';
-import { ExamService } from './add-exams/exam.service';
-import { Exam } from './add-exams/exam';
-import { ExamSchema } from './add-exams/exam';
 import { ExerciseService } from './add-exercises/exercise.service';
-import { Exercise, ExerciseSchema } from './add-exercises/exercise';
+import { Exercise, ExerciseSchema } from '../models/exercise';
+import { LearningContent, LearningContentSchema } from '../models/learning-content';
+import { LearningContentCollection, LearningContentCollectionSchema } from '../models/learning-content-collection';
 
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://localhost:27017/learnhub?directConnection=true'),
-    MongooseModule.forFeature([{
-      name: Exam.name, schema: ExamSchema
-    }, { name: Exercise.name, schema: ExerciseSchema}]),
+    MongooseModule.forFeature([
+      {name: LearningContentCollection.name, schema: LearningContentCollectionSchema},
+      {name: LearningContent.name, schema: LearningContentSchema},
+      {name: Exercise.name, schema: ExerciseSchema}
+    ]),
   ],
   controllers: [AppController, ExamController, ExerciseController],
-  providers: [AppService, ExamService, ExerciseService],
+  providers: [AppService, ExerciseService],
 })
 export class AppModule {}
