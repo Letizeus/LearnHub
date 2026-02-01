@@ -1,4 +1,4 @@
-import {Injectable } from "@nestjs/common";
+/*import {Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { CreateBucketCommand, HeadBucketCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
@@ -74,4 +74,4 @@ export class ExerciseService{
             await this.s3.send(new CreateBucketCommand({ Bucket: bucket}));
         }
     }
-}
+}*/

@@ -1,6 +1,5 @@
 import { Schema, SchemaFactory, Prop } from "@nestjs/mongoose";
-import { LearningContent } from "./learning-content";
-
+import { HydratedDocument, Types } from "mongoose";
 
 @Schema()
 export class LearningContentCollection{
@@ -11,8 +10,8 @@ export class LearningContentCollection{
     @Prop()
     status: Status;
 
-    @Prop()
-    source: Source;
+//    @Prop()
+//    source: Source;
 
     @Prop()
     author: string;
@@ -24,16 +23,11 @@ export class LearningContentCollection{
     changedAt: Date;
 
     @Prop()
-    contents: LearningContent;
-} export const LearningContentCollectionSchema = SchemaFactory.createForClass(LearningContentCollection);
+    contents: Types.ObjectId[];
+}
+export type LearningContentCollectionDocument = HydratedDocument<LearningContentCollection> 
+export const LearningContentCollectionSchema = SchemaFactory.createForClass(LearningContentCollection);
 
 enum Status {
     DRAFT, PUBLISHED, ARCHIVED
-}
-
-interface Source {
-    url: string;
-    publishedAt: Date;
-    publisher: string;
-    organisation: string;
 }

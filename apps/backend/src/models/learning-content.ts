@@ -1,6 +1,7 @@
 import { Schema, Prop, SchemaFactory  } from "@nestjs/mongoose";
-import { LearningContentCollection } from "./learning-content-collection";
 import { Tag } from "./tag";
+import { Types } from "mongoose";
+import { Exercise } from "./exercise";
 
 @Schema()
 export class LearningContent{
@@ -20,6 +21,6 @@ export class LearningContent{
     @Prop()
     tags: Tag[];
 
-    @Prop()
-    relatedCollection: LearningContentCollection;
+    @Prop({ type: [{ type: Types.ObjectId, ref: Exercise }], default: [] })
+    relatedCollection: Types.ObjectId;
 } export const LearningContentSchema = SchemaFactory.createForClass(LearningContent)

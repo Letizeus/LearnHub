@@ -2,14 +2,13 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose'
 
 import { AppController } from './app.controller';
-import { ExamController } from './add-exams/exam.controller';
-import { ExerciseController } from './add-exercises/exercise.controller';
 
 import { AppService } from './app.service';
-import { ExerciseService } from './add-exercises/exercise.service';
 import { Exercise, ExerciseSchema } from '../models/exercise';
 import { LearningContent, LearningContentSchema } from '../models/learning-content';
 import { LearningContentCollection, LearningContentCollectionSchema } from '../models/learning-content-collection';
+import { CreateService } from './services/create.service';
+import { LearningContentCollectionController } from './add-learning-content-collection/learning-content-collection.controller';
 
 @Module({
   imports: [
@@ -20,7 +19,7 @@ import { LearningContentCollection, LearningContentCollectionSchema } from '../m
       {name: Exercise.name, schema: ExerciseSchema}
     ]),
   ],
-  controllers: [AppController, ExamController, ExerciseController],
-  providers: [AppService, ExerciseService],
+  controllers: [AppController, LearningContentCollectionController],
+  providers: [AppService, CreateService],
 })
 export class AppModule {}

@@ -74,7 +74,7 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
             }
         }))
 
-        fd.append('learningContents', new Blob([JSON.stringify(payload)], {type: 'application/json'}));
+        fd.append('learningContents', JSON.stringify(payload));
         this.learningContents.forEach((lc, i) => {
             lc.exercise.images.forEach((file, j) => {
             fd.append(`exerciseImages[${i}][]`, file);
@@ -84,7 +84,10 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
             fd.append(`solutionImages[${i}][]`, file);
             });
         });
-        this.http.post('http://localhost:3000/api/uploadLearningContents', fd);
+        this.http.post('http://localhost:3000/api/add/add', fd).subscribe({
+            next: (res) => console.log('ok', res),
+            error: (err) => console.error(err),
+        });
         fd.forEach((value, key) => {
             console.log(key, value);
             if (value instanceof File) {

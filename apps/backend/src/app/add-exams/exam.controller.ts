@@ -1,4 +1,4 @@
-import { Controller, Post, UseInterceptors, Body, UploadedFiles } from "@nestjs/common";
+/*import { Controller, Post, UseInterceptors, Body, UploadedFiles } from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { ExamService } from "./exam.service";
 
@@ -18,3 +18,4 @@ export class ExamController {
         return this.examService.createExam(title, files);
     }
 }
+*/

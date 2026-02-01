@@ -1,4 +1,4 @@
-import { Controller, Post, UseInterceptors, Body, UploadedFiles } from "@nestjs/common";
+/*import { Controller, Post, UseInterceptors, Body, UploadedFiles } from "@nestjs/common";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { ExerciseService } from "./exercise.service";
 
@@ -27,3 +27,4 @@ export class ExerciseController {
         return this.exerciseService.create(text, solution, totalPoints, images.exerciseImages ?? [], images.solutionImages ?? []);
     }
 }
+    */
