@@ -54,7 +54,7 @@
                 <div class="view">
                     <div>
                         <label for="exericse">Exercise text</label>
-                        <textarea pTextarea minlength="10" id="exericse" [(ngModel)]="lcForm.exercise.text" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
+                        <textarea pTextarea minlength="10" id="exericse" placeholder="Enter the exercise task or question..." [(ngModel)]="lcForm.exercise.text" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
                     </div>
                     
                     <p-fileupload 
@@ -80,15 +80,15 @@
                             </div>
                         </p-scrollPanel>
                     }
-                    
+
                     <div>
                         <label for="tip">Tip</label>
-                        <textarea pTextarea id="tip" [(ngModel)]="lcForm.exercise.tip" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
+                        <textarea pTextarea id="tip" placeholder="Optional hint for students..." [(ngModel)]="lcForm.exercise.tip" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
                     </div>
 
                     <div>
                         <label for="solution">Solution</label>
-                        <textarea pTextarea id="solution" [(ngModel)]="lcForm.exercise.solution" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
+                        <textarea pTextarea id="solution" placeholder="Enter the solution or answer..." [(ngModel)]="lcForm.exercise.solution" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
                     </div>
                         
                     <p-fileupload 
