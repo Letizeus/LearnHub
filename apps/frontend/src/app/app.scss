@@ -9,9 +9,9 @@
   .content {
     @include theme.desktop {
       padding-top: 4rem;
+      max-width: 60vw;
+      margin: 0 auto;
     }
-    max-width: 60vw;
-    margin: 0 auto;
+
   }
 }
-
