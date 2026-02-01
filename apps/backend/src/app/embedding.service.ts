@@ -2,13 +2,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { pipeline } from '@huggingface/transformers';
 import { InjectModel } from '@nestjs/mongoose';
 import { v5 as uuidv5 } from 'uuid';
-import {
-  LearningContent as LearningContentMongo,
-  LearningContentCollection as LearningContentCollectionMongo,
-} from './schema/learning-content.schema';
 import { Model } from 'mongoose';
-import { ContentRelationFeedback, Exercise, LearningContent, LearningContentCollection, SearchQueryPopulated, Tag } from 'models';
+import { ContentRelationFeedback, Exercise, LEARNING_CONTENT_COLLECTION_NAME, LEARNING_CONTENT_NAME, LearningContent, LearningContentCollection, SearchQueryPopulated, Tag } from 'models';
 import { QdrantClient } from '@qdrant/js-client-rest';
+
+
 
 @Injectable()
 export class EmbeddingService implements OnModuleInit {
@@ -18,10 +16,7 @@ export class EmbeddingService implements OnModuleInit {
   private initPromise: Promise<void>;
   private readonly LERP_ALPHA = 0.1;
 
-  constructor(
-    @InjectModel(LearningContentMongo.name) private contentModel: Model<LearningContentMongo>,
-    @InjectModel(LearningContentCollectionMongo.name) private collectionModel: Model<LearningContentCollectionMongo>,
-  ) {
+  constructor() {
     this.qdrant = new QdrantClient({ host: 'localhost', port: 6333 });
   }
 
@@ -45,26 +40,26 @@ export class EmbeddingService implements OnModuleInit {
     }
     try {
       const collections = await this.qdrant.getCollections();
-      const existsContent = collections.collections.some(c => c.name === LearningContentMongo.name);
+      const existsContent = collections.collections.some(c => c.name === LEARNING_CONTENT_NAME);
       if (!existsContent) {
-        await this.qdrant.createCollection(LearningContentMongo.name, {
+        await this.qdrant.createCollection(LEARNING_CONTENT_NAME, {
           vectors: {
             size: 384, // Must match your model output
             distance: 'Cosine',
           },
         });
-        console.log(`✅ Qdrant Collection '${LearningContentMongo.name}' created.`);
+        console.log(`✅ Qdrant Collection '${LEARNING_CONTENT_NAME}' created.`);
       }
 
-      const existsCollections = collections.collections.some(c => c.name === LearningContentCollectionMongo.name);
+      const existsCollections = collections.collections.some(c => c.name === LEARNING_CONTENT_COLLECTION_NAME);
       if (!existsCollections) {
-        await this.qdrant.createCollection(LearningContentCollectionMongo.name, {
+        await this.qdrant.createCollection(LEARNING_CONTENT_COLLECTION_NAME, {
           vectors: {
             size: 384, // Must match your model output
             distance: 'Cosine',
           },
         });
-        console.log(`✅ Qdrant Collection '${LearningContentCollectionMongo.name}' created.`);
+        console.log(`✅ Qdrant Collection '${LEARNING_CONTENT_COLLECTION_NAME}' created.`);
       }
     } catch (err) {
       console.error('❌ Failed to connect to Qdrant. Is Docker running?', err.message);
@@ -127,67 +122,6 @@ export class EmbeddingService implements OnModuleInit {
       with_payload: true, // Returns the metadata we stored
     });
     return results.map(e => e.payload.mongoId as string);
-  }
-
-  async applyMultiSignalFeedback(feedback: ContentRelationFeedback): Promise<number[]> {
-    // 1. Get starting point from Qdrant
-    // Note: feedback.id must be a valid Qdrant ID (UUID or Integer)
-    let collection_name;
-    if (feedback.type == 'CONTENT') {
-      collection_name = LearningContentMongo.name;
-    } else {
-      collection_name = LearningContentCollectionMongo.name;
-    }
-    const [originalPoint] = await this.qdrant.retrieve(collection_name, {
-      ids: [this.toQdrantId(feedback.id)],
-      with_vector: true,
-    });
-
-    if (!originalPoint || !originalPoint.vector) {
-      throw new Error(`Original content ${feedback.id} (${this.toQdrantId(feedback.id)}) not found in Qdrant`);
-    }
-
-    // Cast vector to number array as Qdrant might return it as different types
-    let updatedVector = [...(originalPoint.vector as number[])];
-
-    // 2. Nudge toward Search Query
-    if (feedback.searchQuery) {
-      const searchVector = await this.generate(this.flattenSearchQuery(feedback.searchQuery));
-      updatedVector = this.lerp(updatedVector, searchVector);
-    }
-
-    // 3. Nudge toward Related Content
-    if (feedback.content) {
-      const [relatedPoint] = await this.qdrant.retrieve(LearningContentMongo.name, {
-        ids: [this.toQdrantId(feedback.content)],
-        with_vector: true,
-      });
-      if (relatedPoint?.vector) {
-        updatedVector = this.lerp(updatedVector, relatedPoint.vector as number[]);
-      }
-    }
-
-    // 4. Nudge toward Collection
-    // Note: Ensure your collections are also indexed in Qdrant
-    // or use a separate collection name if necessary.
-    if (feedback.collection) {
-      const [collectionPoint] = await this.qdrant.retrieve(LearningContentCollectionMongo.name, {
-        ids: [this.toQdrantId(feedback.collection)],
-        with_vector: true,
-      });
-      if (collectionPoint?.vector) {
-        updatedVector = this.lerp(updatedVector, collectionPoint.vector as number[]);
-      }
-    }
-
-    // OPTIONAL: Auto-save the "nudged" vector back to Qdrant to update the user's model
-    // await this.upsertVector(feedback.id, normalizedResult);
-
-    return this.normalize(updatedVector);
-  }
-
-  private lerp(v1: number[], v2: number[]): number[] {
-    return v1.map((val, i) => val + this.LERP_ALPHA * (v2[i] - val));
   }
 
   flattenContent(

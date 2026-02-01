@@ -7,10 +7,12 @@ import { FolderItemsComponent } from './folder-items/folder-items.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ContentPreviewComponent } from '../content-preview/content-preview.component';
+import { NgxPrintDirective } from 'ngx-print';
+import { ContentDataService } from '../content-data.service';
 
 @Component({
   selector: 'lh-folder-view',
-  imports: [Button, MatIcon, FolderItemsComponent, ConfirmDialogModule, ContentPreviewComponent],
+  imports: [Button, MatIcon, FolderItemsComponent, ConfirmDialogModule, ContentPreviewComponent, NgxPrintDirective],
   providers: [ConfirmationService],
   templateUrl: './folder-view.component.html',
   styleUrl: './folder-view.component.scss',
@@ -20,6 +22,7 @@ export class FolderViewComponent {
   private router = inject(Router);
   private confirmationService = inject(ConfirmationService);
   folderService = inject(FolderService);
+  contentService = inject(ContentDataService)
 
   @ViewChild('folderName') inputElement!: ElementRef;
 
@@ -61,5 +64,12 @@ export class FolderViewComponent {
         this.router.navigate(['/folder']);
       },
     });
+  }
+
+  download() {
+    for(const i of this.folderService.activeFolder()!.content) {
+      this.contentService.download(i)
+    }
+    
   }
 }

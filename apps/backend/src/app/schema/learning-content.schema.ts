@@ -2,11 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import mongoose from 'mongoose';
 import { Tag } from './tag.schema';
+import { LEARNING_CONTENT_COLLECTION_NAME, LEARNING_CONTENT_NAME } from 'models';
 
 @Schema({
   discriminatorKey: 'type',
   timestamps: true,
-  collection: 'learning_contents', // Shared collection
+  collection: LEARNING_CONTENT_NAME, // Shared collection
 })
 export class LearningContent extends Document {
   @Prop({ required: true })
@@ -24,7 +25,7 @@ export class LearningContent extends Document {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }], default: [] })
   tags: Tag[];
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'LearningContentCollection' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: LEARNING_CONTENT_COLLECTION_NAME })
   relatedCollection: any; // Use forwardRef or string name to avoid circular dependency
 
   @Prop({ type: Object })
@@ -59,7 +60,7 @@ export class Exercise {
 
 export const ExerciseSchema = SchemaFactory.createForClass(Exercise);
 
-@Schema({ timestamps: { createdAt: 'createdAt', updatedAt: 'changedAt' } })
+@Schema({ timestamps: { createdAt: 'createdAt', updatedAt: 'changedAt' }, collection: LEARNING_CONTENT_COLLECTION_NAME })
 export class LearningContentCollection extends Document {
   @Prop({ required: true })
   title: string;
@@ -86,7 +87,7 @@ export class LearningContentCollection extends Document {
   @Prop({ required: true })
   author: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'LearningContent' }] })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: LEARNING_CONTENT_NAME }] })
   contents: LearningContent[];
 }
 

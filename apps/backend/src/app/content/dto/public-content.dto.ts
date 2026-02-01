@@ -1,5 +1,6 @@
 import { Exercise, LearningAnalytics, LearningContent } from 'models';
-import { Exclude, Expose, Transform } from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
+import { Types } from 'mongoose';
 
 @Exclude()
 export class PublicContentDto implements Omit<LearningContent, 'relatedCollection'> {
@@ -13,7 +14,7 @@ export class PublicContentDto implements Omit<LearningContent, 'relatedCollectio
   downloads: number;
 
   @Expose()
-  @Transform(({ value }) => value.likes.length || 0)
+  @Transform(({ value, obj }) => value.length)
   likes: number;
 
   @Expose()

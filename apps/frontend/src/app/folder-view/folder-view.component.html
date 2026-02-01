@@ -16,7 +16,10 @@
       <p-button [rounded]="true" [text]="true" severity="secondary" (click)="editMode = true">
         <mat-icon>edit</mat-icon>
       </p-button>
-      <p-button [rounded]="true" [text]="true" severity="info">
+      <p-button [rounded]="true" [text]="true" severity="info" printSectionId="pdf-content" ngxPrint
+      [useExistingCss]="true"
+    [printStyle]="{ '.katex': {'font-size': '1.1em'} }"
+    (click)="download()">
         <mat-icon> picture_as_pdf</mat-icon>
       </p-button>
       @if (folderService.activeFolder()!.id != 'liked') {

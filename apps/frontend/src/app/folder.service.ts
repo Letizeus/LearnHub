@@ -131,6 +131,7 @@ export class FolderService {
         } else {
           this.removeFromFolder(id, 'liked');
         }
+        this.contentDataService.refreshContent(id);
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: "Couldn't like the content. Please try again later." });

@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { SearchQueryPopulated, SearchResult, Tag } from 'models';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { LEARNING_CONTENT_COLLECTION_NAME, LEARNING_CONTENT_NAME, SearchQueryPopulated, SearchResult, Tag } from 'models';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   LearningContent as LearningContentMongo,
   LearningContentCollection as LearningContentCollectionMongo,
 } from '../schema/learning-content.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import mongoose from 'mongoose';
 import { SimpleCreateDto } from './dto/simple-create.dto';
 import { plainToInstance } from 'class-transformer';
@@ -15,16 +15,16 @@ import { EmbeddingService } from '../embedding.service';
 import { PublicCollectionDto } from './dto/public-collection.dto';
 import { PublicSearchResultsDto } from './dto/public-search-results.dto';
 import { TagService } from '../tag/tag.service';
-import { FeedbackContentDto } from './dto/feedback.dto';
 import { PublicTagDto } from '../tag/dto/public-tag.dto';
-import { IdsDto } from './dto/ids.dto';
+import { ContentsDto } from './dto/contents.dto';
 
 @Injectable()
 export class ContentService {
   constructor(
-    @InjectModel(LearningContentMongo.name) private contentModel: Model<LearningContentMongo>,
-    @InjectModel(LearningContentCollectionMongo.name) private contentCollectionModel: Model<LearningContentCollectionMongo>,
+    @InjectModel(LEARNING_CONTENT_NAME) private contentModel: Model<LearningContentMongo>,
+    @InjectModel(LEARNING_CONTENT_COLLECTION_NAME) private contentCollectionModel: Model<LearningContentCollectionMongo>,
     private embeddingService: EmbeddingService,
+    @Inject(forwardRef(() => TagService))
     private tagService: TagService,
   ) {}
 
@@ -44,7 +44,7 @@ export class ContentService {
       this.embeddingService.flattenCollection(plainToInstance(PublicCollectionDto, createdColl.toObject())),
     );
 
-    await this.embeddingService.upsertVector(LearningContentCollectionMongo.name, createdColl._id.toString(), emb);
+    await this.embeddingService.upsertVector(LEARNING_CONTENT_COLLECTION_NAME, createdColl._id.toString(), emb);
 
     for (const id of ids) {
       const content = await this.contentModel.findByIdAndUpdate(id, { relatedCollection: createdColl._id.toString() });
@@ -56,7 +56,7 @@ export class ContentService {
         }),
       );
 
-      await this.embeddingService.upsertVector(LearningContentMongo.name, content._id.toString(), emb2);
+      await this.embeddingService.upsertVector(LEARNING_CONTENT_NAME, content._id.toString(), emb2);
     }
 
     return plainToInstance(PublicCollectionDto, createdColl.toObject());
@@ -65,23 +65,17 @@ export class ContentService {
   async getContent(id: string) {
     const content = await this.contentModel
       .findById(id, {})
-      .populate('relatedCollection', 'status')
-      .then(content => {
-        if (!content?.relatedCollection || content.relatedCollection.status !== 'PUBLISHED') {
-          return null;
-        }
-        return content;
-      });
+      .populate('relatedCollection', 'status');
     return content.type == 'EXERCISE'
       ? plainToInstance(PublicExerciseDto, content.toObject())
       : plainToInstance(PublicContentDto, content.toObject());
   }
 
   async getContents(ids: string[]) {
-    const res = await this.contentModel.find({ _id: { $in: ids } }).populate('relatedCollection');
-    return res.map(c =>
-      c.type == 'EXERCISE' ? plainToInstance(PublicExerciseDto, c.toObject()) : plainToInstance(PublicContentDto, c.toObject()),
-    );
+    const res = await this.contentModel.find({ _id: { $in: ids } }).populate('relatedCollection').lean();
+      
+
+    return plainToInstance(ContentsDto, res);
   }
 
   async getCollections(ids: string[]) {
@@ -112,9 +106,8 @@ export class ContentService {
     const searchQueryPopulated: SearchQueryPopulated = { ...searchQuery, tags: searchQueryTags };
     const searchQueryString = this.embeddingService.flattenSearchQuery(searchQueryPopulated);
     const queryVector = await this.embeddingService.generate(searchQueryString);
-
-    const content = await this.embeddingService.searchSimilar(LearningContentMongo.name, queryVector, limits.content);
-    const collections = await this.embeddingService.searchSimilar(LearningContentCollectionMongo.name, queryVector, limits.collection);
+    const content = await this.embeddingService.searchSimilar(LEARNING_CONTENT_NAME, queryVector, limits.content);
+    const collections = await this.embeddingService.searchSimilar(LEARNING_CONTENT_COLLECTION_NAME, queryVector, limits.collection);
 
     const existingContent = await this.contentModel.find({ _id: { $in: content } }).distinct('_id');
     const existingCollections = await this.contentCollectionModel.find({ _id: { $in: collections } }).distinct('_id');
@@ -137,10 +130,17 @@ export class ContentService {
     return content.map(d => d._id.toString());
   }
 
+  async download(id: string) {
+    const content = await this.contentModel.findByIdAndUpdate(id, {$inc: {
+      downloads: 1
+    }})
+
+  }
+
   async getRecommendedCollections(limit = 10) {
     const searchString = 'RWTH Aachen';
     const queryVector = await this.embeddingService.generate(searchString);
-    return await this.embeddingService.searchSimilar(LearningContentCollectionMongo.name, queryVector, limit);
+    return await this.embeddingService.searchSimilar(LEARNING_CONTENT_COLLECTION_NAME, queryVector, limit);
   }
 
   async getTrendingContent(limit = 10) {
@@ -149,8 +149,8 @@ export class ContentService {
   }
 
   async getSimilarContent(id: string, limit = 10) {
-    const vector = await this.embeddingService.getVector(LearningContentMongo.name, id);
-    return await this.embeddingService.searchSimilar(LearningContentMongo.name, vector, limit);
+    const vector = await this.embeddingService.getVector(LEARNING_CONTENT_NAME, id);
+    return await this.embeddingService.searchSimilar(LEARNING_CONTENT_NAME, vector, limit);
   }
 
   async like(user: string, id: string) {
@@ -178,26 +178,9 @@ export class ContentService {
       return true;
     }
   }
-
-  async feedbackContent(feedbackContentDto: FeedbackContentDto) {
-    let tags: Tag[] = [];
-    let collection;
-    if (feedbackContentDto.searchQuery) {
-      if (feedbackContentDto.searchQuery.tags) {
-        for (const t of feedbackContentDto.searchQuery.tags) {
-          const tag = await this.tagService.getTag(t, true);
-          tags.push(tag);
-        }
-      }
-      if (feedbackContentDto.searchQuery.collection) {
-        collection = await this.contentCollectionModel.findById(feedbackContentDto.searchQuery.collection);
-      }
-    }
-
-    await this.embeddingService.applyMultiSignalFeedback({
-      ...feedbackContentDto,
-      searchQuery: { ...feedbackContentDto.searchQuery, tags, collection },
-    });
-    return 200;
+  async countDocuments() {
+    return await this.contentModel.countDocuments().exec();
   }
 }
+
+

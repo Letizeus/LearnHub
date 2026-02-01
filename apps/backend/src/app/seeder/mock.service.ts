@@ -1,31 +1,23 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { Exercise, Folder, LearningContentCollection, SearchResult, Tag, TagVisibilityPlace } from 'models';
 import { faker } from '@faker-js/faker';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import {
-  LearningContent as LearningContentMongo,
-  LearningContentCollection as LearningContentCollectionMongo,
-} from './schema/learning-content.schema';
-import { Folder as FolderMongo } from './schema/folder.schema';
-import { Tag as TagMongo, TagGroup as TagGroupMongo } from './schema/tag.schema';
-import { ContentService } from './content/content.service';
-import { SimpleCreateDto, SimpleCreateExerciseDto } from './content/dto/simple-create.dto';
-import { TagService } from './tag/tag.service';
-import { CreateTagGroupDto } from './tag/dto/create-tag-group.dto';
-import { CreateTagDto } from './tag/dto/create-tag.dto';
-import { FolderService } from './folder/folder.service';
+import { ContentService } from '../content/content.service';
+import { TagService } from '../tag/tag.service';
+import { FolderService } from '../folder/folder.service';
+import { SimpleCreateExerciseDto } from '../content/dto/simple-create.dto';
+import { CreateTagDto } from '../tag/dto/create-tag.dto';
+import { CreateTagGroupDto } from '../tag/dto/create-tag-group.dto';
 
 @Injectable()
 export class MockService implements OnModuleInit {
   constructor(
-    @InjectModel(LearningContentMongo.name) private learningContentModel: Model<LearningContentMongo>,
-    @InjectModel(LearningContentCollectionMongo.name) private learningContentCollectionModel: Model<LearningContentCollectionMongo>,
-    @InjectModel(FolderMongo.name) private folderModel: Model<FolderMongo>,
-    @InjectModel(TagMongo.name) private tagModel: Model<TagMongo>,
-    @InjectModel(TagGroupMongo.name) private tagGroupModel: Model<TagGroupMongo>,
+    @Inject(forwardRef(() => ContentService))
     private contentService: ContentService,
+    
+    @Inject(forwardRef(() => TagService))
     private tagService: TagService,
+
+    @Inject(forwardRef(() => FolderService))
     private folderService: FolderService,
   ) {}
 
@@ -36,7 +28,7 @@ export class MockService implements OnModuleInit {
   }
 
   async seedDb() {
-    const count = await this.learningContentModel.countDocuments().exec();
+    const count = await this.contentService.countDocuments();
     if (count > 0) {
       console.log('🌱 Database seeded already. Skipping...');
       return;

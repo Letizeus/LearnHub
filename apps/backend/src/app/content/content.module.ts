@@ -1,37 +1,31 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ContentService } from './content.service';
 import { ContentController } from './content.controller';
-import { MockService } from '../mock.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   ExerciseSchema,
-  LearningContent,
-  LearningContentCollection,
   LearningContentCollectionSchema,
   LearningContentSchema,
 } from '../schema/learning-content.schema';
-
-import { Folder, FolderSchema } from '../schema/folder.schema';
-import { Tag, TagGroup, TagGroupSchema, TagSchema } from '../schema/tag.schema';
-import { EmbeddingService } from '../embedding.service';
-import { TagService } from '../tag/tag.service';
-import { FolderService } from '../folder/folder.service';
+import { LEARNING_CONTENT_COLLECTION_NAME, LEARNING_CONTENT_NAME } from 'models';
+import { TagModule } from '../tag/tag.module';
 
 @Module({
-  providers: [ContentService, MockService, EmbeddingService, TagService, FolderService],
+  providers: [ContentService],
   controllers: [ContentController],
   imports: [
     MongooseModule.forFeature([
-      { name: Folder.name, schema: FolderSchema },
-      { name: Tag.name, schema: TagSchema },
-      { name: TagGroup.name, schema: TagGroupSchema },
-      { name: LearningContentCollection.name, schema: LearningContentCollectionSchema },
+      { name: LEARNING_CONTENT_COLLECTION_NAME, schema: LearningContentCollectionSchema },
       {
-        name: LearningContent.name,
+        name: LEARNING_CONTENT_NAME,
         schema: LearningContentSchema,
         discriminators: [{ name: 'EXERCISE', schema: ExerciseSchema }],
       },
     ]),
+    forwardRef(() => TagModule)
   ],
+  exports: [
+    ContentService
+  ]
 })
 export class ContentModule {}

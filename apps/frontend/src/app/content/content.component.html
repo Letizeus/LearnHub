@@ -1,9 +1,11 @@
 <div class="container">
   @if (contentService.activeExercise() != null) {
-    <p [innerHTML]="contentService.activeExercise()!.text | math"></p>
-    @for (image of contentService.activeExercise()!.images; track image) {
-      <img [src]="image" alt="" />
-    }
+    <div id="pdf-content">
+      <p [innerHTML]="contentService.activeExercise()!.text | math"></p>
+      @for (image of contentService.activeExercise()!.images; track image) {
+        <img [src]="image" alt="" />
+      }
+    </div>
 
     <p-accordion [value]="['']" [multiple]="true">
       @if (contentService.activeExercise()!.tip) {

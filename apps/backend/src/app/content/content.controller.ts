@@ -23,7 +23,8 @@ export class ContentController {
 
   @Post('/contents')
   async getContents(@Body() body: GetContentsDto) {
-    return await this.contentService.getContents(body.missingIds);
+    const res = await this.contentService.getContents(body.missingIds);
+    return ;
   }
 
   @Post('/collections')
@@ -41,11 +42,6 @@ export class ContentController {
     return await this.contentService.like(TEST_USER, id);
   }
 
-  @Post('/feedback')
-  async feedbackContent(@Body() body: FeedbackContentDto) {
-    return await this.contentService.feedbackContent(body);
-  }
-
   @Get('/recommendations/collections')
   async getRecommendedCollections() {
     return await this.contentService.getRecommendedCollections(20);
@@ -59,6 +55,12 @@ export class ContentController {
   @Get('/recommendations/recent')
   async getRecentContent() {
     return await this.contentService.getRecentlyUploaded(20);
+  }
+
+  @Post('/download/:id')
+  async download(@Param('id') id: string) {
+    this.contentService.download(id);
+    return;
   }
 
   @Get('/recommendations/similar')

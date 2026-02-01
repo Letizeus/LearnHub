@@ -139,3 +139,6 @@ export interface ContentRelationFeedback {
   content?: string;
   collection?: string;
 }
+
+export const LEARNING_CONTENT_NAME = 'learning_content'
+export const LEARNING_CONTENT_COLLECTION_NAME = 'learning_content_collection'

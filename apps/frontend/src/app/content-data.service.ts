@@ -184,6 +184,23 @@ export class ContentDataService {
     return this.fetchContent(id);
   }
 
+  download(id: string) {
+    this.http.post('/api/content/download/' + id, {}).subscribe({
+      next: () => {
+        this.refreshContent(id);
+      }
+    })
+  }
+
+  refreshContent(id: string) {
+    this._learningContent.update((prev) => {
+      const map = prev;
+      map.delete(id);
+      return map;
+    });
+    this.fetchMissingContent([id]);
+  }
+
   /*updateContent(id: string, changes: Partial<LearningContent>, errorMsg = "Couldn't perform update. Please try again later.") {
       this.getContentById(id)
         .pipe(
@@ -268,17 +285,5 @@ export class ContentDataService {
             summary: "Couldn't load similar content. Please try again later.",
           }),
       });
-  }
-
-  addLike(id: string) {
-    /*this.getContentById(id).pipe(
-          tap(content => {
-            this.updateContent(id, { likes: content.likes + 1 }, "Couldn't like the content. Please try again later.");
-          }),
-        );*/
-  }
-
-  removeLike(id: string) {
-    //this.getContentById(id).pipe(tap(content => this.updateContent(id, { likes: content.likes - 1 })));
   }
 }

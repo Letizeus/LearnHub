@@ -4,15 +4,16 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { ContentDataService } from '../content-data.service';
 import { FolderService } from '../folder.service';
 import { ButtonModule } from 'primeng/button';
+import { NgxPrintDirective } from 'ngx-print';
 
 @Component({
   selector: 'lh-action-buttons',
-  imports: [MatIcon, SplitButtonModule, ButtonModule],
+  imports: [MatIcon, NgxPrintDirective, ButtonModule],
   templateUrl: './action-buttons.component.html',
   styleUrl: './action-buttons.component.scss',
 })
 export class ActionButtonsComponent {
-  private contentService = inject(ContentDataService);
+  protected contentService = inject(ContentDataService);
   private folderService = inject(FolderService);
 
   id = input.required<string>();
@@ -27,5 +28,10 @@ export class ActionButtonsComponent {
 
   handleLike() {
     this.folderService.like(this.id());
+  }
+
+  generatePdf() {
+    const content = document.getElementById('pdf-content');
+
   }
 }
