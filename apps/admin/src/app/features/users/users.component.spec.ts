@@ -122,12 +122,12 @@ describe('UsersComponent', () => {
     });
   });
 
-  it('should return correct status class and label', () => {
+  it('should return correct status severity and label', () => {
     setupMocks();
     createComponent();
 
-    expect(component.getStatusClass('active')).toBe('status-active');
-    expect(component.getStatusClass('locked')).toBe('status-locked');
+    expect(component.getStatusSeverity('active')).toBe('success');
+    expect(component.getStatusSeverity('locked')).toBe('danger');
     expect(component.getStatusLabel('active')).toBe('Active');
     expect(component.getStatusLabel('locked')).toBe('Locked');
   });

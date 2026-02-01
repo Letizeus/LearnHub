@@ -1,14 +1,40 @@
-<div class="login-card">
-  <h2>Admin Login</h2>
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <label>
-      Email
-      <input type="email" formControlName="email" required />
-    </label>
-    <label>
-      Password
-      <input type="password" formControlName="password" required />
-    </label>
-    <button type="submit" [disabled]="form.invalid">Continue</button>
-  </form>
+<div class="login-container">
+  <p-card class="login-card">
+    <ng-template pTemplate="header">
+      <h2>Admin Login</h2>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            pInputText
+            id="email"
+            type="email"
+            formControlName="email"
+            required
+            class="form-input"
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            pInputText
+            id="password"
+            type="password"
+            formControlName="password"
+            required
+            class="form-input"
+          />
+        </div>
+        <button
+          pButton
+          type="submit"
+          label="Continue"
+          [disabled]="form.invalid"
+          class="submit-btn"
+        ></button>
+      </form>
+    </ng-template>
+  </p-card>
 </div>

@@ -1,12 +1,5 @@
 @use '../../../styles/variables' as *;
 
-.user-details {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xl;
-  padding: $spacing-md;
-}
-
 .status-filter-select {
   width: 11.25rem;
 }

@@ -1,77 +1,50 @@
 @use '../../../styles/variables' as *;
 
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: $spacing-xl;
+}
+
 .login-card {
+  width: 100%;
   max-width: 420px;
-  margin: $spacing-3xl auto;
-  padding: $spacing-2xl;
-  background: $bg-card;
-  border-radius: $border-radius;
-  box-shadow: $shadow-lg;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-}
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-label {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
-  font-weight: $font-medium;
-}
-
-input {
-  padding: $spacing-sm $spacing-md;
-  border-radius: $border-radius;
-  border: 1px solid $border-color;
-  font-size: $font-base;
-  transition: border-color $transition;
-
-  &:focus {
-    outline: none;
-    border-color: $primary;
-  }
-}
-
-button {
-  margin-top: $spacing-xs;
-  padding: $spacing-md;
-  border: none;
-  border-radius: $border-radius;
-  background: $primary;
-  color: $bg-card;
-  font-size: $font-base;
-  cursor: pointer;
-  transition: background $transition;
-
-  &:hover {
-    background: $primary-hover;
+  h2 {
+    margin: 0;
+    padding: $spacing-xl;
+    text-align: center;
+    font-size: $font-2xl;
+    font-weight: $font-bold;
+    color: $text-color;
   }
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .submit-btn {
+    margin-top: $spacing-xs;
+    width: 100%;
   }
 }
 
 // Mobile Styles
-@media (max-width: $breakpoint-md) {
-  .login-card {
-    margin: $spacing-2xl auto;
-    padding: $spacing-xl;
-  }
-}
-
 @media (max-width: $breakpoint-sm) {
+  .login-container {
+    padding: $spacing-lg;
+  }
+
   .login-card {
     max-width: 100%;
-    margin: $spacing-lg;
-    padding: $spacing-lg;
-    box-shadow: $shadow-md;
+
+    h2 {
+      font-size: $font-xl;
+      padding: $spacing-lg;
+    }
   }
 }

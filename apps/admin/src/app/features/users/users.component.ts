@@ -11,6 +11,7 @@ import { DrawerModule } from 'primeng/drawer';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
+import { TagModule } from 'primeng/tag';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
@@ -27,6 +28,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     ConfirmDialogModule,
     ToastModule,
     TooltipModule,
+    TagModule,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './users.component.html',
@@ -205,8 +207,8 @@ export class UsersComponent {
     });
   }
 
-  getStatusClass(status: string): string {
-    return status === 'active' ? 'status-active' : 'status-locked';
+  getStatusSeverity(status: string): 'success' | 'danger' {
+    return status === 'active' ? 'success' : 'danger';
   }
 
   getStatusLabel(status: string): string {

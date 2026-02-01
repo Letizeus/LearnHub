@@ -84,9 +84,10 @@
           <td>{{ user.email }}</td>
           <td>{{ user.displayName }}</td>
           <td>
-            <span [class]="'status-badge ' + getStatusClass(user.status)">
-              {{ getStatusLabel(user.status) }}
-            </span>
+            <p-tag
+              [value]="getStatusLabel(user.status)"
+              [severity]="getStatusSeverity(user.status)"
+            ></p-tag>
           </td>
           <td>
             @if (user.lastActiveAt) {
@@ -190,9 +191,10 @@
           </div>
           <div class="detail-row">
             <span class="detail-label">Status:</span>
-            <span [class]="'status-badge ' + getStatusClass(user.status)">
-              {{ getStatusLabel(user.status) }}
-            </span>
+            <p-tag
+              [value]="getStatusLabel(user.status)"
+              [severity]="getStatusSeverity(user.status)"
+            ></p-tag>
           </div>
         </div>
 
