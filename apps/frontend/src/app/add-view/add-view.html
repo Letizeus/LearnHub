@@ -4,11 +4,11 @@
         <div class="view">
             <h1>Create Collection</h1>
             
-            <label for="collectionSelect">Select a collection</label>
-            <p-select id="collectionSelect" [options]="lcCollections" [(ngModel)]="selectedLcCollection" optionLabel="title" placeholder="Select a collection" [filter]="true"/>
+            <p-select [options]="lcCollections" [(ngModel)]="selectedLcCollection" optionLabel="title" placeholder="Select a collection" [filter]="true"/>
             
             <p-button
                 label="Add collection"
+                icon="pi pi-plus"
                 type="button"
                 (onClick)="openDialogCollection();">
             </p-button>
@@ -27,6 +27,7 @@
 
                     <p-button
                         label="Add collection"
+                        icon="pi pi-plus"
                         type="button"
                         (onClick)="addCollection();">
                     </p-button>
@@ -36,6 +37,7 @@
             <!--LEARNING CONTENT-->
             <h2>Exercises</h2>
             <p-button
+                icon="pi pi-plus"
                 label="Add exercises"
                 type="button"
                 (onClick)="openDialogCreate();">
@@ -78,6 +80,7 @@
                     
                     <p-fileupload 
                         #exerciseFileUpload
+                        chooseIcon="pi pi-file"
                         chooseLabel="Select exercise images and files"
                         mode="basic"
                         [multiple]="true"
@@ -113,6 +116,7 @@
                     <p-fileupload 
                         #solutionFileUpload
                         chooseLabel="Select solution images and files"
+                        chooseIcon="pi pi-file"
                         mode="basic"
                         [multiple]="true"
                         accept="image/*, application/pdf"
@@ -139,6 +143,7 @@
                     </div>
 
                     <p-button
+                        icon="pi pi-plus"
                         label="Add"
                         type="button"
                         (onClick)="saveDialog();dialogVisible = false; ">
@@ -163,6 +168,7 @@
             </p-dialog>
 
             <p-button
+                icon="pi pi-upload"
                 label="Upload"
                 type="button" 
                 severity="primary"
