@@ -15,8 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@learnhub/models": ["models/src/index.ts"],
       "models": ["shared/models/src/index.ts"]
-    }
+    },
   },
   "exclude": ["node_modules", "tmp"]
 }

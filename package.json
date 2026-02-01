@@ -10,6 +10,8 @@
     "dev:frontend": "nx serve frontend",
     "dev:backend": "nx serve backend",
     "dev:admin": "nx serve admin",
+    "format:write": "nx format:write",
+    "format:check": "nx format:check"
     "mock-api": "node apps/frontend/mock/mock-server.js"
   },
   "dependencies": {
