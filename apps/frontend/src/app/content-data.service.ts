@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, resource, signal, untracked } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, of, startWith, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, of, startWith, switchMap, take, tap } from 'rxjs';
 import { Exercise, LearningContent, LearningContentCollection, SearchQuery, SearchResult, SearchResultPopulated } from 'models';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MessageService } from 'primeng/api';
@@ -34,6 +34,33 @@ export class ContentDataService {
     return new Map<string, Exercise>(entries);
   });
 
+  // DETAILED
+  selectedId = signal<string | null>(null);
+  activeExercise = computed(() => this.exercises().get(this.selectedId()!));
+
+  similarExercisesIds = signal<string[]>([]);
+  similarExercises = computed<Exercise[]>(() => {
+    return this.similarExercisesIds().map(e => this.exercises().get(e)!);
+  });
+
+  // Recommendations
+  recommendedCollectionstIds = signal<string[]>([]);
+  recommendedCollections = computed<LearningContentCollection[]>(() => {
+    return this.recommendedCollectionstIds().map(e => this._learningContentCollections().get(e)!);
+  });
+
+  trendingContentIds = signal<string[]>([]);
+  trendingContent = computed<Exercise[]>(() => {
+    return this.trendingContentIds().map(e => this.exercises().get(e)!);
+  });
+
+  recentCollectionsIds = signal<string[]>([]);
+  recentCollections = computed<LearningContentCollection[]>(() => {
+    return this.recentCollectionsIds().map(e => this._learningContentCollections().get(e)!);
+  });
+
+  // SEARCH
+
   searchQuery = toSignal<SearchQuery>(
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -49,34 +76,11 @@ export class ContentDataService {
     ),
   );
 
-  // DETAILED
-  selectedId = signal<string | null>(null);
-  activeExercise = computed(() => this.exercises().get(this.selectedId()!));
-
-  similarExercisesIds = signal<string[]>([]);
-  similarExercises = computed<Exercise[]>(() => {
-    return this.similarExercisesIds().map(e => this.exercises().get(e)!);
-  });
-
-  // Recommendations
-  recommendedCollectionstIds = signal<string[]>([]);
-  recommendedCollections = computed<LearningContentCollection[]>(() => {
-    return this.recommendedCollectionstIds().map(e => this._learningContentCollections().get(e)!);
-  });
-  trendingContentIds = signal<string[]>([]);
-  trendingContent = computed<Exercise[]>(() => {
-    return this.trendingContentIds().map(e => this.exercises().get(e)!);
-  });
-  recentCollectionsIds = signal<string[]>([]);
-  recentCollections = computed<LearningContentCollection[]>(() => {
-    return this.recentCollectionsIds().map(e => this._learningContentCollections().get(e)!);
-  });
-
   private searchResults$ = toObservable(this.searchQuery).pipe(
     filter(query => !!query),
-    debounceTime(1000), // The "Wait" happens here!
-    distinctUntilChanged(), // Don't search if the value is the same
-    switchMap(query => this.getContentBySearch(query!)), // Cancel old requests
+    debounceTime(1000),
+    distinctUntilChanged(),
+    switchMap(query => this.getContentBySearch(query!)),
     tap(result => {
       if (result) {
         this.fetchMissingContent(result.exercises.items);
@@ -117,14 +121,6 @@ export class ContentDataService {
     });
   }
 
-  private fetchContent(id: string) {
-    return this.http.get<LearningContent>(`/api/content/${id}`).pipe(
-      tap(content => {
-        this.addContentHelper([content]);
-      }),
-    );
-  }
-
   private addContentHelper(content: LearningContent[]) {
     this._learningContent.update(prev => {
       const next = new Map(prev); // New reference
@@ -155,45 +151,55 @@ export class ContentDataService {
     if (missingIds.length === 0) return;
     this.http
       .post<LearningContent[]>('/api/content/contents', { missingIds })
-      .pipe(
-        tap(contents => {
+      .pipe(take(1))
+      .subscribe({
+        next: contents => {
           this.addContentHelper(contents);
-        }),
-      )
-      .subscribe();
+        },
+        error: err => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: "Couldn't load missing content. Please try again later.",
+          });
+        },
+      });
   }
 
-  private fetchMissingCollections(ids: string[]) {
+  fetchMissingCollections(ids: string[]) {
     const cache = this._learningContentCollections();
     const missingIds = ids.filter(id => !cache.get(id));
     if (missingIds.length === 0) return;
     this.http
       .post<LearningContentCollection[]>('/api/content/collections/', { missingIds })
-      .pipe(
-        tap(collections => {
+      .pipe(take(1))
+      .subscribe({
+        next: collections => {
           this.addCollectionsHelper(collections);
-        }),
-      )
-      .subscribe();
-  }
-
-  getContentById(id: string) {
-    const cachedItem = this._learningContent().get(id);
-
-    if (cachedItem) return of(cachedItem);
-    return this.fetchContent(id);
+        },
+        error: err => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: "Couldn't load missing collections. Please try again later.",
+          });
+        },
+      });
   }
 
   download(id: string) {
-    this.http.post('/api/content/download/' + id, {}).subscribe({
-      next: () => {
-        this.refreshContent(id);
-      }
-    })
+    this.http
+      .post('/api/content/download/' + id, {})
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.refreshContent(id);
+        },
+      });
   }
 
   refreshContent(id: string) {
-    this._learningContent.update((prev) => {
+    this._learningContent.update(prev => {
       const map = prev;
       map.delete(id);
       return map;
@@ -201,70 +207,61 @@ export class ContentDataService {
     this.fetchMissingContent([id]);
   }
 
-  /*updateContent(id: string, changes: Partial<LearningContent>, errorMsg = "Couldn't perform update. Please try again later.") {
-      this.getContentById(id)
-        .pipe(
-          switchMap(item => {
-            const payload = { ...item, ...changes };
-  
-            return this.http.put<LearningContent>(`/api/content/${id}`, payload).pipe(
-              tap(savedItem => {
-                this._learningContent.update(contents => contents.set(id, savedItem));
-              }),
-            );
-          }),
-          catchError(err => {
-            this.messageService.add({ severity: 'error', summary:  });
-            return of(null);
-          }),
-        )
-        .subscribe();
-    }*/
-
   getContentBySearch(query: SearchQuery) {
     return this.http.post<SearchResult>('/api/content/search', query);
   }
 
   getRecommendedCollections() {
-    this.http.get<string[]>('/api/content/recommendations/collections').subscribe({
-      next: ids => {
-        this.recommendedCollectionstIds.set(ids);
-        this.fetchMissingCollections(ids);
-      },
-      error: err =>
-        this.messageService.add({
-          severity: 'error',
-          summary: "Couldn't load recommended collections. Please try again later.",
-        }),
-    });
+    this.http
+      .get<string[]>('/api/content/recommendations/collections')
+      .pipe(take(1))
+      .subscribe({
+        next: ids => {
+          this.recommendedCollectionstIds.set(ids);
+          this.fetchMissingCollections(ids);
+        },
+        error: err => {
+          console.error(err);
+          this.messageService.add({
+            severity: 'error',
+            summary: "Couldn't load recommended collections. Please try again later.",
+          });
+        },
+      });
   }
 
   getTrendingContent() {
-    this.http.get<string[]>('/api/content/recommendations/trending').subscribe({
-      next: ids => {
-        this.trendingContentIds.set(ids);
-        this.fetchMissingContent(ids);
-      },
-      error: err =>
-        this.messageService.add({
-          severity: 'error',
-          summary: "Couldn't load trending content. Please try again later.",
-        }),
-    });
+    this.http
+      .get<string[]>('/api/content/recommendations/trending')
+      .pipe(take(1))
+      .subscribe({
+        next: ids => {
+          this.trendingContentIds.set(ids);
+          this.fetchMissingContent(ids);
+        },
+        error: err =>
+          this.messageService.add({
+            severity: 'error',
+            summary: "Couldn't load trending content. Please try again later.",
+          }),
+      });
   }
 
   getRecentCollections() {
-    this.http.get<string[]>('/api/content/recommendations/recent').subscribe({
-      next: ids => {
-        this.recentCollectionsIds.set(ids);
-        this.fetchMissingCollections(ids);
-      },
-      error: err =>
-        this.messageService.add({
-          severity: 'error',
-          summary: "Couldn't load recent collections. Please try again later.",
-        }),
-    });
+    this.http
+      .get<string[]>('/api/content/recommendations/recent')
+      .pipe(take(1))
+      .subscribe({
+        next: ids => {
+          this.recentCollectionsIds.set(ids);
+          this.fetchMissingCollections(ids);
+        },
+        error: err =>
+          this.messageService.add({
+            severity: 'error',
+            summary: "Couldn't load recent collections. Please try again later.",
+          }),
+      });
   }
 
   getSimilarContent() {
@@ -274,6 +271,7 @@ export class ContentDataService {
           id: this.selectedId()!,
         },
       })
+      .pipe(take(1))
       .subscribe({
         next: ids => {
           this.similarExercisesIds.set(ids);
