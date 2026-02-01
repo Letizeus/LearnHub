@@ -4,6 +4,9 @@ import { LearningContent } from "./learning-content";
 export class Exercise extends LearningContent {
     @Prop({ required: true })
     text: string;
+
+    @Prop()
+    tip: string;
     
     @Prop()
     solution: string;

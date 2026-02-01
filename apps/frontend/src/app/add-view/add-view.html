@@ -6,12 +6,12 @@
 
             <div>
                 <label for="title">Title *</label>
-                <input pInputText id="title" [(ngModel)]="title" pSize="large" autocomplete="off" placeholder="Enter collection title" fluid/>
+                <input pInputText minlength="1" id="title" [(ngModel)]="title" pSize="large" autocomplete="off" placeholder="Enter collection title" fluid/>
             </div>
 
             <div>
                 <label for="author">Author *</label>
-                <input pInputText id="author" [(ngModel)]="author" pSize="large" autocomplete="off" placeholder="Enter author name" fluid/>
+                <input pInputText minlength="1" id="author" [(ngModel)]="author" pSize="large" autocomplete="off" placeholder="Enter author name" fluid/>
             </div>
 
             <!--LEARNING CONTENT-->
@@ -48,12 +48,13 @@
                 </p-table>
             }
 
+            <!--DIALOG-->
             <p-dialog header="Exercise" [(visible)]="dialogVisible"
             [modal]="true" [dismissableMask]="true">
                 <div class="view">
                     <div>
                         <label for="exericse">Exercise text</label>
-                        <textarea pTextarea id="exericse" [(ngModel)]="lcForm.exercise.text" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
+                        <textarea pTextarea minlength="10" id="exericse" [(ngModel)]="lcForm.exercise.text" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
                     </div>
                     
                     <p-fileupload 
@@ -79,6 +80,11 @@
                             </div>
                         </p-scrollPanel>
                     }
+                    
+                    <div>
+                        <label for="tip">Tip</label>
+                        <textarea pTextarea id="tip" [(ngModel)]="lcForm.exercise.tip" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
+                    </div>
 
                     <div>
                         <label for="solution">Solution</label>
@@ -122,6 +128,7 @@
             </p-dialog>
 
 
+            <!--IMAGE PREVIEW-->
             <div class="singlePreview" *ngIf="activePreview" (click)="closePreview()">
                 <img [src]="activePreview"/>
             </div>

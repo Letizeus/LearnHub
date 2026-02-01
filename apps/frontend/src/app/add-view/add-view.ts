@@ -63,6 +63,9 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
     }
 
     saveDialog(){
+        if(this.lcForm.exercise.text.length < 10){
+            return;
+        }
         if(this.dialogMode == "create"){
             this.learningContents = [... this.learningContents, this.lcForm];
         } else if (this.editIndex !== null) {
@@ -89,6 +92,10 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
     }
 
     upload(){
+        if(this.title.length == 0 || this.author.length == 0){
+            return;
+        }
+        
         const fd = new FormData();
         fd.append('title', this.title);
         fd.append('author', this.author);

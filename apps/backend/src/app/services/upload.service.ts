@@ -79,6 +79,7 @@ export class UploadService {
                     tags: mergedLearningContent.tags ?? [],
                     
                     text: mergedLearningContent.exercise.text,
+                    tip: mergedLearningContent.exercise.tip,
                     solution: mergedLearningContent.exercise.solution ?? "",
                     totalPoints: mergedLearningContent.exercise.total_points ?? 0,
                     exerciseImages: exerciseImagesMetadata,
