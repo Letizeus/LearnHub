@@ -1,11 +1,11 @@
 import { Controller, Post, UseInterceptors, Body, UploadedFiles, BadRequestException } from "@nestjs/common";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
-import { CreateService } from "../services/create.service";
+import { UploadService } from "../services/upload.service";
 
-@Controller('add')
+@Controller('learning-content-collection')
 export class LearningContentCollectionController {
 
-    constructor(private readonly createService: CreateService) {}
+    constructor(private readonly uploadService: UploadService) {}
 
     @Post('add')
     @UseInterceptors(
@@ -46,6 +46,6 @@ export class LearningContentCollectionController {
         const exerciseImages = getIndexedFiles('exerciseImages');
         const solutionImages = getIndexedFiles('solutionImages');
 
-        return await this.createService.create(title, learningContents, exerciseImages, solutionImages);
+        return await this.uploadService.create(title, learningContents, exerciseImages, solutionImages);
     }
 }

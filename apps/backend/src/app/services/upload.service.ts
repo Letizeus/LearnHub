@@ -4,11 +4,10 @@ import { InjectModel } from "@nestjs/mongoose";
 import { CreateBucketCommand, HeadBucketCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { randomUUID } from 'crypto';
 import { LearningContentCollection, LearningContentCollectionDocument } from "../../models/learning-content-collection";
-import { LearningContent } from "../../models/learning-content";
 import { Exercise } from "../../models/exercise";
 
 @Injectable()
-export class CreateService {
+export class UploadService {
     private readonly bucket = "files";
     private readonly s3: S3Client;
     constructor(
@@ -44,8 +43,10 @@ export class CreateService {
         solutionImages: Map<number, Express.Multer.File[]>
     ){  
         await this.createBucketIfNotExist(this.bucket);
+        //Create Collection
         const collection = await this.createCollection(title);
 
+        //Merge Learning Contents and Images from FormData
         const mergedLearningContents = learningContents.map((lc, index) => ({
             ...lc,
             exercise: {
@@ -55,22 +56,19 @@ export class CreateService {
             }
         }))
         console.log(mergedLearningContents.toString());
-
+        
+        //Create LearningContent (Exercise) and map it to its collection
         for(const mergedLearningContent of mergedLearningContents){
-            const exerciseImagesMetadata = (mergedLearningContent.exercise.exerciseImages ?? []).map(
-                                            (f: Express.Multer.File) => ({
-                                                filename: f.filename ?? f.originalname,
-                                                mimetype: f.mimetype,
-                                                size: f.size,
-                                                path: f.path,
-                                            }));
-            const solutionImagesMetadata = (mergedLearningContent.exercise.solutionImages ?? []).map(
-                                            (f: Express.Multer.File) => ({
-                                                filename: f.filename ?? f.originalname,
-                                                mimetype: f.mimetype,
-                                                size: f.size,
-                                                path: f.path,
-                                            }));
+
+            let exerciseImagesMetadata = []
+            mergedLearningContent.exercise.exerciseImages.forEach((f: Express.Multer.File) => {
+                exerciseImagesMetadata.push(this.uploadFile(f, "exercises"));
+            });
+            let solutionImagesMetadata = []
+            mergedLearningContent.exercise.solutionImages.forEach((f: Express.Multer.File) => {
+                solutionImagesMetadata.push(this.uploadFile(f, "solutions"));
+            })
+
             const exercise = await this.exerciseModel.create(
                 {
                     type: mergedLearningContent.type ?? "",
@@ -87,21 +85,13 @@ export class CreateService {
                     relatedCollection: collection._id
                 }
             )
-            collection.contents.push(exercise._id);
-            
-            
-            mergedLearningContent.exercise.exerciseImages.forEach((f: Express.Multer.File) => {
-                this.uploadFile(f, "exercises");
-            });
-            mergedLearningContent.exercise.solutionImages.forEach((f: Express.Multer.File) => {
-                this.uploadFile(f, "solutions");
-            })
-                                            
+            collection.contents.push(exercise._id);                                
         }
         await collection.save()
         return collection;
     }
 
+    //Upload File to Filesystem
     private async uploadFile(f: Express.Multer.File, folder: string){
         const safeName = f.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
         const filePath = `${folder}/${randomUUID()}-${Date.now()}-${safeName}`; //instead of randomUUID: user_id + exam_id
@@ -122,6 +112,7 @@ export class CreateService {
         }
     }
 
+    //Create File system bucket if not exist
     private async createBucketIfNotExist(bucket: string){
         try {
             await this.s3.send(new HeadBucketCommand({Bucket: bucket}));

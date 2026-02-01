@@ -84,7 +84,7 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
             fd.append(`solutionImages[${i}][]`, file);
             });
         });
-        this.http.post('http://localhost:3000/api/add/add', fd).subscribe({
+        this.http.post('http://localhost:3000/api/learning-content-collection/add', fd).subscribe({
             next: (res) => console.log('ok', res),
             error: (err) => console.error(err),
         });

@@ -7,7 +7,7 @@ import { AppService } from './app.service';
 import { Exercise, ExerciseSchema } from '../models/exercise';
 import { LearningContent, LearningContentSchema } from '../models/learning-content';
 import { LearningContentCollection, LearningContentCollectionSchema } from '../models/learning-content-collection';
-import { CreateService } from './services/create.service';
+import { UploadService } from './services/upload.service';
 import { LearningContentCollectionController } from './add-learning-content-collection/learning-content-collection.controller';
 
 @Module({
@@ -20,6 +20,6 @@ import { LearningContentCollectionController } from './add-learning-content-coll
     ]),
   ],
   controllers: [AppController, LearningContentCollectionController],
-  providers: [AppService, CreateService],
+  providers: [AppService, UploadService],
 })
 export class AppModule {}
