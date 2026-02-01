@@ -1,9 +1,17 @@
 <div class="container">
   <div class="bar">
     @for (route of routes; track route.label; let idx = $index) {
-      <a pButton class="p-button-text" [routerLink]="route.routerLink">
-        <mat-icon [class.filled]="current() === idx" pButtonIcon [innerText]="route.icon"></mat-icon>
-      </a>
+      @if (route.routerLink === '/logout') {
+        @if (auth.isAuthenticated()) {
+          <a pButton class="p-button-text" (click)="auth.clearToken()" [routerLink]="'/'">
+            <mat-icon [class.filled]="current() === idx" pButtonIcon [innerText]="route.icon"></mat-icon>
+          </a>
+        }
+      } @else {
+        <a pButton class="p-button-text" [routerLink]="route.routerLink">
+          <mat-icon [class.filled]="current() === idx" pButtonIcon [innerText]="route.icon"></mat-icon>
+        </a>
+      }
     }
   </div>
 </div>
@@ -18,7 +26,13 @@
       Your hub for learning content
     </div>
     @for (route of routes; track route.label; let idx = $index) {
-      <p-button [label]="route.label" [routerLink]="route.routerLink" variant="text" />
+      @if (route.routerLink === '/logout') {
+        @if (auth.isAuthenticated()) {
+          <p-button [label]="route.label" (click)="auth.clearToken()" [routerLink]="'/'" variant="text" />
+        }
+      } @else {
+        <p-button [label]="route.label" [routerLink]="route.routerLink" variant="text" />
+      }
     }
   </div>
 </div>

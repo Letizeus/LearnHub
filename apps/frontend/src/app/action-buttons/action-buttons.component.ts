@@ -4,6 +4,8 @@ import { ContentDataService } from '../content-data.service';
 import { FolderService } from '../folder.service';
 import { ButtonModule } from 'primeng/button';
 import { NgxPrintDirective } from 'ngx-print';
+import { AuthService } from '../core/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'lh-action-buttons',
@@ -14,6 +16,8 @@ import { NgxPrintDirective } from 'ngx-print';
 export class ActionButtonsComponent {
   protected contentService = inject(ContentDataService);
   private folderService = inject(FolderService);
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
   id = input.required<string>();
   small = input<boolean>(false);
@@ -23,9 +27,11 @@ export class ActionButtonsComponent {
     else return this.folderService.likedFolder().content.includes(this.id());
   });
 
-  constructor() {}
-
   handleLike() {
+    if (!this.auth.isAuthenticated()) {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.folderService.like(this.id());
   }
 }

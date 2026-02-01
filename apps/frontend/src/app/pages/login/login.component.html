@@ -1,0 +1,21 @@
+
+<div class="login-card">
+    <div class="login-field">
+    <p-floatlabel variant="in">
+        <input pInputText id="email_input" [(ngModel)]="email" autocomplete="off" />
+        <label for="email_input">Email</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="in">
+        <p-password [(ngModel)]="password" inputId="password_input" [feedback]="false" [toggleMask]="true" />
+        <label for="password_input">Password</label>
+    </p-floatlabel>
+
+    <p-button label="Log in" class="login-button" [disabled]="!isFormValid() || isSubmitting" (onClick)="onSubmit()" />
+
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    </div>
+    <div class="signup-hint">
+    New to LearnHub? <a href="/signup">Sign up</a>
+    </div>
+</div>

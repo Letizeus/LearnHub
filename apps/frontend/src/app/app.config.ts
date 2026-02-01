@@ -6,14 +6,16 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './core/auth.interceptor';
 import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeuix/themes/aura';
+import Aura from '@primeuix/themes/lara';
 import { appRoutes } from './app.routes';
-import { MatIconRegistry } from '@angular/material/icon';
 import { definePreset } from '@primeuix/themes';
-import { provideHttpClient, withFetch } from '@angular/common/http';
-import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { MatIconRegistry } from '@angular/material/icon';
 
 const MyPreset = definePreset(Aura, {
   semantic: {
@@ -61,6 +63,8 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes),
+    provideHttpClient(withInterceptorsFromDi()),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     providePrimeNG({
       theme: {
         preset: MyPreset,
