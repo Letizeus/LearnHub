@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { ContentService } from './content.service';
-import { LearningContent, LearningContentCollection } from '../../../content/learning-content.schema';
+import { LearningContent, LearningContentCollection } from '../../schema/learning-content.schema';
 
 describe('ContentService', () => {
   let service: ContentService;

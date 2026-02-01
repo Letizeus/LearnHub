@@ -156,10 +156,10 @@ export class ContentService {
   async like(user: string, id: string) {
     const content = await this.contentModel.findById(id);
     const userId = new mongoose.Types.ObjectId(user);
-    if (content && content.likes && content.likes.map(id => id.toString()).indexOf(user) !== -1) {
-      await this.contentModel.findByIdAndUpdate(
+    if (content && content.likesArray && content.likesArray.map(id => id.toString()).indexOf(user) !== -1) {
+      const updated = await this.contentModel.findByIdAndUpdate(
         id,
-        { $pull: { likes: userId } },
+        { $pull: { likesArray: userId }, $inc: { likes: -1 } },
         {
           new: true,
           projection: { likes: 1 },
@@ -167,9 +167,9 @@ export class ContentService {
       );
       return false;
     } else {
-      await this.contentModel.findByIdAndUpdate(
+      const updated = await this.contentModel.findByIdAndUpdate(
         id,
-        { $addToSet: { likes: userId } },
+        { $addToSet: { likesArray: userId }, $inc: { likes: 1 } },
         {
           new: true,
           projection: { likes: 1 },

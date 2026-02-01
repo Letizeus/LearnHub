@@ -32,6 +32,8 @@
 
     .taggroup-icon {
       font-size: $font-xl;
+      width: $font-xl;
+      height: $font-xl;
       color: $primary;
       flex-shrink: 0;
     }
@@ -128,6 +130,8 @@
       .tag-icon {
         color: var(--tag-color);
         font-size: $font-lg;
+        width: $font-lg;
+        height: $font-lg;
         filter: brightness(0.8);
       }
     }
@@ -178,9 +182,11 @@
   align-items: center;
   gap: $spacing-sm;
 
-  i {
+  mat-icon {
     font-size: $font-lg;
     color: $primary;
+    width: $font-lg;
+    height: $font-lg;
   }
 }
 

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Tag, TagGroup } from '../../../content/tag.schema';
+import { Tag, TagGroup } from '../../schema/tag.schema';
 import { CreateTagGroupDto, UpdateTagGroupDto } from '../dto/taggroup.dto';
 import {
   TagGroup as TagGroupResponse,
@@ -41,7 +41,7 @@ export class TagGroupsService {
       name: tagGroup.name,
       icon: tagGroup.icon,
       tags: populatedTags.map((tag) => this.toTagResponse(tag)),
-      visibility: tagGroup.visibility,
+      visibility: tagGroup.visibility as any,
     };
   }
 
@@ -133,7 +133,7 @@ export class TagGroupsService {
       throw new BadRequestException('Tag is already in this group');
     }
 
-    tagGroup.tags.push(tag._id);
+    tagGroup.tags.push(tag._id as any);
     await tagGroup.save();
 
     const populatedGroup = await this.findOnePopulated(tagGroupId);
@@ -161,7 +161,7 @@ export class TagGroupsService {
 
   async deleteTagFromAllGroups(tagId: string): Promise<void> {
     await this.tagGroupModel.updateMany(
-      { tags: tagId },
+      { tags: tagId as any },
       { $pull: { tags: tagId } }
     ).exec();
 

@@ -75,7 +75,7 @@ export class TagService {
 
   async removeTagFromGroup(groupId: string, tagId: string) {
     const group = await this.getTagGroup(groupId);
-    group.tags = group.tags.filter(id => id !== tagId);
+    group.tags = group.tags.filter(id => id.toString() !== tagId);
     return await group.save();
   }
 

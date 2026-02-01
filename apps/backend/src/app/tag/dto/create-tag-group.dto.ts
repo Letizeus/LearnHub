@@ -1,8 +1,9 @@
-import { TagGroup, TagID, TagVisibility } from 'models';
-import { IsMongoId, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { TagGroup, TagVisibility } from '@learnhub/models';
+import { TagID } from 'models';
+import { IsMongoId, IsObject, IsOptional, IsString, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class CreateTagGroupDto implements Omit<TagGroup, 'id'> {
+export class CreateTagGroupDto {
   @IsString()
   name: string;
 
@@ -15,6 +16,6 @@ export class CreateTagGroupDto implements Omit<TagGroup, 'id'> {
   tags: TagID[];
 
   @IsOptional()
-  @ValidateNested({ each: true })
-  visibility: TagVisibility[];
+  @IsEnum(TagVisibility)
+  visibility?: TagVisibility;
 }

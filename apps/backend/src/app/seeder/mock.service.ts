@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { Exercise, Folder, LearningContentCollection, SearchResult, Tag, TagVisibilityPlace } from 'models';
+import { Exercise, Folder, LearningContentCollection, SearchResult, Tag } from 'models';
+import { TagVisibility } from '@learnhub/models';
 import { faker } from '@faker-js/faker';
 import { ContentService } from '../content/content.service';
 import { TagService } from '../tag/tag.service';
@@ -76,14 +77,14 @@ export class MockService implements OnModuleInit {
       name: 'Subjects',
       icon: 'category',
       tags: subjectTags.map(t => t._id.toString()),
-      visibility: [{ place: TagVisibilityPlace.SEARCH_PAGE, position: 0 }],
+      visibility: TagVisibility.SEARCH_PAGE,
     });
 
     await this.tagService.createGroup({
       name: 'Institutions',
       icon: 'account_balance',
       tags: uniTags.map(t => t._id.toString()),
-      visibility: [{ place: TagVisibilityPlace.SEARCH_PAGE, position: 1 }],
+      visibility: TagVisibility.SEARCH_PAGE,
     });
 
     // 4. 50 authentische Exams generieren
@@ -251,12 +252,7 @@ export class MockService implements OnModuleInit {
       name: faker.commerce.department(),
       icon: 'shoppingmode',
       tags: Array.from({ length: 10 }, () => faker.string.uuid()),
-      visibility: [
-        {
-          place: TagVisibilityPlace.SEARCH_PAGE,
-          position: faker.number.int({ min: 1, max: 10 }),
-        },
-      ],
+      visibility: TagVisibility.SEARCH_PAGE,
     }));
   }
 

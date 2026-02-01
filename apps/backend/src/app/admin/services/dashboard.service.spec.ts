@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { DashboardService } from './dashboard.service';
 import { User } from '../../../users/user.schema';
-import { LearningContent } from '../../../content/learning-content.schema';
+import { LearningContent } from '../../schema/learning-content.schema';
 import { TimeframeFilter } from '../dto/dashboard.dto';
 
 describe('DashboardService', () => {

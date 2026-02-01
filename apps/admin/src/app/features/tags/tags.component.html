@@ -44,7 +44,7 @@
           aria-label="Select Ungrouped Tags"
         >
           <div class="taggroup-info">
-            <i class="pi pi-tag taggroup-icon"></i>
+            <mat-icon class="taggroup-icon">label</mat-icon>
             <div class="taggroup-details">
               <span class="taggroup-name">Ungrouped Tags</span>
               <span class="taggroup-meta">Tags without a group</span>
@@ -64,7 +64,7 @@
               [attr.aria-label]="'Select ' + tagGroup.name"
             >
               <div class="taggroup-info">
-                <i [class]="'pi pi-' + tagGroup.icon" class="taggroup-icon"></i>
+                <mat-icon class="taggroup-icon">{{ tagGroup.icon }}</mat-icon>
                 <div class="taggroup-details">
                   <span class="taggroup-name">{{ tagGroup.name }}</span>
                   <span class="taggroup-meta">{{ tagGroup.tags.length }} tags · {{ getVisibilityLabel(tagGroup.visibility) }}</span>
@@ -96,7 +96,7 @@
           }
         } @else {
           <div class="empty-state">
-            <i class="pi pi-tags"></i>
+            <mat-icon>folder_open</mat-icon>
             <p>No tag groups found</p>
           </div>
         }
@@ -132,7 +132,7 @@
                 <div class="tag-card-content">
                   <div class="tag-card-header">
                     <div class="tag-icon-wrapper">
-                      <i [class]="'pi pi-' + (tag.icon || 'tag')" class="tag-icon"></i>
+                      <mat-icon class="tag-icon">{{ tag.icon || 'label' }}</mat-icon>
                     </div>
                     <span class="tag-name">{{ tag.name }}</span>
                   </div>
@@ -173,7 +173,7 @@
             }
           } @else {
             <div class="empty-state">
-              <i class="pi pi-tag"></i>
+              <mat-icon>label</mat-icon>
               <p>No ungrouped tags</p>
             </div>
           }
@@ -206,7 +206,7 @@
                 <div class="tag-card-content">
                   <div class="tag-card-header">
                     <div class="tag-icon-wrapper">
-                      <i [class]="'pi pi-' + (tag.icon || 'tag')" class="tag-icon"></i>
+                      <mat-icon class="tag-icon">{{ tag.icon || 'label' }}</mat-icon>
                     </div>
                     <span class="tag-name">{{ tag.name }}</span>
                   </div>
@@ -257,14 +257,14 @@
             }
           } @else {
             <div class="empty-state">
-              <i class="pi pi-tag"></i>
+              <mat-icon>label</mat-icon>
               <p>No tags yet</p>
             </div>
           }
         </div>
       } @else {
         <div class="empty-state">
-          <i class="pi pi-arrow-left"></i>
+          <mat-icon>arrow_back</mat-icon>
           <p>Select a tag group to view its tags</p>
         </div>
       }
@@ -303,13 +303,13 @@
         >
           <ng-template pTemplate="selectedItem" let-option>
             <div class="icon-option">
-              <i [class]="'pi ' + option.icon"></i>
+              <mat-icon>{{ option.icon }}</mat-icon>
               <span>{{ option.label }}</span>
             </div>
           </ng-template>
           <ng-template pTemplate="item" let-option>
             <div class="icon-option">
-              <i [class]="'pi ' + option.icon"></i>
+              <mat-icon>{{ option.icon }}</mat-icon>
               <span>{{ option.label }}</span>
             </div>
           </ng-template>
@@ -369,13 +369,13 @@
         >
           <ng-template pTemplate="selectedItem" let-option>
             <div class="icon-option">
-              <i [class]="'pi ' + option.icon"></i>
+              <mat-icon>{{ option.icon }}</mat-icon>
               <span>{{ option.label }}</span>
             </div>
           </ng-template>
           <ng-template pTemplate="item" let-option>
             <div class="icon-option">
-              <i [class]="'pi ' + option.icon"></i>
+              <mat-icon>{{ option.icon }}</mat-icon>
               <span>{{ option.label }}</span>
             </div>
           </ng-template>
@@ -444,7 +444,7 @@
           >
           <ng-template pTemplate="item" let-option>
             <div class="icon-option">
-              <i [class]="'pi pi-' + option.icon"></i>
+              <mat-icon>{{ option.icon }}</mat-icon>
               <span>{{ option.name }}</span>
             </div>
           </ng-template>

@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { LearningContent, LearningContentCollection } from '../../../content/learning-content.schema';
+import { LearningContent, LearningContentCollection } from '../../schema/learning-content.schema';
 import { CreateContentDto, UpdateContentDto } from '../dto/content.dto';
-import { Tag } from '@learnhub/models';
+import { Tag, LEARNING_CONTENT_NAME, LEARNING_CONTENT_COLLECTION_NAME } from 'models';
 
 interface FindAllOptions {
   search?: string;
@@ -37,9 +37,9 @@ interface ContentResponse {
 @Injectable()
 export class ContentService {
   constructor(
-    @InjectModel(LearningContent.name)
+    @InjectModel(LEARNING_CONTENT_NAME)
     private readonly contentModel: Model<LearningContent>,
-    @InjectModel(LearningContentCollection.name)
+    @InjectModel(LEARNING_CONTENT_COLLECTION_NAME)
     private readonly collectionModel: Model<LearningContentCollection>
   ) {}
 
@@ -51,7 +51,7 @@ export class ContentService {
       keywords: content.keywords,
       downloads: content.downloads,
       likes: content.likes,
-      tags: (content.tags || []) as Tag[],
+      tags: (content.tags || []) as unknown as Tag[],
       relatedCollectionId: content.relatedCollection?._id?.toString(),
       text: doc.text,
       images: doc.images,
@@ -114,9 +114,18 @@ export class ContentService {
       ? this.contentModel.discriminators?.['EXERCISE'] || this.contentModel
       : this.contentModel;
 
-    const { relatedCollectionId, ...contentData } = createContentDto;
+    const { relatedCollectionId, tags, ...contentData } = createContentDto;
+
+    let tagIds: any[] = [];
+    if (tags && Array.isArray(tags) && tags.length > 0) {
+      const tagNames = tags.map((tag: any) => tag.name || tag);
+      const tagDocs = await this.contentModel.db.model('Tag').find({ name: { $in: tagNames } }).exec();
+      tagIds = tagDocs.map((tag: any) => tag._id);
+    }
+
     const content = new ContentModel({
       ...contentData,
+      tags: tagIds,
       downloads: 0,
       likes: 0,
       relatedCollection: relatedCollectionId || null,
@@ -133,7 +142,8 @@ export class ContentService {
       ).exec();
     }
 
-    return this.toContentResponse(savedContent);
+    const populatedContent = await this.contentModel.findById(savedContent._id).populate('tags').exec();
+    return this.toContentResponse(populatedContent!);
   }
 
   async update(id: string, updateContentDto: UpdateContentDto): Promise<ContentResponse> {
@@ -142,11 +152,24 @@ export class ContentService {
       throw new NotFoundException(`Content with ID ${id} not found`);
     }
 
-    Object.assign(content, updateContentDto);
-    content.updatedAt = new Date();
+    const { tags, ...restDto } = updateContentDto;
 
-    const savedContent = await content.save();
-    return this.toContentResponse(savedContent);
+    if (tags !== undefined) {
+      if (Array.isArray(tags) && tags.length > 0) {
+        const tagNames = tags.map((tag: any) => tag.name || tag);
+        const tagDocs = await this.contentModel.db.model('Tag').find({ name: { $in: tagNames } }).exec();
+        content.tags = tagDocs.map((tag: any) => tag._id) as any;
+      } else {
+        content.tags = [] as any;
+      }
+    }
+
+    Object.assign(content, restDto);
+
+    await content.save();
+
+    const populatedContent = await this.contentModel.findById(id).populate('tags').exec();
+    return this.toContentResponse(populatedContent!);
   }
 
   async deleteContent(id: string) {

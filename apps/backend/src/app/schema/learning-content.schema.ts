@@ -20,7 +20,10 @@ export class LearningContent extends Document {
   downloads: number;
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] })
-  likes: mongoose.Schema.Types.ObjectId[];
+  likesArray: mongoose.Schema.Types.ObjectId[];
+
+  @Prop({ default: 0 })
+  likes: number;
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }], default: [] })
   tags: Tag[];
@@ -30,6 +33,9 @@ export class LearningContent extends Document {
 
   @Prop({ type: Object })
   analytics: any;
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export const LearningContentSchema = SchemaFactory.createForClass(LearningContent);
@@ -89,6 +95,9 @@ export class LearningContentCollection extends Document {
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: LEARNING_CONTENT_NAME }] })
   contents: LearningContent[];
+
+  createdAt?: Date;
+  changedAt?: Date;
 }
 
 export const LearningContentCollectionSchema = SchemaFactory.createForClass(LearningContentCollection);

@@ -32,10 +32,10 @@ export class TagGroup extends Document {
   icon?: string;
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }], default: [] })
-  tags: string[];
+  tags: mongoose.Schema.Types.ObjectId[];
 
-  @Prop({ default: [] })
-  visibility: TagVisibility[];
+  @Prop({ type: String, enum: ['SEARCH_PAGE', 'TAG_SELECT'] })
+  visibility: TagVisibility;
 }
 
 export const TagGroupSchema = SchemaFactory.createForClass(TagGroup);

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ContentModule } from '../../content/content.module';
+import { ContentModule } from '../content/content.module';
 import { UsersModule } from '../../users/users.module';
+import { TagModule } from '../tag/tag.module';
 import { DashboardController } from './controllers/dashboard.controller';
 import { DashboardService } from './services/dashboard.service';
 import { UsersController } from './controllers/users.controller';
@@ -18,6 +19,7 @@ import { TagsService } from './services/tags.service';
   imports: [
     ContentModule,
     UsersModule,
+    TagModule,
   ],
   controllers: [
     DashboardController,

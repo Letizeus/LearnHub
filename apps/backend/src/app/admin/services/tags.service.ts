@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Tag } from '../../../content/tag.schema';
+import { Tag } from '../../schema/tag.schema';
 import { CreateTagDto, UpdateTagDto } from '../dto/tag.dto';
 import { Tag as TagResponse } from '@learnhub/models';
 

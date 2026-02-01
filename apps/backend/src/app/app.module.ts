@@ -8,7 +8,6 @@ import { FolderModule } from './folder/folder.module';
 import { SharedModule } from './shared.module';
 import { SeederModule } from './seeder/seeder.module';
 import { AdminModule } from './admin/admin.module';
-import { ContentModule } from '../content/content.module';
 import { UsersModule } from '../users/users.module';
 
 @Module({
@@ -19,7 +18,6 @@ import { UsersModule } from '../users/users.module';
     FolderModule,
     SharedModule,
     SeederModule,
-    ContentModule,
     UsersModule,
     AdminModule,
   ],

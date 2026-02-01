@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { LearningContent, LearningContentCollection } from '../../../content/learning-content.schema';
+import { LearningContent, LearningContentCollection } from '../../schema/learning-content.schema';
 import { CreateCollectionDto, UpdateCollectionDto } from '../dto/collection.dto';
 import { Status, Source } from '@learnhub/models';
+import { LEARNING_CONTENT_NAME, LEARNING_CONTENT_COLLECTION_NAME } from 'models';
 
 interface FindAllOptions {
   search?: string;
@@ -28,9 +29,9 @@ interface CollectionResponse {
 @Injectable()
 export class CollectionsService {
   constructor(
-    @InjectModel(LearningContentCollection.name)
+    @InjectModel(LEARNING_CONTENT_COLLECTION_NAME)
     private readonly collectionModel: Model<LearningContentCollection>,
-    @InjectModel(LearningContent.name)
+    @InjectModel(LEARNING_CONTENT_NAME)
     private readonly contentModel: Model<LearningContent>
   ) {}
 
@@ -94,7 +95,7 @@ export class CollectionsService {
     }
 
     const [collections, total] = await Promise.all([
-      this.collectionModel.find(filter).sort(sort).skip(skip).limit(limit).exec(),
+      this.collectionModel.find(filter).sort(sort).skip(skip).limit(limit).lean().exec(),
       this.collectionModel.countDocuments(filter).exec(),
     ]);
 
@@ -110,7 +111,14 @@ export class CollectionsService {
   async findOne(id: string): Promise<CollectionResponse> {
     const collection = await this.collectionModel
       .findById(id)
-      .populate('contents')
+      .populate({
+        path: 'contents',
+        select: '-relatedCollection',
+        populate: {
+          path: 'tags'
+        }
+      })
+      .lean()
       .exec();
     if (!collection) {
       throw new NotFoundException(`Collection with ID ${id} not found`);
@@ -126,7 +134,8 @@ export class CollectionsService {
       changedAt: new Date(),
     });
     const savedCollection = await collection.save();
-    return this.toCollectionResponse(savedCollection);
+    const plainCollection = await this.collectionModel.findById(savedCollection._id).lean().exec();
+    return this.toCollectionResponse(plainCollection);
   }
 
   async update(id: string, updateCollectionDto: UpdateCollectionDto): Promise<CollectionResponse> {
@@ -139,6 +148,7 @@ export class CollectionsService {
         },
         { new: true }
       )
+      .lean()
       .exec();
     if (!collection) {
       throw new NotFoundException(`Collection with ID ${id} not found`);

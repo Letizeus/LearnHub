@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { forkJoin } from 'rxjs';
 import { Tag, TagGroup, TagVisibility } from '@learnhub/models';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -19,6 +20,7 @@ import { TagsService } from './tags.service';
   standalone: true,
   imports: [
     FormsModule,
+    MatIconModule,
     ButtonModule,
     ColorPickerModule,
     ConfirmDialogModule,
@@ -61,14 +63,16 @@ export class TagsComponent {
   ];
 
   readonly iconOptions = [
-    { label: 'Tag', value: 'tag', icon: 'pi-tag' },
-    { label: 'Folder', value: 'folder', icon: 'pi-folder' },
-    { label: 'Book', value: 'book', icon: 'pi-book' },
-    { label: 'Document', value: 'file-pdf', icon: 'pi-file-pdf' },
-    { label: 'Video', value: 'video', icon: 'pi-video' },
-    { label: 'Pencil', value: 'pencil', icon: 'pi-pencil' },
-    { label: 'Calculator', value: 'calculator', icon: 'pi-calculator' },
-    { label: 'Graduation Cap', value: 'graduation-cap', icon: 'pi-graduation-cap' },
+    { label: 'Label', value: 'label', icon: 'label' },
+    { label: 'Folder', value: 'folder', icon: 'folder' },
+    { label: 'Book', value: 'book', icon: 'book' },
+    { label: 'School', value: 'school', icon: 'school' },
+    { label: 'Science', value: 'science', icon: 'science' },
+    { label: 'Calculate', value: 'calculate', icon: 'calculate' },
+    { label: 'Psychology', value: 'psychology', icon: 'psychology' },
+    { label: 'Gavel', value: 'gavel', icon: 'gavel' },
+    { label: 'History', value: 'history_edu', icon: 'history_edu' },
+    { label: 'Account Balance', value: 'account_balance', icon: 'account_balance' },
   ];
 
   constructor() {

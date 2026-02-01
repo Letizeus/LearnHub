@@ -25,7 +25,8 @@ import { TagModule } from '../tag/tag.module';
     forwardRef(() => TagModule)
   ],
   exports: [
-    ContentService
+    ContentService,
+    MongooseModule
   ]
 })
 export class ContentModule {}

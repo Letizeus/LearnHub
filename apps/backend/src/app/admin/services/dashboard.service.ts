@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../../../users/user.schema';
-import { LearningContent } from '../../../content/learning-content.schema';
+import { LearningContent } from '../../schema/learning-content.schema';
+import { LEARNING_CONTENT_NAME } from 'models';
 import {
   DashboardMetricsResponseDto,
   RegistrationChartResponseDto,
@@ -14,7 +15,7 @@ import {
 export class DashboardService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    @InjectModel(LearningContent.name) private contentModel: Model<LearningContent>
+    @InjectModel(LEARNING_CONTENT_NAME) private contentModel: Model<LearningContent>
   ) {}
 
   async getMetrics(
