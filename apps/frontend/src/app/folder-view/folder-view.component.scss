@@ -1,0 +1,22 @@
+@use 'variables' as theme;
+
+.header {
+  display: flex;
+
+  h1, input {
+    flex-grow: 1;
+  }
+
+  input {
+    font-weight: bold;
+    font-size: 2rem;
+    outline: none;
+    border: none;
+    border-bottom: 2px solid theme.$border-color;
+    width: 100%;
+
+    &:focus {
+      border-bottom: 2px solid theme.$primary-active;
+    }
+  }
+}

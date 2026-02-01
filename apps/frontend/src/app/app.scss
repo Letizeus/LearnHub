@@ -1,0 +1,17 @@
+@use 'variables' as theme;
+
+.wrapper {
+  padding-bottom: 4rem;
+}
+
+.content-wrapper {
+
+  .content {
+    @include theme.desktop {
+      padding-top: 4rem;
+    }
+    max-width: 60vw;
+    margin: 0 auto;
+  }
+}
+

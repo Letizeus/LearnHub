@@ -1,0 +1,45 @@
+<p-confirmdialog />
+<div class="lh-container">
+  <div class="header">
+    @if (editMode) {
+      @if (folderService.activeFolder()!.id == 'liked') {
+        <h1>{{ folderService.activeFolder()!.name }}</h1>
+      } @else {
+        <input value="{{ folderService.activeFolder()!.name }}" #folderName />
+      }
+
+      <p-button [rounded]="true" [text]="true" severity="success" (click)="handleFolderChange()">
+        <mat-icon>check</mat-icon>
+      </p-button>
+    } @else {
+      <h1>{{ folderService.activeFolder()!.name }}</h1>
+      <p-button [rounded]="true" [text]="true" severity="secondary" (click)="editMode = true">
+        <mat-icon>edit</mat-icon>
+      </p-button>
+      <p-button [rounded]="true" [text]="true" severity="info" printSectionId="pdf-content" ngxPrint
+      [useExistingCss]="true"
+    [printStyle]="{ '.katex': {'font-size': '1.1em'} }"
+    (click)="download()">
+        <mat-icon> picture_as_pdf</mat-icon>
+      </p-button>
+      @if (folderService.activeFolder()!.id != 'liked') {
+        <p-button [rounded]="true" [text]="true" severity="danger" (click)="confirmDelete($event)">
+          <mat-icon>delete</mat-icon>
+        </p-button>
+      }
+    }
+  </div>
+
+  <p>{{ folderService.activeFolder()!.content.length }} {{ folderService.activeFolder()!.content.length == 1 ? 'item' : 'items' }}</p>
+  @if (editMode) {
+    @for (doc of folderService.folderContent(); track $index) {
+      @if (doc) {
+        <lh-content-preview [data]="doc" />
+      } @else {
+        <p>Not found</p>
+      }
+    }
+  } @else {
+    <lh-folder-items [items]="folderService.folderContent()!"></lh-folder-items>
+  }
+</div>

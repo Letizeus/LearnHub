@@ -1,1 +1,40 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'primeicons/primeicons.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import "katex/dist/katex.min.css";
+
+* {
+  font-optical-sizing: auto;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+}
+
+body :not(.katex):not(.katex *) {
+  font-family: 'Rubik', sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.material-icons,
+.material-icons-outlined,
+.material-symbols-outlined {
+  font-family: 'Material Icons', 'Material Symbols Outlined' !important;
+}
+
+.mat-icon {
+  &.filled {
+    font-variation-settings: 'FILL' 1;
+  }
+}
+
+.lh-container {
+  padding: 3.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+

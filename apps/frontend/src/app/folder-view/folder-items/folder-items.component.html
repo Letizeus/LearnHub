@@ -1,0 +1,35 @@
+<div id="pdf-content">
+@for (item of itemsFiltered(); track $index) { 
+  @if (item) {
+  <h3>Task {{ $index + 1 }}</h3>
+  <p [innerHTML]="item.text | math"></p>
+  @for (image of item.images; track image) {
+  <img [src]="image" alt="" />
+  }
+  <p-accordion [value]="['']" [multiple]="true">
+    @if (item.tip) {
+    <p-accordion-panel value="0">
+      <p-accordion-header>Tip</p-accordion-header>
+      <p-accordion-content>
+        <p class="m-0" [innerHTML]="item.tip! | math"></p>
+      </p-accordion-content>
+    </p-accordion-panel>
+    }
+  </p-accordion>
+} } 
+</div>
+
+@if (itemsFiltered().length > 0) {
+<h2>Solutions</h2>
+<p-accordion [value]="['']" [multiple]="true">
+  <p-accordion-panel value="0">
+    <p-accordion-header>Open Solutions</p-accordion-header>
+    <p-accordion-content>
+      @for (item of itemsFiltered(); track $index) {
+      <h4>Task {{ $index + 1 }}</h4>
+      <p class="m-0" [innerHTML]="item.solution | math"></p>
+      }
+    </p-accordion-content>
+  </p-accordion-panel>
+</p-accordion>
+}

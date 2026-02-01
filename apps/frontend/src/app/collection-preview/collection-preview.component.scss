@@ -1,0 +1,50 @@
+.image {
+  height: 150px;
+  width: 120px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+
+  background-color: lightgray;
+
+  background-size: cover;
+
+  .innerBar {
+    padding: 5px;
+    padding-top: 20px;
+    display: flex;
+    font-size: 0.8rem;
+    margin-top: auto;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    gap: 4px;
+
+    div {
+      display: flex;
+    }
+
+    .mat-icon {
+      $size: 1rem;
+      font-size: $size;
+      height: $size;
+      width: $size;
+    }
+
+    background: rgba(255, 255, 255, 0);
+    background: linear-gradient(
+                    5deg,
+                    rgba(255, 255, 255, 0.8) 0%,
+                    rgba(255, 255, 255, 0) 60%
+    );
+  }
+}
+
+.title {
+  margin-top: 5px;
+  margin-left: 5px;
+  font-weight: 500;
+}
+
+.container {
+  cursor: pointer;
+}
