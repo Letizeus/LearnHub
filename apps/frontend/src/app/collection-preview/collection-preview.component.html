@@ -1,0 +1,15 @@
+@if (data()) {
+  <div class="container" [routerLink]="['/search']" [queryParams]="{ c: data().id }" queryParamsHandling="merge">
+    <div class="image" [style.background-image]="`url('${data().previewImage}')`">
+      @if (data().length) {
+        <div class="innerBar">
+          <div>
+            <mat-icon>article</mat-icon>
+            <div>{{ data().length }}</div>
+          </div>
+        </div>
+      }
+    </div>
+    <div class="title">{{ data().title }}</div>
+  </div>
+}

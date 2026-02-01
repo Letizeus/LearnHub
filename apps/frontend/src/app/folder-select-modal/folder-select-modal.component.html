@@ -1,0 +1,12 @@
+<div class="container">
+  <p-list-box
+    [options]="folderService.folders()"
+    [(ngModel)]="selection"
+    optionLabel="name"
+    [filter]="true"
+    class="w-full md:w-56"
+    (onChange)="select($event)"
+  />
+</div>
+
+<p-button label="Close" (click)="close()" severity="secondary"></p-button>

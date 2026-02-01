@@ -1,0 +1,25 @@
+<div class="rows">
+  @for (folder of foldersWithOutLiked(); track $index) {
+    <div class="folder-row" [class.active]="folderService.isInFolder(content()!, folder.id)">
+      <div>
+        <mat-icon>{{ folder.icon || 'folder' }}</mat-icon>
+      </div>
+      <div class="grow">{{ folder.name }}</div>
+      <div>{{ folder.content.length }} {{ folder.content.length > 1 ? 'items' : 'item' }}</div>
+      @if (!folderService.isInFolder(content()!, folder.id)) {
+        <p-button [rounded]="true" [text]="true" severity="secondary" (click)="handleAddtoFolder(folder.id)">
+          <mat-icon>add</mat-icon>
+        </p-button>
+      } @else {
+        <p-button [rounded]="true" [text]="true" severity="primary" (click)="handleRemoveFromFolder(folder.id)">
+          <mat-icon>close</mat-icon>
+        </p-button>
+      }
+    </div>
+  }
+</div>
+<div class="addButton">
+  <p-button label="Create new folder" (click)="handleCreateFolder()" severity="secondary" class="addButton">
+    <mat-icon>add</mat-icon>
+  </p-button>
+</div>

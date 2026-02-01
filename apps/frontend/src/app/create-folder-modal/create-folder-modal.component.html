@@ -1,0 +1,8 @@
+<div class="flex items-center gap-4 mb-4">
+  <label for="name" class="font-semibold w-24">Name</label>
+  <input pInputText id="name" class="flex-auto" autocomplete="off" [(ngModel)]="nameInput" />
+</div>
+<div class="flex justify-end gap-2">
+  <p-button label="Cancel" severity="secondary" (click)="close()" />
+  <p-button label="Save" (click)="create()" />
+</div>

@@ -1,0 +1,60 @@
+@use 'variables' as theme;
+
+.container {
+
+  @include theme.desktop {
+    display: none !important;
+  }
+
+  position: fixed;
+  padding: 10px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.bar {
+  @include theme.tablet {
+    border: solid 1px theme.$content-border;
+    border-radius: 7px;
+  }
+
+  padding: 7px 10px;
+  width: fit-content;
+  display: flex;
+  gap: 10px;
+  background-color: white;
+
+  .mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  a {
+    padding: 8px 10px;
+    width: fit-content;
+  }
+}
+
+.desktop {
+  @media (max-width: theme.$desktop-width) {
+    display: none !important;
+  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+
+  .bar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 30px;
+    width: 60vw;;
+  }
+}

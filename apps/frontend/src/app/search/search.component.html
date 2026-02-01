@@ -1,0 +1,167 @@
+<p-drawer header="Tags" [(visible)]="tagSelect" [fullScreen]="true">
+  @if (!tagGroupsSelect()) {
+    <div class="skeleton-container">
+      <div>
+        <p-skeleton width="20rem" height="2rem" />
+        <p-skeleton width="20rem" height="10rem" />
+      </div>
+      <div>
+        <p-skeleton width="20rem" height="2rem" />
+        <p-skeleton width="20rem" height="10rem" />
+      </div>
+    </div>
+  } @else {
+    @for (tagGroup of tagGroupsSelect(); track $index) {
+      <div class="tags-section">
+        <lh-section [label]="tagGroup.name" [icon]="tagGroup.icon">
+          <div class="tags-drawer">
+            @for (tag of tagGroup.tags; track $index) {
+              <p-chip class="chip" [style]="`--color: ${tag.color || 'lightgray'};`" (click)="addTag(tag.id)">
+                <mat-icon>{{ tag.icon }}</mat-icon>
+                <span>{{ tag.name.length > 12 ? (tag.name | slice: 0 : 7) + '...' : tag.name }}</span>
+                @if (contentDataService.searchQuery()!.tags!.includes(tag.id)) {
+                  <mat-icon>check</mat-icon>
+                }
+              </p-chip>
+            }
+          </div>
+        </lh-section>
+      </div>
+    }
+  }
+</p-drawer>
+<div class="container">
+  <div class="input">
+    <input
+      pInputText
+      type="text"
+      pSize="large"
+      placeholder="Type to search..."
+      fluid
+      [ngModel]="searchString"
+      (input)="handleSearch($event)"
+    />
+    @if (isSearch()) {
+      <p-button (click)="folderSelect()" [severity]="folderService.selectMode() ? 'success' : 'primary'">
+        @if (folderService.selectMode()) {
+          <mat-icon>check</mat-icon>
+        } @else {
+          <mat-icon>folder_check</mat-icon>
+        }
+      </p-button>
+    }
+  </div>
+
+  @if (isSearch()) {
+    <div class="tags">
+      <p-chip class="chip addChip" [style]="`--color: lightgray;`" (click)="tagSelect = true">
+        @if (searchTags()!.length == 0) {
+          <span>Add tags</span>
+        }
+        <mat-icon>add_circle</mat-icon>
+      </p-chip>
+      @if (collection()) {
+        <p-chip class="chip" [removable]="true" [style]="`--color: lightgray;`" (onRemove)="removeCollection()">
+          <mat-icon>box</mat-icon>
+          <span>{{ collection()!.title.length > 6 ? (collection()!.title | slice: 0 : 7) + '...' : collection()!.title }}</span>
+        </p-chip>
+      }
+      @for (tag of searchTags()!; track $index) {
+        @if (tag) {
+          <p-chip class="chip" [removable]="true" [style]="`--color: ${tag.color};`" (onRemove)="removeTag(tag.id)">
+            <mat-icon>{{ tag.icon }}</mat-icon>
+            <span>{{ tag.name.length > 6 ? (tag.name | slice: 0 : 7) + '...' : tag.name }}</span>
+          </p-chip>
+        }
+      }
+    </div>
+    <lh-section [label]="'Related Collections'" icon="box" [horizontal]="true">
+      @if (!contentDataService.searchResults()) {
+        <p-skeleton width="20rem" height="10rem" />
+        <p-skeleton width="20rem" height="10rem" />
+        <p-skeleton width="20rem" height="10rem" />
+      } @else {
+        @if (contentDataService.searchResults()!.collections.length == 0) {
+          <p>No collections found</p>
+        } @else {
+          @if (!contentDataService.searchResultsPopulated()) {
+            <p-skeleton width="20rem" height="10rem" />
+            <p-skeleton width="20rem" height="10rem" />
+            <p-skeleton width="20rem" height="10rem" />
+          } @else {
+            @for (collection of contentDataService.searchResultsPopulated()!.collections.items; track $index) {
+              @if (!collection) {
+                <p-skeleton width="20rem" height="10rem" />
+              } @else {
+                <lh-collection-preview [data]="collection!" />
+              }
+            }
+          }
+        }
+      }
+    </lh-section>
+    <lh-section [label]="'Most relevant exercises'" icon="document_search">
+      @if (!contentDataService.searchResults()) {
+        <p-skeleton width="20rem" height="10rem" />
+        <p-skeleton width="20rem" height="10rem" />
+        <p-skeleton width="20rem" height="10rem" />
+      } @else {
+        @if (contentDataService.searchResults()!.exercises.length == 0) {
+          <p>No exercises found</p>
+        } @else {
+          @if (!contentDataService.searchResultsPopulated()) {
+            <p-skeleton width="20rem" height="10rem" />
+            <p-skeleton width="20rem" height="10rem" />
+            <p-skeleton width="20rem" height="10rem" />
+          } @else {
+            @for (item of contentDataService.searchResultsPopulated()!.exercises.items; track $index) {
+              @if (!item) {
+                <p-skeleton width="20rem" height="10rem" />
+              } @else {
+                <lh-content-preview [data]="item!" />
+              }
+            }
+          }
+        }
+      }
+    </lh-section>
+  } @else {
+    @if (!tagGroupsSelect()) {
+      <div class="skeleton-container">
+        <div>
+          <p-skeleton width="20rem" height="2rem" />
+          <p-skeleton width="20rem" height="10rem" />
+        </div>
+        <div>
+          <p-skeleton width="20rem" height="2rem" />
+          <p-skeleton width="20rem" height="10rem" />
+        </div>
+      </div>
+    } @else {
+      @for (tagGroup of tagGroupsMainPage(); track $index) {
+        <lh-section [label]="tagGroup.name" [icon]="tagGroup.icon">
+          <div class="categories">
+            @for (tag of tagGroup.tags | slice: 0 : 5; track $index) {
+              <div
+                class="card"
+                [style.background-image]="tag.backgroundImage && `url('${tag.backgroundImage}')`"
+                [style]="`--color: ${tag.color || 'lightgray'};`"
+                (click)="addTag(tag.id)"
+              >
+                @if (tag.icon) {
+                  <mat-icon>{{ tag.icon }}</mat-icon>
+                }
+                <span>{{ tag.name }}</span>
+              </div>
+            }
+            @if (tagGroup.tags.length > 6) {
+              <div class="card" [style]="`--color: lightgray;`" (click)="tagSelect = true">
+                <span>Show more...</span>
+              </div>
+            }
+          </div>
+        </lh-section>
+      }
+    }
+  }
+</div>

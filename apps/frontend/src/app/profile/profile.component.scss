@@ -1,0 +1,22 @@
+.container {
+  padding: 3.5rem 1.5rem;
+}
+
+.header {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  div {
+    display: flex;
+    gap: 1rem;
+  }
+}
+
+.image {
+  height: 120px;
+  width: 120px;
+  background-color: red;
+  border-radius: 50%;
+}

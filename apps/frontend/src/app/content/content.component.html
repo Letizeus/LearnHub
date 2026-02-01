@@ -1,0 +1,61 @@
+<div class="container">
+  @if (contentService.activeExercise() != null) {
+    <div id="pdf-content">
+      <p [innerHTML]="contentService.activeExercise()!.text | math"></p>
+      @for (image of contentService.activeExercise()!.images; track image) {
+        <img [src]="image" alt="" />
+      }
+    </div>
+
+    <p-accordion [value]="['']" [multiple]="true">
+      @if (contentService.activeExercise()!.tip) {
+        <p-accordion-panel value="0">
+          <p-accordion-header>Tip</p-accordion-header>
+          <p-accordion-content>
+            <p class="m-0" [innerHTML]="contentService.activeExercise()!.tip! | math"></p>
+          </p-accordion-content>
+        </p-accordion-panel>
+      }
+      @if (contentService.activeExercise()!.solution) {
+        <p-accordion-panel value="1">
+          <p-accordion-header>Solution</p-accordion-header>
+          <p-accordion-content>
+            <p class="m-0" [innerHTML]="contentService.activeExercise()!.solution! | math"></p>
+            @for (image of contentService.activeExercise()!.solutionImages; track image) {
+              <img [src]="image" alt="" />
+            }
+          </p-accordion-content>
+        </p-accordion-panel>
+      }
+    </p-accordion>
+    <div class="metadata">
+      <div class="collection" [routerLink]="`/search`" [queryParams]="{ c: contentService.activeExercise()!.relatedCollection.id }">
+        <mat-icon>box</mat-icon>
+        <span>{{ contentService.activeExercise()!.relatedCollection.title }} <p-badge value="VIEW" /></span
+      ></div>
+      <div>
+        <mat-icon>calendar_today</mat-icon>
+        <span [innerHTML]="contentService.activeExercise()!.relatedCollection.source.publishedAt | date: 'dd.MM.yyyy'"></span
+      ></div>
+      <div>
+        <mat-icon>school</mat-icon>
+        <span
+          >{{ contentService.activeExercise()!.relatedCollection.source.organisation }},
+          {{ contentService.activeExercise()!.relatedCollection.source.publisher }}</span
+        >
+      </div>
+      @if (tags()) {
+        <div>
+          <mat-icon>category</mat-icon>
+          <span>{{ tags() }}</span></div
+        >
+      }
+    </div>
+    <lh-action-buttons [id]="contentService.selectedId()!" />
+    <lh-section label="Similar content" icon="search_activity">
+      @for (item of contentService.similarExercises()!; track $index) {
+        <lh-content-preview [data]="item" />
+      }
+    </lh-section>
+  }
+</div>

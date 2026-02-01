@@ -1,0 +1,22 @@
+<div class="actions">
+  <button pButton (click)="handleLike()">
+    @if (liked()) {
+    <mat-icon class="filled">star</mat-icon>@if (!small()) {
+    <span pButtonLabel>Liked!</span>
+    } } @else {
+    <mat-icon>star</mat-icon>@if (!small()) {
+    <span pButtonLabel>Like</span>
+    } }
+  </button>
+  @if (!small()) {
+    <p-button
+      severity="contrast"
+      printSectionId="pdf-content" ngxPrint
+      [useExistingCss]="true"
+    [printStyle]="{ '.katex': {'font-size': '1.1em'} }"
+    (click)="contentService.download(id())">
+      <mat-icon>download</mat-icon>
+          <span>Download</span>
+    </p-button>
+  }
+</div>

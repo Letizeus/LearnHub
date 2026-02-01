@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="header">
+    <h1>
+      <mat-icon>folder_open</mat-icon>
+      LearnHub
+    </h1>
+    Your hub for learning content
+  </div>
+  <lh-section label="Recommended" icon="for_you" [horizontal]="true">
+    @if (contentService.recommendedCollections() && contentService.recommendedCollections().length > 0) {
+      @for (item of contentService.recommendedCollections(); track $index) {
+        <lh-collection-preview [data]="item" />
+      }
+    } @else {
+      <p-skeleton width="20rem" height="10rem" />
+      <p-skeleton width="20rem" height="10rem" />
+      <p-skeleton width="20rem" height="10rem" />
+    }
+  </lh-section>
+  <lh-section label="Trending Exercises" icon="star">
+    @if (contentService.trendingContent() && contentService.trendingContent().length > 0) {
+      @for (item of contentService.trendingContent(); track $index) {
+        <lh-content-preview [data]="item" />
+      }
+    } @else {
+      <p-skeleton width="20rem" />
+      <p-skeleton width="20rem" />
+      <p-skeleton width="20rem" />
+    }
+  </lh-section>
+  <lh-section label="Recently uploaded" icon="search_activity" [horizontal]="true">
+    @if (contentService.recentCollections() && contentService.recentCollections().length > 0) {
+      @for (item of contentService.recentCollections(); track $index) {
+        <lh-collection-preview [data]="item" />
+      }
+    } @else {
+      <p-skeleton width="20rem" height="10rem" />
+      <p-skeleton width="20rem" height="10rem" />
+      <p-skeleton width="20rem" height="10rem" />
+    }
+  </lh-section>
+</div>

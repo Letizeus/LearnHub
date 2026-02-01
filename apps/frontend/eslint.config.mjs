@@ -1,7 +1,9 @@
+import baseConfig from '../../eslint.base.config.mjs';
 import nx from '@nx/eslint-plugin';
 import baseConfig from '../../eslint.config.mjs';
 
 export default [
+  ...baseConfig,
   ...baseConfig,
   ...nx.configs['flat/angular'],
   ...nx.configs['flat/angular-template'],
@@ -12,7 +14,7 @@ export default [
         'error',
         {
           type: 'attribute',
-          prefix: 'app',
+          prefix: 'lh',
           style: 'camelCase',
         },
       ],
@@ -20,7 +22,7 @@ export default [
         'error',
         {
           type: 'element',
-          prefix: 'app',
+          prefix: 'lh',
           style: 'kebab-case',
         },
       ],
