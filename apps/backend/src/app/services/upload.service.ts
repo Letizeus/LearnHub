@@ -37,6 +37,7 @@ export class UploadService {
     }
 
     async create(
+        _id: string,
         title: string,
         author: string,
         learningContents: any[],  
@@ -45,7 +46,12 @@ export class UploadService {
     ){  
         await this.createBucketIfNotExist(this.bucket);
         //Create Collection
-        const collection = await this.createCollection(title, author);
+        let collection = null
+        if(_id == ""){
+            collection = await this.createCollection(title, author);
+        } else {
+            collection = await this.lcCollectionModel.where(_id = _id);
+        }
 
         //Merge Learning Contents and Images from FormData
         const mergedLearningContents = learningContents.map((lc, index) => ({

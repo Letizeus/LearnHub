@@ -12,6 +12,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
+import { SelectModule } from 'primeng/select';
 import { FileSelectEvent, FileUpload } from "primeng/fileupload";
 
 @Component({
@@ -30,24 +31,36 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
         IftaLabelModule,
         DialogModule,
         TableModule,
+        SelectModule,
         FileUpload
     ],
 }) export class AddView {
-    constructor(private http: HttpClient){}
+    constructor(private http: HttpClient){
+        this.loadCollections();
+    }
 
     protected activePreview: string | null = null;
+
+    protected lcCollections: LearningContentCollectionForm[] = [];
 
     //Dialog settings
     protected dialogVisible: boolean = false;
     protected dialogMode: "create" | "edit" = "create";
     protected editIndex: number | null = null;
 
-    //User forms
-    protected title: string = "";
-    protected author: string = "";
+    protected dialogCollectionVisible: boolean = false;
+
+    //Lcc form
+    protected selectedLcCollection: LearningContentCollectionForm = new LearningContentCollectionForm();
     protected learningContents: LearningContentForm[] = [];
     protected lcForm: LearningContentForm = new LearningContentForm()
-    
+
+    loadCollections() {
+    this.http
+        .get<LearningContentCollectionForm[]>('http://localhost:3000/api/learning-content-collection/get-all')
+        .subscribe(res => this.lcCollections = res);
+    }
+
     openDialogCreate(){
         this.dialogMode = "create"; 
         this.editIndex = null;
@@ -55,11 +68,21 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
         this.dialogVisible = true;
     }
 
+    openDialogCollection(){
+        this.dialogCollectionVisible = true;
+        this.selectedLcCollection = new LearningContentCollectionForm()
+    }
+
     openDialogEdit(lc: LearningContentForm, index: number){
         this.dialogMode = "edit";
         this.editIndex = index;
         this.lcForm = structuredClone(lc);
         this.dialogVisible = true;
+    }
+
+    addCollection(){
+        this.lcCollections = [...this.lcCollections, this.selectedLcCollection];
+        this.dialogCollectionVisible = false;
     }
 
     saveDialog(){
@@ -92,13 +115,14 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
     }
 
     upload(){
-        if(this.title.length == 0 || this.author.length == 0){
+        if(this.selectedLcCollection == null || this.selectedLcCollection.title.length == 0 || this.selectedLcCollection.author.length == 0){
             return;
         }
 
         const fd = new FormData();
-        fd.append('title', this.title);
-        fd.append('author', this.author);
+        fd.append('_id', this.selectedLcCollection._id ?? "")
+        fd.append('title', this.selectedLcCollection.title);
+        fd.append('author', this.selectedLcCollection.author);
         const payload = this.learningContents.map(lc => ({
             type: lc.type,
             keywords: lc.keywords,
@@ -136,11 +160,18 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
     }  
 
     resetForm(){
-        this.title = "";
-        this.author = "";
         this.learningContents = [];
+        this.selectedLcCollection = new LearningContentCollectionForm()
         this.lcForm = new LearningContentForm();
     }
+}
+
+export class LearningContentCollectionForm {
+    _id: string = "";
+    title: string = "";
+    author: string = "";
+    createdAt: number = Date.now();
+    changedAt: number = Date.now();
 }
 
 export class LearningContentForm {

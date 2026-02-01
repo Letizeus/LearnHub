@@ -3,16 +3,35 @@
     <body>
         <div class="view">
             <h1>Create Collection</h1>
+            
+            <label for="collectionSelect">Select a collection</label>
+            <p-select id="collectionSelect" [options]="lcCollections" [(ngModel)]="selectedLcCollection" optionLabel="title" placeholder="Select a collection" [filter]="true"/>
+            
+            <p-button
+                label="Add collection"
+                type="button"
+                (onClick)="openDialogCollection();">
+            </p-button>
+            
+            <p-dialog header="Collection" [(visible)]="dialogCollectionVisible"
+            [modal]="true" [dismissableMask]="true">
+                <div class="view">
+                    <div>
+                        <label for="selectedLcCollection.title">Title *</label>
+                        <input pInputText minlength="1" id="title" [(ngModel)]="selectedLcCollection.title" pSize="large" autocomplete="off" placeholder="Enter collection title" fluid/>
+                    </div>
+                    <div>
+                        <label for="selectedLcCollection.author">Author *</label>
+                        <input pInputText minlength="1" id="author" [(ngModel)]="selectedLcCollection.author" pSize="large" autocomplete="off" placeholder="Enter author name" fluid/>
+                    </div>
 
-            <div>
-                <label for="title">Title *</label>
-                <input pInputText minlength="1" id="title" [(ngModel)]="title" pSize="large" autocomplete="off" placeholder="Enter collection title" fluid/>
-            </div>
-
-            <div>
-                <label for="author">Author *</label>
-                <input pInputText minlength="1" id="author" [(ngModel)]="author" pSize="large" autocomplete="off" placeholder="Enter author name" fluid/>
-            </div>
+                    <p-button
+                        label="Add collection"
+                        type="button"
+                        (onClick)="addCollection();">
+                    </p-button>
+                </div>
+            </p-dialog>
 
             <!--LEARNING CONTENT-->
             <h2>Exercises</h2>

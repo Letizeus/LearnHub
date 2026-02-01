@@ -1,17 +1,26 @@
-import { Controller, Post, UseInterceptors, Body, UploadedFiles, BadRequestException } from "@nestjs/common";
+import { Controller, Post, UseInterceptors, Body, UploadedFiles, BadRequestException, Get } from "@nestjs/common";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { UploadService } from "../services/upload.service";
+import { GetService } from "../services/get.service";
 
 @Controller('learning-content-collection')
 export class LearningContentCollectionController {
 
-    constructor(private readonly uploadService: UploadService) {}
+    constructor(private readonly uploadService: UploadService,
+        private readonly getService: GetService,
+    ) {}
+
+    @Get('get-all')
+    public async get(){
+        return await this.getService.getAllLearningContentCollections()
+    }
 
     @Post('add')
     @UseInterceptors(
         AnyFilesInterceptor({limits:{ fileSize: 10*1024*1024}})
     )
     public async add(
+        @Body('_id') _id: string,
         @Body('title') title: string,
         @Body('author') author: string,
         @Body('learningContents') learningContentsStr: string,
@@ -47,6 +56,6 @@ export class LearningContentCollectionController {
         const exerciseImages = getIndexedFiles('exerciseImages');
         const solutionImages = getIndexedFiles('solutionImages');
 
-        return await this.uploadService.create(title, author, learningContents, exerciseImages, solutionImages);
+        return await this.uploadService.create(_id, title, author, learningContents, exerciseImages, solutionImages);
     }
 }
