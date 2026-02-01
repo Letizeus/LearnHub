@@ -40,6 +40,7 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
     }
 
     protected activePreview: string | null = null;
+    protected previewVisible: boolean = false;
 
     protected lcCollections: LearningContentCollectionForm[] = [];
 
@@ -101,10 +102,12 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
 
 
     openPreview(img: string){
+        this.previewVisible = true;
         this.activePreview = img;
     }
 
     closePreview(){
+        this.previewVisible = false;
         this.activePreview = null;
     }
 
