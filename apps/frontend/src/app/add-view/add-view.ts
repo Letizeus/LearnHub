@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { TextareaModule } from 'primeng/textarea';
 import { IftaLabelModule } from 'primeng/iftalabel';
-import { PopoverModule } from 'primeng/popover';
+import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { FileSelectEvent, FileUpload } from "primeng/fileupload";
 
@@ -28,7 +28,7 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
         InputNumberModule,
         TextareaModule,
         IftaLabelModule,
-        PopoverModule,
+        DialogModule,
         TableModule,
         FileUpload
     ],
@@ -37,11 +37,43 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
 
     protected activePreview: string | null = null;
 
+    protected dialogVisible: boolean = false;
+    protected dialogMode: "create" | "edit" = "create";
+    protected editIndex: number | null = null;
+
     //LearningContentCollectionForm
     protected title: string = "";
+    protected author: string = "";
     protected learningContents: LearningContentForm[] = [];
-    protected lc: LearningContentForm = new LearningContentForm()
     
+    protected lcForm: LearningContentForm = new LearningContentForm()
+    
+    openDialogCreate(){
+        this.dialogMode = "create"; 
+        this.editIndex = null;
+        this.lcForm = new LearningContentForm();
+        this.dialogVisible = true;
+    }
+
+    openDialogEdit(lc: LearningContentForm, index: number){
+        this.dialogMode = "edit";
+        this.editIndex = index;
+        this.lcForm = structuredClone(lc);
+        this.dialogVisible = true;
+    }
+
+    saveDialog(){
+        if(this.dialogMode == "create"){
+            this.learningContents = [... this.learningContents, this.lcForm];
+        } else if (this.editIndex !== null) {
+            const copy = [...this.learningContents];
+            copy[this.editIndex] = this.lcForm;
+            this.learningContents = copy;
+        }
+        this.dialogVisible = false;
+    }
+
+
     openPreview(img: string){
         this.activePreview = img;
     }
@@ -50,10 +82,6 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
         this.activePreview = null;
     }
 
-    addToCollection(){
-        this.learningContents.push(this.lc);
-        this.lc = new LearningContentForm();
-    }
 
     removeFromCollection(index: number){
         this.learningContents.splice(index, 1); 
@@ -63,6 +91,7 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
     upload(){
         const fd = new FormData();
         fd.append('title', this.title);
+        fd.append('author', this.author);
         const payload = this.learningContents.map(lc => ({
             type: lc.type,
             keywords: lc.keywords,

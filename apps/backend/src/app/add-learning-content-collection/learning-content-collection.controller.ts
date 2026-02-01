@@ -13,6 +13,7 @@ export class LearningContentCollectionController {
     )
     public async add(
         @Body('title') title: string,
+        @Body('author') author: string,
         @Body('learningContents') learningContentsStr: string,
         @UploadedFiles() files: Express.Multer.File[]
     ){
@@ -46,6 +47,6 @@ export class LearningContentCollectionController {
         const exerciseImages = getIndexedFiles('exerciseImages');
         const solutionImages = getIndexedFiles('solutionImages');
 
-        return await this.uploadService.create(title, learningContents, exerciseImages, solutionImages);
+        return await this.uploadService.create(title, author, learningContents, exerciseImages, solutionImages);
     }
 }

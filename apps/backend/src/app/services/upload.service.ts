@@ -25,12 +25,12 @@ export class UploadService {
         });
     }   
 
-    async createCollection(title: string){
+    async createCollection(title: string, author: string){
         return await this.lcCollectionModel.create({
             title: title,
             status: Status.DRAFT,
             //source
-            author: "",
+            author: author,
             createdAt: Date.now(),
             changedAt: Date.now()
         })
@@ -38,13 +38,14 @@ export class UploadService {
 
     async create(
         title: string,
+        author: string,
         learningContents: any[],  
         exerciseImages: Map<number, Express.Multer.File[]>,
         solutionImages: Map<number, Express.Multer.File[]>
     ){  
         await this.createBucketIfNotExist(this.bucket);
         //Create Collection
-        const collection = await this.createCollection(title);
+        const collection = await this.createCollection(title, author);
 
         //Merge Learning Contents and Images from FormData
         const mergedLearningContents = learningContents.map((lc, index) => ({

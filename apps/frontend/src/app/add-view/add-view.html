@@ -2,71 +2,45 @@
 <html>
     <body>
         <div class="view">
-            <h1>Add a learning content collection</h1>
-            <p-floatlabel variant="on">
-                <input pInputText id="on_label" [(ngModel)]="title" pSize="large" autocomplete="off" fluid/>
-                <label for="on_label">Title</label>
-            </p-floatlabel>
+            <h1>Create Collection</h1>
+
+            <div>
+                <label for="title">Title *</label>
+                <input pInputText id="title" [(ngModel)]="title" pSize="large" autocomplete="off" placeholder="Enter collection title" fluid/>
+            </div>
+
+            <div>
+                <label for="author">Author *</label>
+                <input pInputText id="author" [(ngModel)]="author" pSize="large" autocomplete="off" placeholder="Enter author name" fluid/>
+            </div>
 
             <!--LEARNING CONTENT-->
             <h2>Exercises</h2>
             <p-button
-                label="Create exercise manually"
+                label="Add exercises"
                 type="button"
-                (onClick)="exercisePopover.toggle($event)">
+                (onClick)="openDialogCreate();">
             </p-button>
 
             @if(learningContents.length > 0){
                  <p-table [value]="learningContents">
                     <ng-template pTemplate="header">
                         <tr>
-                            <th>Exercise</th>
-                            <th>Solution</th>
-                            <th>Total points</th>
-                            <th>Exercise images</th>
-                            <th>Exercise solutions</th>
-                        <th style="width: 8rem"></th>
+                            <th>Exercise text</th>
+                        <th style="width: 5rem"></th>
                         </tr>
                     </ng-template>
 
                     <ng-template pTemplate="body" let-learningContent let-i="rowIndex">
-                        <tr>
+                        <tr (click)="openDialogEdit(learningContent, i)">
                             <td>{{ learningContent.exercise.text }}</td>
-                            <td>{{ learningContent.exercise.solution }}</td>
-                            <td>{{ learningContent.exercise.total_points }}</td>
-                            <td>
-                                @if(learningContent.exercise.imagesPreviews.length != 0){
-                                    <p-scrollPanel styleClass="previewScroll" [style]="{ width: '100%', height: '100px' }">
-                                        <div class="previews">
-                                            <div class="preview" *ngFor="let img of learningContent.exercise.imagesPreviews; let i = index;">
-                                                <button type="button" (click)="openPreview(img)">
-                                                    <img [src]="img"/>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </p-scrollPanel>
-                                }
-                            </td>
-                            <td>
-                                @if(learningContent.exercise.solutionImagesPreviews.length != 0){
-                                    <p-scrollPanel styleClass="previewScroll" [style]="{ width: '100%', height: '100px' }">
-                                        <div class="previews">
-                                            <div class="preview" *ngFor="let img of learningContent.exercise.solutionImagesPreviews; let i = index;">
-                                                <button type="button" (click)="openPreview(img)">
-                                                    <img [src]="img"/>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </p-scrollPanel>
-                                }
-                            </td>
                             <td>
                                 <p-button
                                 icon="pi pi-trash"
                                 severity="danger"
                                 rounded
                                 type="button"
-                                (onClick)="removeFromCollection(i)">
+                                (onClick)="$event.stopPropagation();removeFromCollection(i)">
                                 </p-button>
                             </td>
                         </tr>
@@ -74,69 +48,78 @@
                 </p-table>
             }
 
-            <p-popover #exercisePopover class="view">
-                <h2>Create exercises</h2>
-                <p-iftalabel>
-                    <textarea pTextarea id="exericse" [(ngModel)]="lc.exercise.text" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
-                    <label for="exericse">Exercise</label>
-                </p-iftalabel>
-                <p-fileupload 
-                    #exerciseFileUpload
-                    chooseLabel="Select exercise images and files"
-                    mode="basic"
-                    [multiple]="true"
-                    accept="image/*, application/pdf"
-                    maxFileSize="1000000"
-                    (onSelect) = "lc.exercise.onExerciseSelect($event)"
-                    [customUpload]="true">
-                </p-fileupload>
-                @if(lc.exercise.imagesPreviews.length != 0){
-                    <p-scrollPanel styleClass="previewScroll" [style]="{ width: '100%', height: '100px' }">
-                        <div class="previews">
-                            <div class="preview" *ngFor="let img of lc.exercise.imagesPreviews; let i = index;">
-                                <img [src]="img"/>
-                                <button class="removeImg" (click)="lc.exercise.removeChosenExercise(i)">x</button>
-                            </div>
-                        </div>
-                    </p-scrollPanel>
-                }
+            <p-dialog header="Exercise" [(visible)]="dialogVisible"
+            [modal]="true" [dismissableMask]="true">
+                <div class="view">
+                    <div>
+                        <label for="exericse">Exercise text</label>
+                        <textarea pTextarea id="exericse" [(ngModel)]="lcForm.exercise.text" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
+                    </div>
+                    
+                    <p-fileupload 
+                        #exerciseFileUpload
+                        chooseLabel="Select exercise images and files"
+                        mode="basic"
+                        [multiple]="true"
+                        accept="image/*, application/pdf"
+                        maxFileSize="1000000"
+                        (onSelect) = "lcForm.exercise.onExerciseSelect($event)"
+                        [customUpload]="true">
+                    </p-fileupload>
 
-                <p-iftalabel>
-                    <textarea pTextarea id="solution" [(ngModel)]="lc.exercise.solution" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
-                    <label for="solution">Solution</label>
-                </p-iftalabel>
-                <p-fileupload 
-                    #solutionFileUpload
-                    chooseLabel="Select solution images and files"
-                    mode="basic"
-                    [multiple]="true"
-                    accept="image/*, application/pdf"
-                    maxFileSize="1000000"
-                    (onSelect) = "lc.exercise.onSolutionSelect($event)"
-                    [customUpload]="true">
-                </p-fileupload>
-                @if(lc.exercise.solutionImagesPreviews.length != 0){
-                    <p-scrollPanel styleClass="previewScroll" [style]="{ width: '100%', height: '100px' }">
-                        <div class="previews">
-                            <div class="preview" *ngFor="let img of lc.exercise.solutionImagesPreviews; let i = index;">
-                                r<img [src]="img"/>
-                                <button class="removeImg" (click)="lc.exercise.removeChosenSolution(i)">x</button>
+                    @if(lcForm.exercise.imagesPreviews.length != 0){
+                        <p-scrollPanel styleClass="previewScroll" [style]="{ width: '100%', height: '100px' }">
+                            <div class="previews">
+                                <div class="preview" *ngFor="let img of lcForm.exercise.imagesPreviews; let i = index;">
+                                    <button type="button" (click)="openPreview(img)">
+                                        <img [src]="img"/>
+                                    </button>
+                                    <button class="removeImg" (click)="lcForm.exercise.removeChosenExercise(i)">x</button>
+                                </div>
                             </div>
-                        </div>
-                    </p-scrollPanel>
-                }
-                
-                <div>
-                    <label for="integeronly"><b>Total points</b></label>
-                    <p-inputnumber inputId="integeronly" [(ngModel)]="lc.exercise.total_points" />
+                        </p-scrollPanel>
+                    }
+
+                    <div>
+                        <label for="solution">Solution</label>
+                        <textarea pTextarea id="solution" [(ngModel)]="lcForm.exercise.solution" rows="4" cols="30" [autoResize]="true" fluid ></textarea>
+                    </div>
+                        
+                    <p-fileupload 
+                        #solutionFileUpload
+                        chooseLabel="Select solution images and files"
+                        mode="basic"
+                        [multiple]="true"
+                        accept="image/*, application/pdf"
+                        maxFileSize="1000000"
+                        (onSelect) = "lcForm.exercise.onSolutionSelect($event)"
+                        [customUpload]="true">
+                    </p-fileupload>
+                    @if(lcForm.exercise.solutionImagesPreviews.length != 0){
+                        <p-scrollPanel styleClass="previewScroll" [style]="{ width: '100%', height: '100px' }">
+                            <div class="previews">
+                                <div class="preview" *ngFor="let img of lcForm.exercise.solutionImagesPreviews; let i = index;">
+                                    <button type="button" (click)="openPreview(img)">
+                                        <img [src]="img"/>
+                                    </button>
+                                    <button class="removeImg" (click)="lcForm.exercise.removeChosenSolution(i)">x</button>
+                                </div>
+                            </div>
+                        </p-scrollPanel>
+                    }
+                    
+                    <div>
+                        <label for="integeronly">Total points</label>
+                        <p-inputnumber inputId="integeronly" [(ngModel)]="lcForm.exercise.total_points" />
+                    </div>
+
+                    <p-button
+                        label="Add"
+                        type="button"
+                        (onClick)="saveDialog();dialogVisible = false; ">
+                    </p-button>
                 </div>
-
-                <p-button
-                    label="Add"
-                    type="button"
-                    (onClick)="addToCollection();exercisePopover.hide(); ">
-                </p-button>
-            </p-popover>
+            </p-dialog>
 
 
             <div class="singlePreview" *ngIf="activePreview" (click)="closePreview()">
