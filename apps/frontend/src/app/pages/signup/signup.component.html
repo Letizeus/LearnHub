@@ -1,0 +1,32 @@
+
+<div class="signup-card">
+    <div class="signup-field">
+    <p-iftalabel>
+    <input pInputText id="username_input" [(ngModel)]="username" />
+    <label for="username_input">Username</label>
+    </p-iftalabel>
+
+    <p-iftalabel>
+    <input pInputText id="email_input" [(ngModel)]="email" />
+    <label for="email_input">Email</label>
+    </p-iftalabel>
+
+    <p-iftalabel>
+    <p-password [(ngModel)]="password" inputId="password_input" [feedback]="false" />
+    <label for="password_input">Password</label>
+    </p-iftalabel>
+
+    <p-iftalabel>
+    <p-password [(ngModel)]="passwordrep" inputId="passwordrep_input" [feedback]="false" />
+    <label for="passwordrep_input">Confirm Password</label>
+    </p-iftalabel>
+
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+    <p-button label="Sign up" class="signup-button" [disabled]="!isFormValid() || isSubmitting" (onClick)="onSubmit()" />
+    </div>
+    <div class="login-hint">
+    Already have an account? <a href="/login">Log in</a>
+    </div>
+</div>

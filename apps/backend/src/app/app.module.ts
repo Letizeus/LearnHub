@@ -7,6 +7,8 @@ import { FolderModule } from './folder/folder.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SharedModule } from './shared.module';
 import { SeederModule } from './seeder/seeder.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { SeederModule } from './seeder/seeder.module';
     FolderModule,
     SharedModule,
     SeederModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

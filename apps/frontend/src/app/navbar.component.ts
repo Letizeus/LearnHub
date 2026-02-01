@@ -5,6 +5,7 @@ import { filter, map } from 'rxjs';
 import { Button, ButtonDirective, ButtonLabel, ButtonIcon } from 'primeng/button';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { Toast } from 'primeng/toast';
+import { AuthService } from './core/auth.service';
 
 @Component({
   selector: 'lh-navbar',
@@ -15,13 +16,14 @@ import { Toast } from 'primeng/toast';
 })
 export class NavbarComponent {
   private router = inject(Router);
+  protected auth = inject(AuthService);
 
   // Track the current URL via Router events
   private currentPath = toSignal(
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
-      map(() => this.router.url)
-    )
+      map(() => this.router.url),
+    ),
   );
 
   current = computed(() => {
@@ -34,6 +36,6 @@ export class NavbarComponent {
     { routerLink: '/search', label: 'Search', icon: 'search' },
     { routerLink: '/add', label: 'Upload new item', icon: 'note_add' },
     { routerLink: '/folder', label: 'Folder', icon: 'folder' },
-    { routerLink: '/profile', label: 'Profile', icon: 'account_circle' },
+    { routerLink: '/logout', label: 'Logout', icon: 'logout' },
   ];
 }

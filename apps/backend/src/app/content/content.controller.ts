@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { SearchQueryDto } from './dto/search-query.dto';
 import { ContentService } from './content.service';
 import { FeedbackContentDto } from './dto/feedback.dto';
 import { GetContentsDto } from './dto/get-contents.dto';
 import { GetCollectionsDto } from './dto/get-collections.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { User } from '../users/user.decorator';
 
 const TEST_USER = '697d2ce679e4c52f67b58f8a';
 
@@ -37,8 +39,9 @@ export class ContentController {
   }
 
   @Post('/like/:id')
-  async like(@Param('id') id: string) {
-    return await this.contentService.like(TEST_USER, id);
+  @UseGuards(JwtAuthGuard)
+  async like(@Param('id') id: string, @User() user: string) {
+    return await this.contentService.like(user, id);
   }
 
   @Get('/recommendations/collections')
