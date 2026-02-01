@@ -37,15 +37,15 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
 
     protected activePreview: string | null = null;
 
+    //Dialog settings
     protected dialogVisible: boolean = false;
     protected dialogMode: "create" | "edit" = "create";
     protected editIndex: number | null = null;
 
-    //LearningContentCollectionForm
+    //User forms
     protected title: string = "";
     protected author: string = "";
     protected learningContents: LearningContentForm[] = [];
-    
     protected lcForm: LearningContentForm = new LearningContentForm()
     
     openDialogCreate(){
@@ -95,7 +95,7 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
         if(this.title.length == 0 || this.author.length == 0){
             return;
         }
-        
+
         const fd = new FormData();
         fd.append('title', this.title);
         fd.append('author', this.author);
@@ -132,7 +132,15 @@ import { FileSelectEvent, FileUpload } from "primeng/fileupload";
                 console.log('  size:', value.size);
             }
         });
+        this.resetForm();
     }  
+
+    resetForm(){
+        this.title = "";
+        this.author = "";
+        this.learningContents = [];
+        this.lcForm = new LearningContentForm();
+    }
 }
 
 export class LearningContentForm {
