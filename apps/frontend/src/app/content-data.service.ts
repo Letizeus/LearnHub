@@ -239,11 +239,13 @@ export class ContentDataService {
           this.trendingContentIds.set(ids);
           this.fetchMissingContent(ids);
         },
-        error: err =>
+        error: err => {
+          console.error(err);
           this.messageService.add({
             severity: 'error',
             summary: "Couldn't load trending content. Please try again later.",
-          }),
+          });
+        },
       });
   }
 
@@ -256,11 +258,13 @@ export class ContentDataService {
           this.recentCollectionsIds.set(ids);
           this.fetchMissingCollections(ids);
         },
-        error: err =>
+        error: err => {
+          console.error(err);
           this.messageService.add({
             severity: 'error',
             summary: "Couldn't load recent collections. Please try again later.",
-          }),
+          });
+        },
       });
   }
 
@@ -277,11 +281,13 @@ export class ContentDataService {
           this.similarExercisesIds.set(ids);
           this.fetchMissingContent(ids);
         },
-        error: err =>
+        error: err => {
+          console.error(err);
           this.messageService.add({
             severity: 'error',
-            summary: "Couldn't load similar content. Please try again later.",
-          }),
+            summary: "Couldn't load similar collections. Please try again later.",
+          });
+        },
       });
   }
 }

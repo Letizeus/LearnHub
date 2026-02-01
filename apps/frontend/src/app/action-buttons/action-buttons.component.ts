@@ -1,6 +1,5 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { SplitButtonModule } from 'primeng/splitbutton';
 import { ContentDataService } from '../content-data.service';
 import { FolderService } from '../folder.service';
 import { ButtonModule } from 'primeng/button';
@@ -28,10 +27,5 @@ export class ActionButtonsComponent {
 
   handleLike() {
     this.folderService.like(this.id());
-  }
-
-  generatePdf() {
-    const content = document.getElementById('pdf-content');
-
   }
 }

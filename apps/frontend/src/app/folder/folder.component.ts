@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Button, ButtonModule } from 'primeng/button';
 import { MatIcon } from '@angular/material/icon';
 import { TableModule } from 'primeng/table';

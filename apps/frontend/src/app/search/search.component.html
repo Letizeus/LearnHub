@@ -19,7 +19,7 @@
               <p-chip class="chip" [style]="`--color: ${tag.color || 'lightgray'};`" (click)="addTag(tag.id)">
                 <mat-icon>{{ tag.icon }}</mat-icon>
                 <span>{{ tag.name.length > 12 ? (tag.name | slice: 0 : 7) + '...' : tag.name }}</span>
-                @if (contentDataService.searchQuery()?.tags?.includes(tag.id)) {
+                @if (contentDataService.searchQuery()!.tags!.includes(tag.id)) {
                   <mat-icon>check</mat-icon>
                 }
               </p-chip>

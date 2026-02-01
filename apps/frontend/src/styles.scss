@@ -5,16 +5,25 @@
 @import "katex/dist/katex.min.css";
 
 * {
-  font-family: 'Rubik', sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
   margin: 0;
   padding: 0;
 }
 
+body :not(.katex):not(.katex *) {
+  font-family: 'Rubik', sans-serif;
+}
+
 html,
 body {
   height: 100%;
+}
+
+.material-icons,
+.material-icons-outlined,
+.material-symbols-outlined {
+  font-family: 'Material Icons', 'Material Symbols Outlined' !important;
 }
 
 .mat-icon {
@@ -28,3 +37,4 @@ body {
   display: flex;
   flex-direction: column;
 }
+

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FolderService } from '../folder.service';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';

@@ -8,7 +8,7 @@ import { ActionButtonsComponent } from '../action-buttons/action-buttons.compone
 import { Drawer } from 'primeng/drawer';
 import { FolderComponent } from '../folder/folder.component';
 import { NgxLongPress2Module } from 'ngx-long-press2';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'lh-content-preview',
@@ -37,7 +37,6 @@ export class ContentPreviewComponent {
     if (this.isSelected()) {
       this.folderService.removeFromFolder(this.data().id, this.folderService.selectMode());
     } else {
-      console.log('add to folder');
       this.folderService.addToFolder(this.data().id, this.folderService.selectMode());
     }
   }

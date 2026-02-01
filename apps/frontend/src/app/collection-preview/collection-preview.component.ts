@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { FastAverageColor } from 'fast-average-color';
 import { Router, RouterLink } from '@angular/router';
@@ -14,29 +14,4 @@ export class CollectionPreviewComponent {
   router = inject(Router);
 
   data = input.required<LearningContentCollection>();
-
-  contentColor = computed(async () => {
-    if (this.data().previewImage) {
-      const fac = new FastAverageColor();
-      const color = await fac.getColorAsync(this.data().previewImage!, {
-        // Analyze only the bottom 30%
-        top: 70, // Start 70% from the top
-        height: 30, // Take 30% of the height
-        left: 0,
-        width: 100,
-        algorithm: 'sqrt', // Highly accurate for luminance
-      });
-
-      // The library gives you 'isDark' and 'isLight' booleans automatically!
-      console.log(color);
-      return color.isDark ? 'white' : 'black';
-    }
-    return 'black';
-  });
-
-  constructor() {
-    effect(() => {
-      console.log(this.data());
-    });
-  }
 }

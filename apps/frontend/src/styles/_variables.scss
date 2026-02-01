@@ -46,3 +46,20 @@ $mask-bg: var(--p-mask-background);
 $font-sm: 0.875rem;
 $font-base: 1rem;
 $font-lg: 1.25rem;
+
+// Common breakpoint variables
+$tablet-width: 768px;
+$desktop-width: 1024px;
+
+// The Mixin
+@mixin desktop {
+  @media (min-width: #{$desktop-width}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$tablet-width}) and (max-width: #{$desktop-width - 1px}) {
+    @content;
+  }
+}

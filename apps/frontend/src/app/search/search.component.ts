@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, resource, signal } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { MatIcon } from '@angular/material/icon';
 import { Button, ButtonModule } from 'primeng/button';
@@ -8,27 +8,22 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Chip } from 'primeng/chip';
 import { SlicePipe } from '@angular/common';
 import { DrawerModule } from 'primeng/drawer';
-import { LongPressDirective } from '../long-press.directive';
 import { TableModule } from 'primeng/table';
 import { ContentDataService } from '../content-data.service';
-import { FolderComponent } from '../folder/folder.component';
-import { ActionButtonsComponent } from '../action-buttons/action-buttons.component';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FolderSelectModalComponent } from '../folder-select-modal/folder-select-modal.component';
 import { FolderService } from '../folder.service';
 import { CollectionPreviewComponent } from '../collection-preview/collection-preview.component';
 import { TagGroupPopulated, TagService } from '../tag.service';
-import { firstValueFrom, forkJoin } from 'rxjs';
 import { Skeleton } from 'primeng/skeleton';
-import { LearningContentCollection, SearchQuery, TagGroup, TagID, TagVisibilityPlace } from 'models';
+import { LearningContentCollection, TagID, TagVisibilityPlace } from 'models';
 import { FormsModule } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ContentPreviewComponent } from '../content-preview/content-preview.component';
 
 const visibilityFilter = (visibility: TagVisibilityPlace) => {
   return (e: TagGroupPopulated) => {
-    for (const visibility of e.visibility) {
-      if (visibility.place === TagVisibilityPlace.SEARCH_PAGE) return true;
+    for (const v of e.visibility) {
+      if (v.place === visibility) return true;
     }
     return false;
   };

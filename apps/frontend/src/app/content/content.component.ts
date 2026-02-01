@@ -9,12 +9,9 @@ import { DatePipe } from '@angular/common';
 import { BadgeModule } from 'primeng/badge';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ButtonModule } from 'primeng/button';
-import { FolderService } from '../folder.service';
 import { ActionButtonsComponent } from '../action-buttons/action-buttons.component';
-import { MessageService } from 'primeng/api';
 import { ContentPreviewComponent } from '../content-preview/content-preview.component';
 import { TagService } from '../tag.service';
-import { Tag } from 'models';
 import { split } from '@angular-devkit/core';
 
 @Component({
@@ -37,10 +34,7 @@ import { split } from '@angular-devkit/core';
 })
 export class ContentComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   protected contentService = inject(ContentDataService);
-  private messageService = inject(MessageService);
-  private folderService = inject(FolderService);
   private tagService = inject(TagService);
 
   tags = computed(() => {

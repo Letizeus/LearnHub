@@ -73,7 +73,6 @@ export class FolderService {
       });
       return;
     }
-    console.log(id);
     this.updateFolder(folderId, { content: [...(folderToAdd.content ?? []), id] });
   }
 

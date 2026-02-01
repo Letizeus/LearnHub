@@ -1,6 +1,5 @@
 import { Component, inject, viewChild } from '@angular/core';
 import { Button } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FolderService } from '../folder.service';
@@ -8,9 +7,9 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'lh-create-folder-modal',
-  imports: [Button, Dialog, InputText, FormsModule],
+  imports: [Button, InputText, FormsModule],
   templateUrl: './create-folder-modal.component.html',
-  styleUrl: './create-folder-modal.component.css',
+  styleUrl: './create-folder-modal.component.scss',
 })
 export class CreateFolderModalComponent {
   private folderService = inject(FolderService);

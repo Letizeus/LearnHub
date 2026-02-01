@@ -23,8 +23,7 @@ export class ContentController {
 
   @Post('/contents')
   async getContents(@Body() body: GetContentsDto) {
-    const res = await this.contentService.getContents(body.missingIds);
-    return ;
+    return await this.contentService.getContents(body.missingIds);
   }
 
   @Post('/collections')

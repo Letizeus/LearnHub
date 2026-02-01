@@ -124,7 +124,7 @@ a {
     cursor: pointer;
     height: 8rem;
     justify-content: center;
-    //-webkit-filter: brightness(109%) contrast(34%) saturate(66%);
+
     &:hover {
       transition: 0.3s ease;
     }
@@ -141,9 +141,7 @@ a {
   display: flex;
   align-items: center;
   gap: 4px;
-  /*background-color: white;
-  padding: 6px;
-  border-radius: 4px;*/
+
   .mat-icon {
     $size: 1.3rem;
     font-size: $size;
