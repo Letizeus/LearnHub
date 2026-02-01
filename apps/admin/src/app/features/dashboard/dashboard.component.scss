@@ -133,7 +133,7 @@
 
 .loading-state {
   .loading-icon {
-    font-size: 3rem;
+    font-size: $icon-size-xl;
     color: $primary;
     margin-bottom: $spacing-lg;
   }
@@ -147,7 +147,7 @@
 
 .error-state {
   .error-icon {
-    font-size: 3rem;
+    font-size: $icon-size-xl;
     color: $error;
     margin-bottom: $spacing-lg;
   }
@@ -161,7 +161,7 @@
 
 .empty-state {
   .empty-icon {
-    font-size: 3rem;
+    font-size: $icon-size-xl;
     color: $text-muted;
     margin-bottom: $spacing-lg;
   }
@@ -236,7 +236,7 @@
   margin-top: $spacing-xl;
 
   i {
-    font-size: 2rem;
+    font-size: $icon-size-lg;
     color: $primary;
     margin-bottom: $spacing-md;
   }

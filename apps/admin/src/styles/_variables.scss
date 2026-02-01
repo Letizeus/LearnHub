@@ -1,12 +1,15 @@
 // =============================================================================
-// PrimeNG Theme Bridge (v18+)
+// PrimeNG Theme Bridge Variables
+// =============================================================================
+// This file bridges PrimeNG's CSS variables to SCSS variables for easier use
+
+// =============================================================================
+// Colors
 // =============================================================================
 
-// --- Primary Palette ---
+// --- Primary Colors ---
 $primary: var(--p-primary-color);
-$primary-contrast: var(--p-primary-contrast-color);
 $primary-hover: var(--p-primary-hover-color);
-$primary-active: var(--p-primary-active-color);
 
 // --- Surface / Neutral Colors ---
 $surface-0: var(--p-surface-0);
@@ -21,122 +24,33 @@ $surface-700: var(--p-surface-700);
 $surface-800: var(--p-surface-800);
 $surface-900: var(--p-surface-900);
 
-// --- Semantic Backgrounds & Text ---
+// --- Semantic Colors ---
 $text-color: var(--p-text-color);
 $text-secondary: var(--p-text-secondary-color);
 $text-muted: var(--p-text-muted-color);
 $bg-card: var(--p-content-background);
-$bg-ground: var(--p-surface-100);  // Softer gray instead of pure white
+$bg-ground: var(--p-surface-100);
 $bg-hover: var(--p-content-hover-background);
 $border-color: var(--p-content-border-color);
 
-// --- Color Scales (PrimeNG palette) ---
-// Blue
-$blue-50: var(--p-blue-50);
-$blue-100: var(--p-blue-100);
-$blue-200: var(--p-blue-200);
-$blue-300: var(--p-blue-300);
-$blue-400: var(--p-blue-400);
+// --- Color Palette ---
 $blue-500: var(--p-blue-500);
-$blue-600: var(--p-blue-600);
-$blue-700: var(--p-blue-700);
-$blue-800: var(--p-blue-800);
-$blue-900: var(--p-blue-900);
-
-// Green
-$green-50: var(--p-green-50);
-$green-100: var(--p-green-100);
-$green-200: var(--p-green-200);
-$green-300: var(--p-green-300);
-$green-400: var(--p-green-400);
 $green-500: var(--p-green-500);
-$green-600: var(--p-green-600);
-$green-700: var(--p-green-700);
-$green-800: var(--p-green-800);
-$green-900: var(--p-green-900);
-
-// Yellow
-$yellow-50: var(--p-yellow-50);
-$yellow-100: var(--p-yellow-100);
-$yellow-200: var(--p-yellow-200);
-$yellow-300: var(--p-yellow-300);
-$yellow-400: var(--p-yellow-400);
 $yellow-500: var(--p-yellow-500);
-$yellow-600: var(--p-yellow-600);
-$yellow-700: var(--p-yellow-700);
-$yellow-800: var(--p-yellow-800);
-$yellow-900: var(--p-yellow-900);
-
-// Orange
-$orange-50: var(--p-orange-50);
-$orange-100: var(--p-orange-100);
-$orange-200: var(--p-orange-200);
-$orange-300: var(--p-orange-300);
-$orange-400: var(--p-orange-400);
 $orange-500: var(--p-orange-500);
-$orange-600: var(--p-orange-600);
-$orange-700: var(--p-orange-700);
-$orange-800: var(--p-orange-800);
-$orange-900: var(--p-orange-900);
-
-// Red
-$red-50: var(--p-red-50);
-$red-100: var(--p-red-100);
-$red-200: var(--p-red-200);
-$red-300: var(--p-red-300);
-$red-400: var(--p-red-400);
 $red-500: var(--p-red-500);
-$red-600: var(--p-red-600);
-$red-700: var(--p-red-700);
-$red-800: var(--p-red-800);
-$red-900: var(--p-red-900);
 
-// Purple
-$purple-50: var(--p-purple-50);
-$purple-100: var(--p-purple-100);
-$purple-200: var(--p-purple-200);
-$purple-300: var(--p-purple-300);
-$purple-400: var(--p-purple-400);
-$purple-500: var(--p-purple-500);
-$purple-600: var(--p-purple-600);
-$purple-700: var(--p-purple-700);
-$purple-800: var(--p-purple-800);
-$purple-900: var(--p-purple-900);
-
-// Cyan
-$cyan-50: var(--p-cyan-50);
-$cyan-100: var(--p-cyan-100);
-$cyan-200: var(--p-cyan-200);
-$cyan-300: var(--p-cyan-300);
-$cyan-400: var(--p-cyan-400);
-$cyan-500: var(--p-cyan-500);
-$cyan-600: var(--p-cyan-600);
-$cyan-700: var(--p-cyan-700);
-$cyan-800: var(--p-cyan-800);
-$cyan-900: var(--p-cyan-900);
-
-// Slate
-$slate-50: var(--p-slate-50);
-$slate-100: var(--p-slate-100);
-$slate-200: var(--p-slate-200);
-$slate-300: var(--p-slate-300);
-$slate-400: var(--p-slate-400);
-$slate-500: var(--p-slate-500);
-$slate-600: var(--p-slate-600);
-$slate-700: var(--p-slate-700);
-$slate-800: var(--p-slate-800);
-$slate-900: var(--p-slate-900);
-
-// Semantic aliases
-$info: $blue-500;
-$success: $green-500;
-$warning: $orange-500;
 $error: $red-500;
 
-// --- Layout & Misc ---
-$border-radius: var(--p-content-border-radius);
-$transition: var(--p-transition-duration);
-$mask-bg: var(--p-mask-background);
+// --- Admin Sidebar Colors ---
+$sidebar-bg: var(--p-surface-900);
+$sidebar-text: var(--p-surface-0);
+$sidebar-hover: color-mix(in srgb, var(--p-surface-0) 8%, transparent);
+$sidebar-active: color-mix(in srgb, var(--p-blue-500) 15%, transparent);
+
+// =============================================================================
+// Typography
+// =============================================================================
 
 // --- Font Sizes ---
 $font-xs: 0.75rem;
@@ -153,7 +67,15 @@ $font-medium: 500;
 $font-semibold: 600;
 $font-bold: 700;
 
-// --- Spacing ---
+// --- Icon Sizes ---
+$icon-size-md: 1.5rem;
+$icon-size-lg: 2rem;
+$icon-size-xl: 3rem;
+
+// =============================================================================
+// Spacing
+// =============================================================================
+
 $spacing-xs: 0.35rem;
 $spacing-sm: 0.5rem;
 $spacing-md: 0.75rem;
@@ -162,26 +84,42 @@ $spacing-xl: 1.5rem;
 $spacing-2xl: 2rem;
 $spacing-3xl: 3rem;
 
-// --- Shadows ---
+// --- Special Spacing ---
+$icon-input-left: 0.75rem;
+$icon-input-padding: 2.5rem;
+$empty-state-top-padding: 135px;
+
+// =============================================================================
+// Shadows
+// =============================================================================
+
 $shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 $shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 
+// =============================================================================
+// Layout
+// =============================================================================
+
+// --- Border & Transitions ---
+$border-radius: var(--p-content-border-radius);
+$transition: var(--p-transition-duration);
+$mask-bg: var(--p-mask-background);
+
 // --- Breakpoints ---
-$breakpoint-xs: 480px;
 $breakpoint-sm: 640px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 1024px;
-$breakpoint-xl: 1280px;
-
-// --- Admin-specific colors ---
-$sidebar-bg: var(--p-surface-900);
-$sidebar-text: var(--p-surface-0);
-$sidebar-hover: color-mix(in srgb, var(--p-surface-0) 8%, transparent);
-$sidebar-active: color-mix(in srgb, var(--p-blue-500) 15%, transparent);
 
 // --- Dialog & Drawer Sizes ---
 $dialog-width-sm: 400px;
 $dialog-width-md: 450px;
 $dialog-width-lg: 600px;
 $drawer-width: 450px;
+
+// --- Layout Dimensions ---
+$sidebar-width: 350px;
+$sidebar-width-md: 300px;
+$section-min-height: 600px;
+$content-card-min-width: 280px;
+$tag-card-min-width: 200px;

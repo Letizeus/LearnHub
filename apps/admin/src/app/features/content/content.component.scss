@@ -1,25 +1,5 @@
 @use '../../../styles/variables' as *;
 
-$sidebar-width: 350px;
-$sidebar-width-md: 300px;
-$section-min-height: 600px;
-$content-card-min-width: 280px;
-
-.content-layout {
-  display: grid;
-  grid-template-columns: $sidebar-width 1fr;
-  gap: $spacing-xl;
-
-  @media (max-width: $breakpoint-lg) {
-    grid-template-columns: $sidebar-width-md 1fr;
-    gap: $spacing-lg;
-  }
-
-  @media (max-width: $breakpoint-md) {
-    grid-template-columns: 1fr;
-  }
-}
-
 .collections-section,
 .contents-section {
   background: $bg-card;
@@ -33,53 +13,8 @@ $content-card-min-width: 280px;
   }
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-lg;
-
-  h3 {
-    margin: 0;
-    font-size: $font-xl;
-    font-weight: $font-semibold;
-    color: $text-color;
-  }
-
-  .section-title {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-
-    .content-count {
-      font-size: $font-sm;
-      color: $text-secondary;
-      font-weight: $font-normal;
-    }
-  }
-}
-
 .search-box {
   margin-bottom: $spacing-lg;
-
-  .p-input-icon-left {
-    width: 100%;
-    position: relative;
-
-    i {
-      position: absolute;
-      left: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: $text-secondary;
-      z-index: 1;
-    }
-
-    .search-input {
-      width: 100%;
-      padding-left: 2.5rem;
-    }
-  }
 }
 
 .filter-box {
@@ -87,34 +22,10 @@ $content-card-min-width: 280px;
 }
 
 .collections-list {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
   max-height: $section-min-height;
-  overflow-y: auto;
-  padding-right: $spacing-xs;
 }
 
 .collection-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-md;
-  background-color: $surface-50;
-  border: 2px solid transparent;
-  border-radius: calc($border-radius / 2);
-  cursor: pointer;
-  transition: all $transition;
-
-  &:hover {
-    background-color: $bg-hover;
-    border-color: $surface-300;
-  }
-
-  &.selected {
-    background-color: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
-    border-color: var(--p-primary-color);
-  }
 
   .collection-info {
     display: flex;
@@ -151,28 +62,12 @@ $content-card-min-width: 280px;
     }
   }
 
-  .collection-actions {
-    display: flex;
-    gap: $spacing-xs;
-    opacity: 0;
-    transition: opacity $transition;
-  }
-
-  &:hover {
-    .collection-actions {
-      opacity: 1;
-    }
-  }
 }
 
 .contents-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax($content-card-min-width, 1fr));
   gap: $spacing-md;
-
-  @media (max-width: $breakpoint-sm) {
-    grid-template-columns: 1fr;
-  }
 }
 
 .content-card {
@@ -285,59 +180,16 @@ $content-card-min-width: 280px;
       }
     }
 
-    .content-card-actions {
-      display: flex;
-      gap: $spacing-xs;
-      opacity: 0;
-      transition: opacity $transition;
-    }
-  }
-
-  &:hover {
-    .content-card-footer .content-card-actions {
-      opacity: 1;
-    }
   }
 }
 
 .form-group {
-  margin-bottom: $spacing-lg;
-
-  label {
-    display: block;
-    margin-bottom: $spacing-xs;
-    font-weight: $font-medium;
-    color: $text-color;
-    font-size: $font-sm;
-  }
-
-  .form-input {
-    width: 100%;
-  }
-
-  small {
-    display: block;
-    margin-top: $spacing-xs;
-    color: $text-muted;
-    font-size: $font-xs;
-  }
-
   ::ng-deep p-multiSelect {
     .p-multiselect-label {
       display: flex;
       align-items: center;
       line-height: normal;
     }
-  }
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-md;
-
-  @media (max-width: $breakpoint-sm) {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -375,35 +227,16 @@ $content-card-min-width: 280px;
 
 .empty-state {
   grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: $spacing-2xl;
   text-align: center;
   min-height: 450px;
-
-  i {
-    font-size: 3rem;
-    color: $text-muted;
-  }
-
-  p {
-    margin: $spacing-sm 0 0 0;
-    color: $text-secondary;
-  }
 }
 
 .contents-section > .empty-state {
-  padding-top: 135px;
+  padding-top: $empty-state-top-padding;
 }
 
 @media (max-width: $breakpoint-md) {
-  .collection-actions,
-  .content-card-actions {
-    opacity: 1 !important;
-  }
-
   .contents-section > .empty-state {
     i {
       transform: rotate(90deg);

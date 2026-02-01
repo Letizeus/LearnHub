@@ -3,7 +3,7 @@
     <h2>Tags & Tag Groups</h2>
   </div>
 
-  <div class="tags-layout">
+  <div class="grid-sidebar-layout">
     <div class="taggroups-section">
       <div class="section-header">
         <h3>Tag Groups</h3>
@@ -33,9 +33,9 @@
         </span>
       </div>
 
-      <div class="taggroups-list">
+      <div class="taggroups-list scrollable-list">
         <div
-          class="taggroup-item"
+          class="taggroup-item selectable-item has-hover-actions"
           [class.selected]="showingUngrouped()"
           (click)="selectUngrouped()"
           (keydown.enter)="selectUngrouped()"
@@ -55,7 +55,7 @@
         @if (tagGroups().length > 0) {
           @for (tagGroup of tagGroups(); track tagGroup.id) {
             <div
-              class="taggroup-item"
+              class="taggroup-item selectable-item has-hover-actions"
               [class.selected]="selectedTagGroup()?.id === tagGroup.id && !showingUngrouped()"
               (click)="selectTagGroup(tagGroup)"
               (keydown.enter)="selectTagGroup(tagGroup)"
@@ -70,7 +70,7 @@
                   <span class="taggroup-meta">{{ tagGroup.tags.length }} tags · {{ getVisibilityLabel(tagGroup.visibility) }}</span>
                 </div>
               </div>
-              <div class="taggroup-actions" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="presentation">
+              <div class="actions-on-hover" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="presentation">
                 <button
                   pButton
                   type="button"
@@ -124,7 +124,7 @@
         <div class="tags-grid">
           @if (ungroupedTags().length > 0) {
             @for (tag of ungroupedTags(); track tag.id) {
-              <div class="tag-card"
+              <div class="tag-card has-hover-actions"
                    [style.--tag-color]="tag.color || 'var(--p-primary-color)'"
                    [style.background-image]="tag.backgroundImage ? 'url(' + tag.backgroundImage + ')' : 'none'"
                    [class.has-background]="!!tag.backgroundImage">
@@ -136,7 +136,7 @@
                     </div>
                     <span class="tag-name">{{ tag.name }}</span>
                   </div>
-                  <div class="tag-card-actions">
+                  <div class="actions-on-hover">
                     <button
                       pButton
                       type="button"
@@ -198,7 +198,7 @@
         <div class="tags-grid">
           @if (tagGroup.tags.length > 0) {
             @for (tag of tagGroup.tags; track tag.id) {
-              <div class="tag-card"
+              <div class="tag-card has-hover-actions"
                    [style.--tag-color]="tag.color || 'var(--p-primary-color)'"
                    [style.background-image]="tag.backgroundImage ? 'url(' + tag.backgroundImage + ')' : 'none'"
                    [class.has-background]="!!tag.backgroundImage">
@@ -210,7 +210,7 @@
                     </div>
                     <span class="tag-name">{{ tag.name }}</span>
                   </div>
-                  <div class="tag-card-actions">
+                  <div class="actions-on-hover">
                     <button
                       pButton
                       type="button"

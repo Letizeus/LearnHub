@@ -3,7 +3,7 @@
     <h2>Learning Content Collections</h2>
   </div>
 
-  <div class="content-layout">
+  <div class="grid-sidebar-layout">
     <div class="collections-section">
       <div class="section-header">
         <h3>Collections</h3>
@@ -46,9 +46,9 @@
         ></p-select>
       </div>
 
-      <div class="collections-list">
+      <div class="collections-list scrollable-list">
         <div
-          class="collection-item"
+          class="collection-item selectable-item has-hover-actions"
           [class.selected]="showingUngrouped()"
           (click)="selectUngrouped()"
           (keydown.enter)="selectUngrouped()"
@@ -67,7 +67,7 @@
         @if (collections().length > 0) {
           @for (collection of collections(); track collection.id) {
             <div
-              class="collection-item"
+              class="collection-item selectable-item has-hover-actions"
               [class.selected]="selectedCollection()?.id === collection.id && !showingUngrouped()"
               (click)="selectCollection(collection)"
               (keydown.enter)="selectCollection(collection)"
@@ -84,7 +84,7 @@
                   <span class="collection-author">by {{ collection.author }}</span>
                 </div>
               </div>
-              <div class="collection-actions" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="presentation">
+              <div class="actions-on-hover" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="presentation">
                 <button
                   pButton
                   type="button"
@@ -138,7 +138,7 @@
         <div class="contents-grid">
           @if (ungroupedContent().length > 0) {
             @for (content of ungroupedContent(); track content.id) {
-              <div class="content-card">
+              <div class="content-card has-hover-actions">
                 <div class="content-card-header">
                   <i class="pi pi-file-edit content-icon"></i>
                   <span class="content-type">Exercise</span>
@@ -189,7 +189,7 @@
                       </span>
                     }
                   </div>
-                  <div class="content-card-actions">
+                  <div class="actions-on-hover">
                     <button
                       pButton
                       type="button"
@@ -251,7 +251,7 @@
         <div class="contents-grid">
           @if (collection.contents && collection.contents.length > 0) {
             @for (content of collection.contents; track content.id) {
-              <div class="content-card">
+              <div class="content-card has-hover-actions">
                 <div class="content-card-header">
                   <i class="pi pi-file-edit content-icon"></i>
                   <span class="content-type">Exercise</span>
@@ -302,7 +302,7 @@
                       </span>
                     }
                   </div>
-                  <div class="content-card-actions">
+                  <div class="actions-on-hover">
                     <button
                       pButton
                       type="button"

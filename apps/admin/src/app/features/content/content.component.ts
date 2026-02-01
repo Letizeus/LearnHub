@@ -190,7 +190,7 @@ export class ContentComponent {
 
   deleteCollection(collection: LearningContentCollection): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete collection "${collection.title}"? This will not delete the exercises, but they will no longer be grouped.`,
+      message: 'Are you sure you want to delete this collection? This action cannot be undone.',
       header: 'Delete Collection',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
@@ -471,7 +471,7 @@ export class ContentComponent {
     if (!contentId || !collection) return;
 
     this.confirmationService.confirm({
-      message: `Remove this content from "${collection.title}"?`,
+      message: 'Are you sure you want to remove this content from the collection?',
       header: 'Remove from Collection',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',

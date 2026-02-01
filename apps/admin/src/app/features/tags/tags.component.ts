@@ -169,7 +169,7 @@ export class TagsComponent {
 
   deleteTagGroup(tagGroup: TagGroup): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete tag group "${tagGroup.name}"? This will not delete the tags, but they will no longer be grouped.`,
+      message: 'Are you sure you want to delete this tag group? This action cannot be undone.',
       header: 'Delete Tag Group',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
@@ -344,7 +344,7 @@ export class TagsComponent {
     if (!tagId || !tagGroup) return;
 
     this.confirmationService.confirm({
-      message: `Remove "${tag.name}" from "${tagGroup.name}"?`,
+      message: 'Are you sure you want to remove this tag from the group?',
       header: 'Remove from Group',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
@@ -440,7 +440,7 @@ export class TagsComponent {
     if (!tagId) return;
 
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete tag "${tag.name}"? This will remove it from all groups.`,
+      message: 'Are you sure you want to delete this tag? This action cannot be undone.',
       header: 'Delete Tag',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
