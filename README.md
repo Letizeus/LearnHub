@@ -1,4 +1,9 @@
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://repostatus.org/#wip)   
+<div align="center">
+  <a href="https://www.repostatus.org/#wip">
+    <img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP" width="200">
+  </a>
+</div>
+
 # LearnHub
 
 A web platform for uploading learning content with:
