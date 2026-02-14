@@ -1,8 +1,12 @@
-<div align="center">
+<p align="center">
   <a href="https://www.repostatus.org/#wip">
-    <img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP" width="200">
+    <img
+      src="https://img.shields.io/badge/project%20status-WIP-f59e0b?style=for-the-badge&labelColor=111827"
+      alt="Project Status: WIP"
+      height="32"
+    />
   </a>
-</div>
+</p>
 
 # LearnHub
 
