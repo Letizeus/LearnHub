@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://www.repostatus.org/#wip">
+  <a href="https://github.com/Letizeus/LearnHub">
     <img
       src="https://img.shields.io/badge/project%20status-WIP-f59e0b?style=for-the-badge&labelColor=111827"
       alt="Project Status: WIP"
