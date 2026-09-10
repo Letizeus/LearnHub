@@ -1,4 +1,3 @@
-<p align="center">
   <a href="https://github.com/Letizeus/LearnHub">
     <img
       src="https://img.shields.io/badge/project%20status-WIP-f59e0b?style=for-the-badge&labelColor=111827"
@@ -7,6 +6,8 @@
     />
   </a>
 </p>
+
+<img width="1860" height="480" alt="learnhub-banner" src="https://github.com/user-attachments/assets/0c23e35a-1c4c-441e-ada4-a1b1c364ce22" />
 
 # LearnHub
 
